@@ -1,0 +1,358 @@
+.bg_yellow {background-color: #ffe402;}
+.bg_yellow button {background-color: #f2d802;}
+.bg_green {background-color: #4dcca7;}
+.bg_green button {background-color: #33be96;}
+.bg_blue {background-color: #0181d1;}
+.bg_blue button {background-color: #0778be; color: #dbdbdb;}
+
+.font_blue {color: #0181d1;}
+.font_gray {color: #aaa;}
+.font_darkgray {color: #434343;}
+
+.content {padding: 30px 0;}
+
+#login .input_box input:focus, 
+#join .input_box input:focus, 
+#join .input_box select:focus {border-color: #ffe402;}
+#login .input_box .login_btn, 
+#join .join_btn {margin-top: 10px; width: 100%; border-radius: 2px; background-color: #ffe402; padding: 5px 0; font-size: 18px; color: #444;}
+#login .input_box label, 
+#join .input_box > div > label {margin-top: 10px;}
+#login .input_box input, 
+#join .input_box input {border: 1px solid #ccc; border-radius: 2px; padding: 4px 10px; font-size: 18px;}
+
+/* 로그인 */
+#login {display: grid; place-items: center; min-height: 100dvh;}
+#login form {border: 1px solid #ccc; border-radius: 4px; padding: 30px 16px;}
+#login .logo_box p {font-size: 36px; text-align: center;}
+#login .input_box {display: flex; flex-direction: column; align-items: center;}
+#login .save_box label {margin-top: 10px; display: flex; align-items: center; justify-content: flex-end; gap: 6px; font-size: 14px;}
+#login .join_box {margin-top: 10px; display: flex; align-items: center; justify-content: space-between; font-size: 14px; color: #999;}
+#login .join_box .find_box {display: flex; align-items: center; gap: 10px;}
+#login .join_box .find_box li:first-child {position: relative;}
+#login .join_box .find_box li:first-child::after {content: ''; position: absolute; top: 50%; transform: translateY(-50%); right: -5px; display: inline-block; width: 1px; height: 10px; background-color: #999;}
+#login .join_box a:hover {color: #fc5c50;}
+
+/* 회원가입 */
+#join {display: grid; place-items: center; min-height: 100dvh;}
+#join form {border: 1px solid #ccc; border-radius: 4px; padding: 30px 16px;}
+#join .logo_box {font-size: 36px; text-align: center;}
+#join .input_box > div {display: flex; flex-direction: column;}
+#join .input_box > div input {width: 370px;}
+#join .input_box div .email_box, 
+#join .input_box div .tel_box,
+#join .input_box div .comfirm_box, 
+#join .input_box div .id_box {margin-top: 10px; display: flex; align-items: center; gap: 10px;}
+#join .input_box div .email_box input, #join .input_box div .email_box select {width: 180px;}
+#join .input_box div .email_box select {padding: 4px 0; font-size: 18px;}
+#join .input_box div .comfirm_box label {position: relative;}
+#join .input_box div .comfirm_box .count_box {position: absolute; top: 50%; transform: translateY(-50%); right: 10px; font-size: 14px; color: #666;}
+#join .input_box div .confirm_btn, 
+#join .input_box div .id_box .repeat_btn {border-radius: 2px; border: 1px solid #ccc; padding: 7px 6px; font-size: 12px; color: #444;}
+#join .input_box .my_box {position: relative; margin-top: 20px;}
+#join .input_box .my_box::before {content: ''; position: absolute; top: -5px; left: 50%; transform: translateX(-50%); display: inline-block; width: 100%; height: 1px; background-color: #ccc;}
+#join .input_box .my_box .passwd_noti {margin-top: 10px; font-size: 14px; color: #555;}
+
+/* header, footer */
+header {display: flex; align-items: center; justify-content: space-between; padding: 20px 0;}
+header .logo_box p {font-size: 38px;}
+header .icon_box {position: relative; display: flex; align-items: center; gap: 8px;}
+header .icon_box .img_box {width: 40px; height: 40px; cursor: pointer;}
+header .icon_box .alarm_txt {position: absolute; left: 0; bottom: 0; width: 16px; height: 16px; border-radius: 50%; background-color: #fc5c50; font-size: 12px; text-align: center; line-height: 16px; color: #fefefe;}
+
+header .setting_box {position: absolute; right: 0; top: 50px; width: 160px; border: 1px solid #555; background-color: #fefefe; border-radius: 4px; text-align: center; color: #555; z-index: 101;}
+header .setting_box li + li {border-top: 1px solid #555;}
+header .setting_box li {height: 40px; font-size: 18px; line-height: 40px;}
+header .setting_box li a {display: inline-block; width: 100%; height: 100%;}
+header .setting_box li:hover {background-color: #ffe402;}
+
+footer {border-top: 1px solid #ddd; padding: 30px 0;}
+footer ul {display: flex; align-items: center; justify-content: center; gap: 60px;}
+footer ul li:not(:last-child) {position: relative;}
+footer ul li:not(:last-child)::after {content: ''; position: absolute; top: 50%; transform: translateY(-50%); right: -30px; display: inline-block; width: 1px; height: 14px; background-color: #ccc;}
+footer ul li, footer ul li a {font-size: 16px; color: #ccc;}
+footer p {margin-top: 16px; font-size: 14px; text-align: center; color: #666;}
+
+
+/* main */
+#main .account_box, #main .account_box ul  {margin-top: 20px;}
+#main .account_box .account_tit {font-size: 20px;}
+#main .account_box ul li {border-radius: 8px; padding: 30px 16px;}
+
+#main .account_box ul .nolist {display: inline-block; border: 1px solid #ccc; }
+#main .account_box ul .nolist a {display: flex; align-items: center; gap: 8px; font-size: 18px;}
+#main .account_box ul .nolist .img_box {width: 40px;}
+
+#main .account_box ul .account_item {display: flex; align-items: center; justify-content: space-between;}
+#main .account_box ul .account_item + .account_item {margin-top: 10px;}
+#main .account_box ul .account_item .txt_box .account_name {font-size: 18px; color: #222;}
+#main .account_box ul .account_item .txt_box .account_number {margin-top: 6px; font-size: 16px; color: #656565;}
+#main .account_box ul .account_item .txt_box .account_amount {margin-top: 6px; font-size: 20px; font-weight: 700; color: #222;}
+
+#main .account_box ul .account_item .btn_box button + button {margin-left: 6px;}
+#main .account_box ul .account_item .btn_box button {border-radius: 20px; padding: 4px 12px; font-size: 18px;}
+
+#main .account_box .product_list li {display: inline-block; width: 200px;height: 146px; border: 1px solid #ccc; padding: 0;}
+#main .account_box .product_list li + li {margin-left: 10px;}
+#main .account_box .product_list li a {display: inline-block; width: 100%; height: 100%; font-size: 16px; color: #222; text-align: center;}
+#main .account_box .product_list li .img_box {margin: 30px auto 0; width: 40px; filter: brightness(0) saturate(100%) invert(8%) sepia(4%) saturate(7%) hue-rotate(354deg) brightness(102%) contrast(87%);}
+#main .account_box .product_list li .txt_noti {margin-top: 6px; font-size: 14px; color: #536caa;}
+
+/* account_list */
+#account_list .info_box {padding: 30px 0;}
+#account_list .info_box .txt_box {text-align: center;}
+#account_list .info_box .txt_box .account_name {font-size: 18px; color: #222;}
+#account_list .info_box .txt_box .account_number {margin-top: 6px; font-size: 16px; color: #656565;}
+#account_list .info_box .txt_box .account_amount {margin-top: 6px; font-size: 20px; font-weight: 700; color: #222;}
+#account_list .info_box .btn_box {text-align: center;}
+#account_list .info_box .btn_box button {border-radius: 4px; padding: 4px 12px; font-size: 18px;}
+
+#account_list .account_details .toolbar {padding: 10px 20px; text-align: right;}
+#account_list .account_details .toolbar select {width: 80px; padding: 4px 0; font-size: 18px;}
+#account_list .account_details .toolbar select + select {margin-left: 6px;}
+
+#account_list .account_details .account_list {border-top: 1px solid #ddd;}
+#account_list .account_details .account_list .account_items {display: flex; justify-content: space-between; padding: 10px 20px;}
+#account_list .account_details .account_list li + li {border-top: 1px solid #ddd;}
+#account_list .account_details .account_list .account_items .txt_box p + p, 
+#account_list .account_details .account_list .account_items .account_info p + p {margin-top: 6px;}
+#account_list .account_details .account_list .account_items .txt_box .account_name {font-size: 18px;}
+#account_list .account_details .account_list .account_items .txt_box .account_memo {font-size: 14px;}
+#account_list .account_details .account_list .account_items .account_info {text-align: right;}
+#account_list .account_details .account_list .account_items .account_info .delta_amount {font-size: 20px; font-weight: 700;}
+
+/* transfer */
+#transfer .bank_info {text-align: center;}
+#transfer .bank_info p {margin-bottom: 16px; font-size: 20px;}
+#transfer .bank_info select, 
+#transfer .bank_info input {font-size: 18px;}
+#transfer .bank_info select {width: 120px; padding: 4px 0;}
+#transfer .bank_info input {padding: 4px 10px;}
+#transfer .bank_info button {border-radius: 2px; padding: 4px 12px; font-size: 18px;}
+
+#transfer .bank_list > p {margin: 20px 0; font-size: 20px;}
+#transfer .bank_list .account_list {border-top: 1px solid #ccc; border-bottom: 1px solid #ccc;}
+#transfer .bank_list .account_list li + li {border-top: 1px solid #ccc;}
+#transfer .bank_list .account_list li a {display: flex; gap: 20px; width: 100%; padding: 10px 0;}
+#transfer .bank_list .account_list li .txt_box .account_name {font-size: 18px; color: #222;}
+#transfer .bank_list .account_list li .txt_box .deposit_account {margin-top: 6px; font-size: 16px; color: #434343;}
+#transfer .bank_list .account_list li .txt_box .deposit_account span {margin-right: 10px;}
+#transfer .bank_list .account_list li .img_box {width: 30px;}
+
+/* transfer_money */
+#transfer_money .bank_info {text-align: center;}
+#transfer_money .bank_info p {margin-bottom: 16px; font-size: 20px;}
+#transfer_money .bank_info input {font-size: 18px; padding: 4px 10px;}
+#transfer_money .bank_info button {border-radius: 2px; padding: 4px 12px; font-size: 18px;}
+
+#transfer_money .select_box {margin-top: 20px; text-align: center;}
+#transfer_money .select_box button + button {margin-left: 6px;}
+#transfer_money .select_box button {width: 70px; border: 2px solid #555; border-radius: 4px; padding: 4px 0; font-size: 18px; color: #555;}
+#transfer_money .select_box button:hover {background-color: #ffe402;}
+
+#pwbox input {width: 160px; padding: 4px 10px; font-size: 18px; text-align: center;}
+#pwbox .pbtn_box button + button {margin-left: 6px;}
+#pwbox .pbtn_box button {border: 1px solid #222; border-radius: 2px; padding: 4px 12px; font-size: 16px;}
+#pwbox .pbtn_box button:hover {background-color: #ffe402;}
+
+/* add_account, add installment_saving, add_deposit */
+.add_bank > p {font-size: 20px; text-align: center;}
+.add_bank .txt_box {margin-top: 20px; padding: 30px 0; font-size: 20px; line-height: 28px; text-align: center;}
+.add_bank form {padding-top: 20px;}
+.add_bank form > div:not(:last-child) {padding: 0 20px; display: flex; align-items: flex-start; gap: 20px; height: 100px;}
+.add_bank form div > p {font-size: 18px;}
+.add_bank form .passwd_box {display: flex; flex-direction: column;}
+.add_bank form .passwd_box label + label {margin-top: 10px;}
+.add_bank form div input, 
+.add_bank form div select {padding: 4px 10px; font-size: 16px;}
+
+.add_bank form .btn_box {text-align: center;}
+.add_bank form .btn_box button {border: 1px solid #555; border-radius: 4px; padding: 4px 10px; font-size: 18px; color: #555;}
+.add_bank form .btn_box button:hover {background-color: #ffe402;}
+
+/* alarms */
+#alarms .alarm_list li + li {border-top: 1px solid #ccc;}
+#alarms .alarm_list .alarm_items {display: flex; align-items: flex-start; gap: 20px; padding: 10px 20px;}
+#alarms .alarm_list .alarm_items .img_box {width: 40px;}
+
+/* my_account */
+#my_account .account_box, #my_account .account_box ul  {margin-top: 20px;}
+#my_account > p {font-size: 22px;}
+#my_account .account_box .account_tit {font-size: 20px;}
+#my_account .account_box ul li {border-radius: 8px; padding: 30px 16px;}
+
+#my_account .account_box ul .nolist {display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid #ccc; font-size: 18px;}
+#my_account .account_box ul .nolist .img_box {width: 40px;}
+
+#my_account .account_box ul .account_item {position: relative; display: flex; align-items: center; justify-content: space-between;}
+#my_account .account_box ul .account_item .img_box {position: absolute; top: 10px; right: 10px; width: 22px; height: 22px; cursor: pointer;}
+#my_account .account_box ul .account_item + .account_item {margin-top: 10px;}
+#my_account .account_box ul .account_item .txt_box .account_name {font-size: 18px; color: #222;}
+#my_account .account_box ul .account_item .txt_box .account_number {margin-top: 6px; font-size: 16px; color: #656565;}
+#my_account .account_box ul .account_item .txt_box .account_amount {margin-top: 6px; font-size: 20px; font-weight: 700; color: #222;}
+
+#my_account .account_box ul .account_item .btn_box button + button {margin-left: 6px;}
+#my_account .account_box ul .account_item .btn_box button {border-radius: 20px; padding: 4px 12px; font-size: 18px;}
+
+
+@media all and (max-width:1440px) {
+    .content {padding: 2.0833vw 0;}
+
+    #login .input_box .login_btn, 
+    #join .join_btn {margin-top: 0.6944vw; border-radius: 0.1389vw; padding: 0.3472vw 0; font-size: 1.2500vw;}
+    #login .input_box label, 
+    #join .input_box > div > label {margin-top: 0.6944vw;}
+    #login .input_box input, 
+    #join .input_box input {border: 0.0694vw solid #ccc; border-radius: 0.1389vw; padding: 0.2778vw 0.6944vw; font-size: 1.2500vw;}
+
+    /* 로그인 */
+    #login form {border: 0.0694vw solid #ccc; border-radius: 0.2778vw; padding: 2.0833vw 1.1111vw;}
+    #login .logo_box p {font-size: 2.5000vw;}
+    #login .save_box label {margin-top: 0.6944vw; gap: 0.4167vw; font-size: 0.9722vw;}
+    #login .join_box {margin-top: 0.6944vw; font-size: 0.9722vw;}
+    #login .join_box .find_box {gap: 0.6944vw;}
+    #login .join_box .find_box li:first-child::after {right: -0.3472vw; width: 0.0694vw; height: 0.6944vw;}
+
+    /* 회원가입 */
+    #join form {border: 0.0694vw solid #ccc; border-radius: 0.2778vw; padding: 2.0833vw 1.1111vw;}
+    #join .logo_box {font-size: 2.5000vw;}
+    #join .input_box > div input {width: 25.6944vw;}
+    #join .input_box div .email_box, 
+    #join .input_box div .tel_box,
+    #join .input_box div .comfirm_box, 
+    #join .input_box div .id_box {margin-top: 0.6944vw; gap: 0.6944vw;}
+    #join .input_box div .email_box input, #join .input_box div .email_box select {width: 12.5000vw;}
+    #join .input_box div .email_box select {padding: 0.2778vw 0; font-size: 1.2500vw;}
+    #join .input_box div .comfirm_box .count_box {right: 0.6944vw; font-size: 0.9722vw;}
+    #join .input_box div .confirm_btn, 
+    #join .input_box div .id_box .repeat_btn {border-radius: 0.1389vw; border: 0.0694vw solid #ccc; padding: 0.4861vw 0.4167vw; font-size: 0.8333vw;}
+    #join .input_box .my_box {margin-top: 1.3889vw;}
+    #join .input_box .my_box::before {top: -0.3472vw; height: 0.0694vw;}
+    #join .input_box .my_box .passwd_noti {margin-top: 0.6944vw; font-size: 0.9722vw;}
+
+    /* header, footer */
+    header {padding: 1.3889vw 0;}
+    header .logo_box p {font-size: 2.6389vw;}
+    header .icon_box {gap: 0.5556vw;}
+    header .icon_box .img_box {width: 2.7778vw; height: 2.7778vw;}
+    header .icon_box .alarm_txt {width: 1.1111vw; height: 1.1111vw; font-size: 0.8333vw; line-height: 1.1111vw;}
+
+    header .setting_box {top: 3.4722vw; width: 11.1111vw; border: 0.0694vw solid #555; border-radius: 0.2778vw;}
+    header .setting_box li + li {border-top: 0.0694vw solid #555;}
+    header .setting_box li {height: 2.7778vw; font-size: 1.2500vw; line-height: 2.7778vw;}
+
+    footer {border-top: 0.0694vw solid #ddd; padding: 2.0833vw 0;}
+    footer ul {gap: 4.1667vw;}
+    footer ul li:not(:last-child)::after {right: -2.0833vw; display: inline-block; width: 0.0694vw; height: 0.9722vw; background-color: #ccc;}
+    footer ul li, footer ul li a {font-size: 1.1111vw; color: #ccc;}
+    footer p {margin-top: 1.1111vw; font-size: 0.9722vw; text-align: center; color: #666;}
+
+
+    /* main */
+    #main .account_box, #main .account_box ul  {margin-top: 1.3889vw;}
+    #main .account_box .account_tit {font-size: 1.3889vw;}
+    #main .account_box ul li {border-radius: 0.5556vw; padding: 2.0833vw 1.1111vw;}
+
+    #main .account_box ul .nolist {border: 0.0694vw solid #ccc;}
+    #main .account_box ul .nolist a {gap: 0.5556vw; font-size: 1.2500vw;}
+    #main .account_box ul .nolist .img_box {width: 2.7778vw;}
+
+    #main .account_box ul .account_item + .account_item {margin-top: 0.6944vw;}
+    #main .account_box ul .account_item .txt_box .account_name {font-size: 1.2500vw;}
+    #main .account_box ul .account_item .txt_box .account_number {margin-top: 0.4167vw; font-size: 1.1111vw;}
+    #main .account_box ul .account_item .txt_box .account_amount {margin-top: 0.4167vw; font-size: 1.3889vw;}
+
+    #main .account_box ul .account_item .btn_box button + button {margin-left: 0.4167vw;}
+    #main .account_box ul .account_item .btn_box button {border-radius: 1.3889vw; padding: 0.2778vw 0.8333vw; font-size: 1.2500vw;}
+
+    #main .account_box .product_list li {width: 13.8889vw;height: 10.1389vw; border: 0.0694vw solid #ccc;}
+    #main .account_box .product_list li + li {margin-left: 0.6944vw;}
+    #main .account_box .product_list li a {font-size: 1.1111vw;}
+    #main .account_box .product_list li .img_box {margin: 2.0833vw auto 0; width: 2.7778vw;}
+    #main .account_box .product_list li .txt_noti {margin-top: 0.4167vw; font-size: 0.9722vw;}
+
+    /* account_list */
+    #account_list .info_box {padding: 2.0833vw 0;}
+    #account_list .info_box .txt_box .account_name {font-size: 1.2500vw;}
+    #account_list .info_box .txt_box .account_number {margin-top: 0.4167vw; font-size: 1.1111vw;}
+    #account_list .info_box .txt_box .account_amount {margin-top: 0.4167vw; font-size: 1.3889vw;}
+    #account_list .info_box .btn_box button {border-radius: 0.2778vw; padding: 0.2778vw 0.8333vw; font-size: 1.2500vw;}
+
+    #account_list .account_details .toolbar {padding: 0.6944vw 1.3889vw;}
+    #account_list .account_details .toolbar select {width: 5.5556vw; padding: 0.2778vw 0; font-size: 1.2500vw;}
+    #account_list .account_details .toolbar select + select {margin-left: 0.4167vw;}
+
+    #account_list .account_details .account_list {border-top: 0.0694vw solid #ddd;}
+    #account_list .account_details .account_list .account_items {padding: 0.6944vw 1.3889vw;}
+    #account_list .account_details .account_list li + li {border-top: 0.0694vw solid #ddd;}
+    #account_list .account_details .account_list .account_items .txt_box p + p, 
+    #account_list .account_details .account_list .account_items .account_info p + p {margin-top: 0.4167vw;}
+    #account_list .account_details .account_list .account_items .txt_box .account_name {font-size: 1.2500vw;}
+    #account_list .account_details .account_list .account_items .txt_box .account_memo {font-size: 0.9722vw;}
+    #account_list .account_details .account_list .account_items .account_info .delta_amount {font-size: 1.3889vw;}
+
+    /* transfer */
+    #transfer .bank_info p {margin-bottom: 1.1111vw; font-size: 1.3889vw;}
+    #transfer .bank_info select, 
+    #transfer .bank_info input {font-size: 1.2500vw;}
+    #transfer .bank_info select {width: 8.3333vw; padding: 0.2778vw 0;}
+    #transfer .bank_info input {padding: 0.2778vw 0.6944vw;}
+    #transfer .bank_info button {border-radius: 0.1389vw; padding: 0.2778vw 0.8333vw; font-size: 1.2500vw;}
+
+    #transfer .bank_list > p {margin: 1.3889vw 0; font-size: 1.3889vw;}
+    #transfer .bank_list .account_list {border-top: 0.0694vw solid #ccc; border-bottom: 0.0694vw solid #ccc;}
+    #transfer .bank_list .account_list li + li {border-top: 0.0694vw solid #ccc;}
+    #transfer .bank_list .account_list li a {gap: 1.3889vw; padding: 0.6944vw 0;}
+    #transfer .bank_list .account_list li .txt_box .account_name {font-size: 1.2500vw;}
+    #transfer .bank_list .account_list li .txt_box .deposit_account {margin-top: 0.4167vw; font-size: 1.1111vw;}
+    #transfer .bank_list .account_list li .txt_box .deposit_account span {margin-right: 0.6944vw;}
+    #transfer .bank_list .account_list li .img_box {width: 2.0833vw;}
+
+    /* transfer_money */
+    #transfer_money .bank_info p {margin-bottom: 1.1111vw; font-size: 1.3889vw;}
+    #transfer_money .bank_info input {font-size: 1.2500vw; padding: 0.2778vw 0.6944vw;}
+    #transfer_money .bank_info button {border-radius: 0.1389vw; padding: 0.2778vw 0.8333vw; font-size: 1.2500vw;}
+
+    #transfer_money .select_box {margin-top: 1.3889vw;}
+    #transfer_money .select_box button + button {margin-left: 0.4167vw;}
+    #transfer_money .select_box button {width: 4.8611vw; border: 0.1389vw solid #555; border-radius: 0.2778vw; padding: 0.2778vw 0; font-size: 1.2500vw;}
+
+    #pwbox input {width: 11.1111vw; padding: 0.2778vw 0.6944vw; font-size: 1.2500vw;}
+    #pwbox .pbtn_box button + button {margin-left: 0.4167vw;}
+    #pwbox .pbtn_box button {border: 0.0694vw solid #222; border-radius: 0.1389vw; padding: 0.2778vw 0.8333vw; font-size: 1.1111vw;}
+
+    /* add_account, add installment_saving, add_deposit */
+    .add_bank > p {font-size: 1.3889vw;}
+    .add_bank .txt_box {margin-top: 1.3889vw; padding: 2.0833vw 0; font-size: 1.3889vw; line-height: 1.9444vw;}
+    .add_bank form {padding-top: 1.3889vw;}
+    .add_bank form > div:not(:last-child) {padding: 0 1.3889vw; gap: 1.3889vw; height: 6.9444vw;}
+    .add_bank form div > p {font-size: 1.2500vw;}
+    .add_bank form .passwd_box label + label {margin-top: 0.6944vw;}
+    .add_bank form div input, 
+    .add_bank form div select {padding: 0.2778vw 0.6944vw; font-size: 1.1111vw;}
+
+    .add_bank form .btn_box button {border: 0.0694vw solid #555; border-radius: 0.2778vw; padding: 0.2778vw 0.6944vw; font-size: 1.2500vw;}
+
+    /* alarms */
+    #alarms .alarm_list li + li {border-top: 0.0694vw solid #ccc;}
+    #alarms .alarm_list .alarm_items {gap: 1.3889vw; padding: 0.6944vw 1.3889vw;}
+    #alarms .alarm_list .alarm_items .img_box {width: 2.7778vw;}
+
+    /* my_account */
+    #my_account .account_box, #my_account .account_box ul  {margin-top: 1.3889vw;}
+    #my_account > p {font-size: 1.5278vw;}
+    #my_account .account_box .account_tit {font-size: 1.3889vw;}
+    #my_account .account_box ul li {border-radius: 0.5556vw; padding: 2.0833vw 1.1111vw;}
+
+    #my_account .account_box ul .nolist {gap: 0.5556vw; border: 0.0694vw solid #ccc; font-size: 1.2500vw;}
+    #my_account .account_box ul .nolist .img_box {width: 2.7778vw;}
+
+    #my_account .account_box ul .account_item .img_box {top: 0.6944vw; right: 0.6944vw; width: 1.5278vw; height: 1.5278vw;}
+    #my_account .account_box ul .account_item + .account_item {margin-top: 0.6944vw;}
+    #my_account .account_box ul .account_item .txt_box .account_name {font-size: 1.2500vw;}
+    #my_account .account_box ul .account_item .txt_box .account_number {margin-top: 0.4167vw; font-size: 1.1111vw;}
+    #my_account .account_box ul .account_item .txt_box .account_amount {margin-top: 0.4167vw; font-size: 1.3889vw;}
+
+    #my_account .account_box ul .account_item .btn_box button + button {margin-left: 0.4167vw;}
+    #my_account .account_box ul .account_item .btn_box button {border-radius: 1.3889vw; padding: 0.2778vw 0.8333vw; font-size: 1.2500vw;}
+}

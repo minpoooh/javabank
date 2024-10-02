@@ -1,0 +1,34 @@
+/* 공통 CSS */
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+* {margin: 0; padding: 0; font-family: 'Pretendard-Regular';}
+a {display: inline-block; text-decoration: none; color: initial;}
+em {font-style: normal; font-weight: 700;}
+img {width: 100%; height: 100%;}
+ul li {list-style: none;}
+table {border-collapse: collapse;}
+button {border: none; background-color: transparent; cursor: pointer;}
+select {border: 1px solid #ccc; border-radius: 2px; -webkit-appearance: none; -moz-appearance: none; appearance: none; text-align-last: center; text-align: center; -ms-text-align-last: center; -moz-text-align-last: center; outline: none;}
+label {display: inline-block;}
+input {border: 1px solid #ccc; border-radius: 2px; outline: none;}
+textarea {border: 1px solid #ccc; border-radius: 2px; padding: 3px; outline: none; resize: none;}
+
+body {max-width: 1440px; margin: 0 auto;}
+
+/* 팝업처리 */
+.popup_box {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 30px 20px; border-radius: 8px; background-color: #fefefe; overflow: hidden; box-shadow: 0 3px 7px #ccc; z-index: 150;}
+.popup_box .popup_title {margin-bottom: 10px; font-size: 18px; text-align: center;}
+.popup_box .pbtn_box {margin-top: 20px; text-align: center;}
+.popup_box .pbtn_box button {position: relative; font-size: 14px; line-height: 18px; color: #555;}
+.dimm {display:none; position: fixed; top: 0; left:0; width: 100%; height: 100%; background: #000; opacity: 0.3; z-index:100;}
+
+/* 공통 테이블 처리  */
+.s_table {width: 100%; border-collapse: collapse;}
+.s_table thead tr th {border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; padding: 4px 0; font-size: 16px; text-align: center; font-weight: 400;}
+.s_table tr {border-bottom: 1px solid #ccc;}
+.s_table tr td {font-size: 16px; line-height: 32px; text-align: center;}
+.s_table tbody tr a {display: inline-block; width: 100%; height: 100%;}
