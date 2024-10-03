@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,19 +16,20 @@
 </head>
 <body>
     <section id="login">
-        <form name="f" action="" method="post">
+        <form name="f" action="/login" method="post">
             <div class="logo_box">
                 <p>java<em>bank</em></p>
             </div>
             
             <div class="input_box">
+            	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <label>
-                    <input type="text" placeholder="ID" required>
+                    <input type="text" name="userid" placeholder="ID" required>
                 </label>
                 <label>
-                    <input type="password" placeholder="PASSWORD" required>
+                    <input type="password" name="pw" placeholder="PASSWORD" required>
                 </label>
-                <button class="login_btn" type="button">로그인</button>
+                <button class="login_btn" type="submit">로그인</button>
             </div>
 
             <div class="save_box">
