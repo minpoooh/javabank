@@ -13,7 +13,7 @@
 </head>
 <body>
     <section id="join">
-        <form name="f" action="" method="post">
+        <form name="f" action="/joinProcess" method="post">
             <div class="logo_box">
                 <p>java<em>bank</em></p>
             </div>
@@ -21,16 +21,16 @@
             <div class="input_box">
                 <div class="info_box">
                     <label>
-                        <input type="text" placeholder="이름" required>
+                        <input type="text" name="userName" placeholder="이름" required>
                     </label>
                     <label>
-                        <input type="text" placeholder="생년월일 ex&#41;2024-10-01" required>
+                        <input type="text" name="userBirth" placeholder="생년월일 ex&#41;2024-10-01" required>
                     </label>
                     <div class="email_box">
                         <label>
-                            <input type="text" placeholder="이메일" required>
+                            <input type="text" name="userEmail1" placeholder="이메일" required>
                         </label>
-                        <select>
+                        <select name="userEmail2">
                             <option value="@naver.com">@naver.com</option>
                             <option value="@nate.com">@nate.com</option>
                             <option value="@gamil.com">@gamil.com</option>
@@ -38,7 +38,7 @@
                     </div>
                     <div class="tel_box">
                         <label>
-                            <input type="text" placeholder="핸드폰번호 ex&#41;010-0000-0000" required>
+                            <input type="text" name="userTel" placeholder="핸드폰번호 ex&#41;010-0000-0000" required>
                         </label>
                         <button class="confirm_btn confirm_btn--01" type="button">인증받기</button>
                     </div>
@@ -58,16 +58,16 @@
                 <div class="my_box">
                     <div class="id_box">
                         <label>
-                            <input type="text" placeholder="아이디" required>
+                            <input type="text" name="userId" placeholder="아이디" required>
                         </label>
                         <button class="repeat_btn" type="button">중복확인</button>
                     </div>
                     <label>
-                        <input type="password" placeholder="비밀번호 ex&#41;영문,숫자가 포함된 8글자 이상의 조합" required>
+                        <input type="password" name="userPw" placeholder="비밀번호 ex&#41;영문,숫자가 포함된 8글자 이상의 조합" required>
                     </label>
                     <!-- <p class="passwd_noti"></p> -->
                 </div>
-                <button class="join_btn" type="button">회원가입</button>
+                <button class="join_btn" type="submit">회원가입</button>
             </div>
         </form>
     </section>

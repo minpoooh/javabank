@@ -4,7 +4,8 @@
   
   
 <mapper namespace="mybatis.javabank.javabank-mapper">
-<!--     <select id="" resultType="">
-         
-    </select> -->
+     <select id="findUsernameById" parameterType="String" resultType="UserDTO">
+         select * from javabankUser
+         where userId = #{insertedUserId}
+    </select>
 </mapper>

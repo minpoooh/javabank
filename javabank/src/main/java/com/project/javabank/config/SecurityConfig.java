@@ -19,6 +19,13 @@ import jakarta.servlet.DispatcherType;
 @EnableWebSecurity
 public class SecurityConfig {
 	
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+		//return new SimplePasswordEncoder(); // 테스트용
+	}
+	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 		http	
@@ -42,24 +49,20 @@ public class SecurityConfig {
 		return http.build();
 	}
 	
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
 	
-	@Bean
-    public UserDetailsService userDetailsService() {
-        return username -> {
-            if ("userid".equals(username)) { // 고정된 사용자 아이디
-                return User.builder()
-                        .username("userid")
-                        .password(passwordEncoder().encode("pw")) // 고정된 패스워드
-                        .roles("USER")
-                        .build();
-            } else {
-                throw new UsernameNotFoundException("User not found");
-            }
-        };
-    }
+//	@Bean
+//    public UserDetailsService userDetailsService() {
+//        return username -> {
+//            if ("userid".equals(username)) { // 고정된 사용자 아이디
+//                return User.builder()
+//                        .username("userid")
+//                        .password(passwordEncoder().encode("pw")) // 고정된 패스워드
+//                        .roles("USER")
+//                        .build();
+//            } else {
+//                throw new UsernameNotFoundException("User not found");
+//            }
+//        };
+//    }
 	
 }

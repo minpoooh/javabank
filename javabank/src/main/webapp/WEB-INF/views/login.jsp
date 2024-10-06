@@ -13,6 +13,13 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="js/script.js"></script>
     <title>javabank_Login</title>
+    
+    <script>
+    	let msg = "${msg}";
+		if(msg){
+			alert(msg);
+		}
+	</script>
 </head>
 <body>
     <section id="login">
@@ -38,7 +45,7 @@
             </div>
 
             <div class="join_box">
-                <a href="javascript:;">회원가입</a>
+                <a href="/join">회원가입</a>
                 <ul class="find_box">
                     <li><a href="javascript:;">아이디찾기</a></li>
                     <li><a href="javascript:;">비밀번호찾기</a></li>
@@ -48,3 +55,4 @@
     </section>
 </body>
 </html>
+
