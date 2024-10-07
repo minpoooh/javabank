@@ -110,8 +110,8 @@ public class LoginController {
 	}
 	
 	@GetMapping("/logout")
-	public String logout(HttpServletRequest req, HttpServletResponse res) {
-		new SecurityContextLogoutHandler().logout(req, res, SecurityContextHolder.getContext().getAuthentication());
+	public String logout(HttpServletRequest req, HttpServletResponse resp) {
+		new SecurityContextLogoutHandler().logout(req, resp, SecurityContextHolder.getContext().getAuthentication());
 		return "redirect:/login?logout";
 	}
 	
