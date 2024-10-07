@@ -13,7 +13,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="js/script.js"></script>
     <title>javabank_Login</title>
-    
     <script>
     	let msg = "${msg}";
 		if(msg){
@@ -40,8 +39,18 @@
             </div>
 
             <div class="save_box">
-                <label> 아이디저장<input type="checkbox">
-                </label>
+            	<c:if test="${empty cookie['saveId']}">
+	                <label>
+	                	아이디저장	<input type="checkbox" name="saveId">
+	                </label>
+	            </c:if>
+	            
+	            <c:if test="${not empty cookie['saveId']}">
+	                <label>
+	                	아이디저장	<input type="checkbox" name="saveId" value="on" checked>
+	                </label>
+	            </c:if>
+	            
             </div>
 
             <div class="join_box">

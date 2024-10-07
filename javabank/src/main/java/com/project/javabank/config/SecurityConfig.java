@@ -15,10 +15,9 @@ import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 
 import jakarta.servlet.DispatcherType;
 
-@Configuration
-@EnableWebSecurity
+@Configuration // 설정파일임
+@EnableWebSecurity // 설정파일을 필터에 등록
 public class SecurityConfig {
-	
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -32,7 +31,7 @@ public class SecurityConfig {
 			.authorizeHttpRequests(request -> request
 					.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
 					.requestMatchers("/css/**", "/images/**", "/js/**").permitAll()
-					.requestMatchers("/", "/login", "/join", "/logout").permitAll()
+					.requestMatchers("/", "/login", "/join", "/joinProcess", "/logout").permitAll()
 					.anyRequest().authenticated()
 			)
 			.formLogin(form -> form					
@@ -40,8 +39,9 @@ public class SecurityConfig {
 						.loginProcessingUrl("/login")
 						.usernameParameter("userid")
 						.passwordParameter("pw")
-						.defaultSuccessUrl("/index", true)
-						.failureUrl("/login?error")
+						//.defaultSuccessUrl("/index?javabank", true) // 핸들러없을때 사용
+						.successHandler(new CustomAuthenticationSuccessHandler()) // 커스토마이징 핸들러 사용
+						.failureUrl("/login?loginError")
 						.permitAll()
 			)
 			.logout(Customizer.withDefaults());

@@ -4,8 +4,15 @@
   
   
 <mapper namespace="mybatis.javabank.javabank-mapper">
-     <select id="findUsernameById" parameterType="String" resultType="UserDTO">
-         select * from javabankUser
-         where userId = #{insertedUserId}
-    </select>
+
+	<select id="findUsernameById" parameterType="String" resultType="UserDTO">
+		select * from javabankUser
+		where userId = #{insertedUserId}
+	</select>
+    
+    <insert id="joinUser" parameterType="java.util.Map">
+    	insert into javabankUser (userId, userPw, userName, userBirth, userEmail, userTel, userRoles, userRegDate)
+    	values (#{userId}, #{userPw}, #{userName}, #{userBirth}, #{userEmail}, #{userTel}, 'USER', SYSDATE)
+    </insert>
+    
 </mapper>

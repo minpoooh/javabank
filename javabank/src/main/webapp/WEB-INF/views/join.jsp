@@ -13,13 +13,14 @@
 </head>
 <body>
     <section id="join">
-        <form name="f" action="/joinProcess" method="post">
+        <form name="f" action="/join" method="post">
             <div class="logo_box">
                 <p>java<em>bank</em></p>
             </div>
             
             <div class="input_box">
                 <div class="info_box">
+                	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <label>
                         <input type="text" name="userName" placeholder="이름" required>
                     </label>
@@ -45,7 +46,7 @@
                     <!-- s: 인증번호 박스 -->
                     <div class="comfirm_box" style="display: none;">
                         <label>
-                            <input type="text" placeholder="인증번호 입력" required>
+                            <input type="text" placeholder="인증번호 입력">
                             <div class="count_box">
                                 <span>3:00</span>
                             </div>

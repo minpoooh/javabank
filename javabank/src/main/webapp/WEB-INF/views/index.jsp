@@ -10,6 +10,12 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="js/script.js"></script>
     <title>javabank</title>
+    <script>
+    	let msg = "${msg}";
+		if(msg){
+			alert(msg);
+		}
+	</script>
 </head>
 <body>
     <header>
@@ -27,7 +33,7 @@
             </div>
             <ul class="setting_box" style="display: none;">
                 <li><a href="javascript:;">내계좌 모아보기</a></li>
-                <li><a href="javascript:;">로그아웃</a></li>
+                <li><a href="/logout">로그아웃</a></li>
             </ul>
         </div>
     </header>
@@ -41,7 +47,7 @@
                     <a href="javascript:;">
                         <p>등록된 계좌가 없습니다. 계좌를 추가해주세요.</p>
                         <div class="img_box">
-                            <img src="/@sources/images/icons/account.png">
+                            <img src="images/icons/account.png">
                         </div>
                     </a>
                 </li>
