@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.project.javabank.mapper.LoginMapper;
 
@@ -79,8 +80,6 @@ public class LoginController {
 	@PostMapping("/join")
 	public String joinProcess(@RequestParam Map<String, String> reqParams){
 		
-		System.out.println("reqParams :" + reqParams);
-		
 		// 비밀번호 암호화
 		String userPw = reqParams.get("userPw");		
 		String encodedUserPw = passwordEncoder.encode(userPw);
@@ -95,8 +94,6 @@ public class LoginController {
 		params.put("userTel", reqParams.get("userTel"));
 		params.put("userId", reqParams.get("userId"));
 		params.put("userPw", encodedUserPw);
-		
-		System.out.println(params);
 		
 		try {
 			int joinResult = mapper.joinUser(params);
@@ -118,6 +115,19 @@ public class LoginController {
 	public String logout(HttpServletRequest req, HttpServletResponse resp) {
 		new SecurityContextLogoutHandler().logout(req, resp, SecurityContextHolder.getContext().getAuthentication());
 		return "redirect:/login?logout";
+	}
+	
+	@ResponseBody
+	@PostMapping("/checkID.ajax")
+	public String checkID(String userId) {
+		int checkIDres = mapper.checkID(userId);
+		System.out.println(checkIDres);
+		if(checkIDres == 0) {
+			System.out.println("OK");
+			return "OK";
+		}else {
+			return "NOT OK";
+		}
 	}
 	
 }

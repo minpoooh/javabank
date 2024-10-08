@@ -15,4 +15,8 @@ public class LoginMapper {
 	public int joinUser(Map<String, Object> params) {
 		return sqlSession.insert("joinUser", params);
 	}
+	
+	public int checkID(String userId) {
+		return sqlSession.selectOne("checkID", userId);
+	}
 }

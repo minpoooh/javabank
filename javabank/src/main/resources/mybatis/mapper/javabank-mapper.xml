@@ -15,4 +15,9 @@
     	values (#{userId}, #{userPw}, #{userName}, #{userBirth}, #{userEmail}, #{userTel}, 'USER', SYSDATE)
     </insert>
     
+    <select id="checkID" parameterType="String" resultType="int">
+    	select count(*) from javabankUser
+    	where userId = #{userId}
+    </select>
+    
 </mapper>
