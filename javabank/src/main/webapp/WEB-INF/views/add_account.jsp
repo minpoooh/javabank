@@ -38,4 +38,4 @@
         </form>
     </section>
     <!-- e: content -->
-<jsp:include page="index_bottom.jsp"/>
+<%-- <jsp:include page="index_bottom.jsp"/> --%>
