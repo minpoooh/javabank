@@ -9,6 +9,8 @@
 .font_gray {color: #aaa;}
 .font_darkgray {color: #434343;}
 
+.disabled {background: #ddd; color: #555;}
+
 .content {padding: 30px 0;}
 
 #login .input_box input:focus, 
@@ -19,7 +21,8 @@
 #login .input_box label, 
 #join .input_box > div > label {margin-top: 10px;}
 #login .input_box input, 
-#join .input_box input {border: 1px solid #ccc; border-radius: 2px; padding: 4px 10px; font-size: 18px;}
+#join .input_box input, 
+.popup_box .input_box input {border: 1px solid #ccc; border-radius: 2px; padding: 4px 10px; font-size: 18px;}
 
 /* 로그인 */
 #login {display: grid; place-items: center; min-height: 100dvh;}
@@ -33,6 +36,12 @@
 #login .join_box .find_box li:first-child::after {content: ''; position: absolute; top: 50%; transform: translateY(-50%); right: -5px; display: inline-block; width: 1px; height: 10px; background-color: #999;}
 #login .join_box a:hover {color: #fc5c50;}
 
+/* 로그인 팝업 */
+#findbyid .input_box .email_box {margin-top: 10px; display: flex; align-items: center; gap: 10px;}
+#findbyid .input_box .email_box input, 
+#findbyid .input_box .email_box select {width: 180px;}
+#findbyid .input_box .email_box select {padding: 4px 0; font-size: 18px;}
+
 /* 회원가입 */
 #join {display: grid; place-items: center; min-height: 100dvh;}
 #join form {border: 1px solid #ccc; border-radius: 4px; padding: 30px 16px;}
@@ -42,16 +51,20 @@
 #join .input_box div .email_box, 
 #join .input_box div .tel_box,
 #join .input_box div .comfirm_box, 
-#join .input_box div .id_box {margin-top: 10px; display: flex; align-items: center; gap: 10px;}
-#join .input_box div .email_box input, #join .input_box div .email_box select {width: 180px;}
+#join .input_box div .id_box, 
+.popup_box .comfirm_box {margin-top: 10px; display: flex; align-items: center; gap: 10px;}
+#join .input_box div .email_box input, #join .input_box div .email_box select, .popup_box .comfirm_box input {width: 180px;}
 #join .input_box div .email_box select {padding: 4px 0; font-size: 18px;}
-#join .input_box div .comfirm_box label {position: relative;}
-#join .input_box div .comfirm_box .count_box {position: absolute; top: 50%; transform: translateY(-50%); right: 10px; font-size: 14px; color: #666;}
+#join .input_box div .comfirm_box label, 
+.popup_box .comfirm_box label {position: relative;}
+#join .input_box div .comfirm_box .count_box, 
+ .popup_box .comfirm_box .count_box {position: absolute; top: 50%; transform: translateY(-50%); right: 10px; font-size: 14px; color: #666;}
 #join .input_box div .confirm_btn, 
-#join .input_box div .id_box .repeat_btn {border-radius: 2px; border: 1px solid #ccc; padding: 7px 6px; font-size: 12px; color: #444;}
+#join .input_box div .id_box .repeat_btn, 
+.popup_box .confirm_btn {border-radius: 2px; border: 1px solid #ccc; padding: 7px 6px; font-size: 12px; color: #444;}
 #join .input_box .my_box {position: relative; margin-top: 20px;}
 #join .input_box .my_box::before {content: ''; position: absolute; top: -5px; left: 50%; transform: translateX(-50%); display: inline-block; width: 100%; height: 1px; background-color: #ccc;}
-#join .input_box .my_box .passwd_noti {margin-top: 10px; font-size: 14px; color: #555;}
+#join .input_box .my_box .passwd_noti {position: absolute; bottom: 7%; right: 3%; font-size: 12px;}
 
 /* header, footer */
 header {display: flex; align-items: center; justify-content: space-between; padding: 20px 0;}
@@ -203,7 +216,8 @@ footer p {margin-top: 16px; font-size: 14px; text-align: center; color: #666;}
     #login .input_box label, 
     #join .input_box > div > label {margin-top: 0.6944vw;}
     #login .input_box input, 
-    #join .input_box input {border: 0.0694vw solid #ccc; border-radius: 0.1389vw; padding: 0.2778vw 0.6944vw; font-size: 1.2500vw;}
+    #join .input_box input, 
+    .popup_box .input_box input {border: 0.0694vw solid #ccc; border-radius: 0.1389vw; padding: 0.2778vw 0.6944vw; font-size: 1.2500vw;}
 
     /* 로그인 */
     #login form {border: 0.0694vw solid #ccc; border-radius: 0.2778vw; padding: 2.0833vw 1.1111vw;}
@@ -212,6 +226,11 @@ footer p {margin-top: 16px; font-size: 14px; text-align: center; color: #666;}
     #login .join_box {margin-top: 0.6944vw; font-size: 0.9722vw;}
     #login .join_box .find_box {gap: 0.6944vw;}
     #login .join_box .find_box li:first-child::after {right: -0.3472vw; width: 0.0694vw; height: 0.6944vw;}
+    
+	#findbyid .input_box .email_box {margin-top: 0.6944vw; gap: 0.6944vw;}
+	#findbyid .input_box .email_box input, 
+	#findbyid .input_box .email_box select {width: 12.5000vw;}
+	#findbyid .input_box .email_box select {padding: 0.2778vw 0; font-size: 1.2500vw;}
 
     /* 회원가입 */
     #join form {border: 0.0694vw solid #ccc; border-radius: 0.2778vw; padding: 2.0833vw 1.1111vw;}
@@ -220,15 +239,18 @@ footer p {margin-top: 16px; font-size: 14px; text-align: center; color: #666;}
     #join .input_box div .email_box, 
     #join .input_box div .tel_box,
     #join .input_box div .comfirm_box, 
-    #join .input_box div .id_box {margin-top: 0.6944vw; gap: 0.6944vw;}
-    #join .input_box div .email_box input, #join .input_box div .email_box select {width: 12.5000vw;}
+    #join .input_box div .id_box, 
+    .popup_box .comfirm_box {margin-top: 0.6944vw; gap: 0.6944vw;}
+    #join .input_box div .email_box input, #join .input_box div .email_box select, .popup_box .comfirm_box input {width: 12.5000vw;}
     #join .input_box div .email_box select {padding: 0.2778vw 0; font-size: 1.2500vw;}
-    #join .input_box div .comfirm_box .count_box {right: 0.6944vw; font-size: 0.9722vw;}
+    #join .input_box div .comfirm_box .count_box, 
+    .popup_box .comfirm_box .count_box {right: 0.6944vw; font-size: 0.9722vw;}
     #join .input_box div .confirm_btn, 
-    #join .input_box div .id_box .repeat_btn {border-radius: 0.1389vw; border: 0.0694vw solid #ccc; padding: 0.4861vw 0.4167vw; font-size: 0.8333vw;}
+    #join .input_box div .id_box .repeat_btn, 
+    .popup_box .confirm_btn {border-radius: 0.1389vw; border: 0.0694vw solid #ccc; padding: 0.4861vw 0.4167vw; font-size: 0.8333vw;}
     #join .input_box .my_box {margin-top: 1.3889vw;}
     #join .input_box .my_box::before {top: -0.3472vw; height: 0.0694vw;}
-    #join .input_box .my_box .passwd_noti {margin-top: 0.6944vw; font-size: 0.9722vw;}
+    #join .input_box .my_box .passwd_noti {font-size: 0.8333vw;}
 
     /* header, footer */
     header {padding: 1.3889vw 0;}

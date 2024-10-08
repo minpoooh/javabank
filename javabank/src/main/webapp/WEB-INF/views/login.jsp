@@ -30,10 +30,10 @@
             <div class="input_box">
             	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <label>
-                    <input type="text" name="userid" placeholder="ID" required>
+                    <input type="text" name="userId" placeholder="ID" required>
                 </label>
                 <label>
-                    <input type="password" name="pw" placeholder="PASSWORD" required>
+                    <input type="password" name="userPw" placeholder="PASSWORD" required>
                 </label>
                 <button class="login_btn" type="submit">로그인</button>
             </div>

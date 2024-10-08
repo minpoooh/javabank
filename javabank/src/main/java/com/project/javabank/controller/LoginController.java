@@ -78,6 +78,9 @@ public class LoginController {
 	
 	@PostMapping("/join")
 	public String joinProcess(@RequestParam Map<String, String> reqParams){
+		
+		System.out.println("reqParams :" + reqParams);
+		
 		// 비밀번호 암호화
 		String userPw = reqParams.get("userPw");		
 		String encodedUserPw = passwordEncoder.encode(userPw);
@@ -92,6 +95,8 @@ public class LoginController {
 		params.put("userTel", reqParams.get("userTel"));
 		params.put("userId", reqParams.get("userId"));
 		params.put("userPw", encodedUserPw);
+		
+		System.out.println(params);
 		
 		try {
 			int joinResult = mapper.joinUser(params);

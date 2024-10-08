@@ -35,11 +35,11 @@ public class SecurityConfig {
 					.anyRequest().authenticated()
 			)
 			.formLogin(form -> form					
-						.loginPage("/login")
-						.loginProcessingUrl("/login")
-						.usernameParameter("userid")
-						.passwordParameter("pw")
-						//.defaultSuccessUrl("/index?javabank", true) // 핸들러없을때 사용
+						.loginPage("/login") // GET
+						.loginProcessingUrl("/login") // POST
+						.usernameParameter("userId")
+						.passwordParameter("userPw")
+						//.defaultSuccessUrl("/index?javabank", true) // 핸들러없을 때 사용
 						.successHandler(new CustomAuthenticationSuccessHandler()) // 커스토마이징 핸들러 사용
 						.failureUrl("/login?loginError")
 						.permitAll()
