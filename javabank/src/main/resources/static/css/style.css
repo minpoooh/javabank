@@ -50,15 +50,15 @@
 #join .input_box > div input {width: 370px;}
 #join .input_box div .email_box, 
 #join .input_box div .tel_box,
-#join .input_box div .comfirm_box, 
+#join .input_box div .confirm_box, 
 #join .input_box div .id_box, 
-.popup_box .comfirm_box {margin-top: 10px; display: flex; align-items: center; gap: 10px;}
-#join .input_box div .email_box input, #join .input_box div .email_box select, .popup_box .comfirm_box input {width: 180px;}
+.popup_box .confirm_box {margin-top: 10px; display: flex; align-items: center; gap: 10px;}
+#join .input_box div .email_box input, #join .input_box div .email_box select, .popup_box .confirm_box input {width: 180px;}
 #join .input_box div .email_box select {padding: 4px 0; font-size: 18px;}
-#join .input_box div .comfirm_box label, 
-.popup_box .comfirm_box label {position: relative;}
-#join .input_box div .comfirm_box .count_box, 
- .popup_box .comfirm_box .count_box {position: absolute; top: 50%; transform: translateY(-50%); right: 10px; font-size: 14px; color: #666;}
+#join .input_box div .confirm_box label, 
+.popup_box .confirm_box label {position: relative;}
+#join .input_box div .confirm_box .count_box, 
+ .popup_box .confirm_box .count_box {position: absolute; top: 50%; transform: translateY(-50%); right: 10px; font-size: 14px; color: #666;}
 #join .input_box div .confirm_btn, 
 #join .input_box div .id_box .repeat_btn, 
 .popup_box .confirm_btn {border-radius: 2px; border: 1px solid #ccc; padding: 7px 6px; font-size: 12px; color: #444;}
