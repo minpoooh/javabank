@@ -51,7 +51,7 @@
                                 <p><span id="timerMin">3</span>:<span id="timerSec">00</span></p>
                             </div>
                         </label>
-                        <button class="confirm_btn confirm_btn--02" type="button" name="confirmBtn">인증확인</button>
+                        <button class="confirm_btn confirm_btn--02" type="button" name="confirmBtn" onclick="confirm()">인증확인</button>
                     </div>
                     <!-- e: 인증번호 박스 -->
                 </div>
@@ -202,7 +202,7 @@
 			},
 			success : function(res){
 				console.log(res);
-				if(res == 'OK'){
+				if(res === 'OK'){
 					alert("인증번호가 메일로 발송되었습니다.");
 					sendBtn.textContent = '재전송';
 					mailCheck = true;
@@ -218,6 +218,40 @@
 		
 	}
 	
+	function confirm(){
+		let csrfToken = '${_csrf.token}';
+		let inputCode = document.getElementsByName('confirmNum')[0].value;
+		let confirmBtn = document.getElementsByName('confirmBtn')[0];
+		$.ajax({
+			url : "confirmCode.ajax",
+			type : "POST",
+			headers : {
+                "X-CSRF-TOKEN": csrfToken
+            },
+			data : {
+				"inputCode" : inputCode
+			},
+			success : function(res){
+				if(res === 'OK'){
+					alert("인증 완료되었습니다.")
+					stopTimer();
+					confirmBtn.disabled = true;
+					confirmBtn.textContent = "인증완료";
+					confirmBtn.style.backgroundColor = "grey";
+					document.getElementsByName('confirmNum')[0].disabled = true;
+				}else if(res === 'ERROR'){
+					alert("인증에 실패하였습니다. 인증코드를 다시 입력해주세요.")
+                	document.getElementsByName('confirmNum')[0].focus();
+					confirmBtn.disabled = false;
+					confirmBtn.textContent = "인증확인";
+					confirmBtn.style.backgroundColor = "";
+				}
+			},
+			error : function(err){
+				console.log(err);
+			}
+		});
+	}
 	
 	function checkID(){
 		let csrfToken = '${_csrf.token}';

@@ -141,7 +141,7 @@ public class LoginController {
 	
 	@ResponseBody
 	@PostMapping("/sendEmail.ajax")
-	public String sendEmail(HttpServletRequest req, HttpServletResponse resp, String mail1, String mail2) {
+	public String sendEmail(HttpServletResponse resp, String mail1, String mail2) {
 		try {
 			String email = mail1 + mail2;
 			
@@ -170,5 +170,22 @@ public class LoginController {
 			e.printStackTrace();
 			return "ERROR";
 		}
+	}
+	
+	@ResponseBody
+	@PostMapping("/confirmCode.ajax")
+	public String confirmCode(HttpServletRequest req, String inputCode) {
+		Cookie [] cookies = req.getCookies();
+		 if(cookies != null) {
+			 for(Cookie cookie : cookies) {
+				 if(cookie.getName().contentEquals("certiCode")) {
+					 if(cookie.getValue().equals(inputCode)) {
+						 return "OK";
+					 }
+				 }
+			 }
+		 }
+		 return "ERROR";
+		
 	}
 }
