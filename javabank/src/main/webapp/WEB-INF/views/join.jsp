@@ -41,17 +41,17 @@
                             <option value="@nate.com">@nate.com</option>
                             <option value="@gmail.com">@gmail.com</option>
                         </select>
-                        <button class="confirm_btn confirm_btn--01" type="button">인증받기</button>
+                        <button class="confirm_btn confirm_btn--01" type="button" name="sendBtn" onclick="sendEmail()">인증받기</button>
                     </div>
                     <!-- s: 인증번호 박스 -->
-                    <div class="comfirm_box" style="display: none;">
+                    <div class="confirm_box" style="display: none;">
                         <label>
                             <input type="text" name="confirmNum" placeholder="인증번호 입력">
                             <div class="count_box">
-                                <p>3:00</p>
+                                <p><span id="timerMin">3</span>:<span id="timerSec">00</span></p>
                             </div>
                         </label>
-                        <button class="confirm_btn confirm_btn--02" type="button">인증확인</button>
+                        <button class="confirm_btn confirm_btn--02" type="button" name="confirmBtn">인증확인</button>
                     </div>
                     <!-- e: 인증번호 박스 -->
                 </div>
@@ -79,6 +79,15 @@
 </body>
 
 <script>
+	let nameCheck = false;
+	let birthCheck = false;
+	let telCheck = false;
+	let idCheck = false;
+	let pwCheck = false;
+	let timeout = false;
+	let mailCheck = false;
+	let confirmCheck = false;
+
 	function validateName(input) {
 	    input.value = input.value.replace(/[^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]/g, ''); // 영문, 한글 허용
 	}
@@ -123,6 +132,7 @@
 	    if (pw === pw2 && pw.length > 0) {
 	    	noti.textContent = '일치';
 	    	noti.style.color = 'green'; // 일치할 경우 초록색으로 표시
+	    	pwCheck = true;
 	    } else if (pw2.length > 0) {
 	    	noti.textContent = '불일치';
 	    	noti.style.color = 'red'; // 불일치할 경우 빨간색으로 표시
@@ -130,6 +140,84 @@
 	    	noti.textContent = ''; // 비밀번호가 입력되지 않은 경우
 	    }
 	}
+	
+	let timer;
+	let timeRemaining = 180;
+	
+	function startTimer() {
+	    let timerMin = document.getElementById('timerMin');
+	    let timerSec = document.getElementById('timerSec');
+	    
+	    timer = setInterval(() => {
+	        if (timeRemaining <= 0) {
+	            clearInterval(timer);
+	            alert("인증 시간이 초과되었습니다.");
+	            timeout = true;
+	            return;
+	        }
+	        timeRemaining--;
+	        let minutes = Math.floor(timeRemaining / 60);
+	        let seconds = timeRemaining % 60;
+
+	        timerMin.textContent = minutes;
+	        timerSec.textContent = seconds < 10 ? '0' + seconds : seconds;
+	    }, 1000);
+	}
+	
+	function stopTimer() {
+	    if (timer) {
+	        clearInterval(timer);
+	        timer = null;
+	    }
+	}
+
+	function sendEmail(){
+		let csrfToken = '${_csrf.token}';
+		let mail1 = document.getElementsByName('userEmail1')[0].value;
+		let mail2 = document.getElementsByName('userEmail2')[0].value;
+		let sendBtn = document.getElementsByName('sendBtn')[0];
+		let confirmBox = document.querySelector('.confirm_box');
+		
+		if (mail1 === ''){
+			alert("이메일 주소를 입력해주세요.");
+			document.getElementsByName('userEmail1')[0].focus();
+		} else if (mail2 === 'notSelected'){
+			alert("이메일 주소를 선택해주세요.");
+			document.getElementsByName('userEmail2')[0].focus();
+		}		
+
+		confirmBox.style.display = 'inline-block';
+		let timeRemaining = 180;
+		startTimer();
+		
+		$.ajax({
+			url : "sendEmail.ajax",
+			type : "POST",
+			headers : {
+				"X-CSRF-TOKEN" : csrfToken
+			},
+			data : {
+				"mail1" : mail1,
+				"mail2" : mail2
+			},
+			success : function(res){
+				console.log(res);
+				if(res == 'OK'){
+					alert("인증번호가 메일로 발송되었습니다.");
+					sendBtn.textContent = '재전송';
+					mailCheck = true;
+				} else {
+					alert("메일 발송 중 에러가 발생했습니다. 관리자에게 문의해주세요. (에러코드:AB03)");
+				}
+			},
+			error : function(err){
+				console.log(err);
+				alert("에러가 발생했습니다. 관리자에게 문의해주세요. (에러코드:AB04)");
+			}
+		});
+		
+	}
+	
 	
 	function checkID(){
 		let csrfToken = '${_csrf.token}';
@@ -141,19 +229,19 @@
 		$.ajax({
 			url : "checkID.ajax",
 			type : "POST",
-			headers: {
-                'X-CSRF-TOKEN': csrfToken // CSRF 토큰 추가
+			headers : {
+                "X-CSRF-TOKEN": csrfToken
             },
 			data : {
 				"userId" : id
 			},
 			success : function(res){
-				console.log(res);
 				if(res == 'OK'){
 					alert("사용 가능한 아이디입니다.")
 					checkIdBtn.disabled = true;
 					checkIdBtn.textContent = "확인완료";
 					checkIdBtn.style.backgroundColor = "grey";
+					document.getElementsByName('userId')[0].disabled = true;
 				}else{
 					alert("이미 사용중인 아이디입니다.")
 					document.getElementsByName('userId')[0].value = '';
@@ -168,6 +256,7 @@
 			}
 		});
 	}
+	
 </script>
 
 </html>

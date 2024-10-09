@@ -2,9 +2,13 @@ package com.project.javabank.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -18,8 +22,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.project.javabank.mapper.LoginMapper;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 
 @Controller
@@ -30,6 +38,9 @@ public class LoginController {
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	JavaMailSender mailSender;
 	
 	@GetMapping("/")
 	public String home() {
@@ -121,13 +132,43 @@ public class LoginController {
 	@PostMapping("/checkID.ajax")
 	public String checkID(String userId) {
 		int checkIDres = mapper.checkID(userId);
-		System.out.println(checkIDres);
 		if(checkIDres == 0) {
-			System.out.println("OK");
 			return "OK";
 		}else {
-			return "NOT OK";
+			return "ERROR";
 		}
 	}
 	
+	@ResponseBody
+	@PostMapping("/sendEmail.ajax")
+	public String sendEmail(HttpServletRequest req, HttpServletResponse resp, String mail1, String mail2) {
+		try {
+			String email = mail1 + mail2;
+			
+			// 인증코드
+			Random random = new Random();
+			String certiCode = String.valueOf(random.nextInt(900000) + 100000);
+			
+			// 쿠키
+			Cookie cookie = new Cookie("certiCode", certiCode);
+			cookie.setMaxAge(3*60);
+			cookie.setPath("/");
+			resp.addCookie(cookie);
+			
+			// 이메일 전송 로직
+			MimeMessage msg = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(msg, true);
+			helper.setFrom("admin@javabank.com");
+			helper.setTo(email);
+	        helper.setSubject("JavaBank 이메일 인증번호입니다.");
+	        helper.setText("안녕하세요!! JavaBank 입니다.\n\n 이메일 인증번호 : " + certiCode
+	                + " \n\n 회원가입을 진행 하시려면 인증번호를 해당 칸에 입력해주세요.\n 이용해주셔서 감사합니다." + "\n\n --JavaBank--");
+	        mailSender.send(msg);	              
+			
+			return "OK";
+		}catch(Exception e){
+			e.printStackTrace();
+			return "ERROR";
+		}
+	}
 }
