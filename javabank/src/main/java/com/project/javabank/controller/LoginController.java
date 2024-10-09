@@ -116,7 +116,7 @@ public class LoginController {
 				return "redirect:/login?insertError";
 			}
 		}catch(Exception e) {
-			System.out.println("에러 발생");
+			System.out.println("회원가입 에러 발생");
 			e.printStackTrace();
 			return "redirect:/login?joinError";
 		}
@@ -131,12 +131,19 @@ public class LoginController {
 	@ResponseBody
 	@PostMapping("/checkID.ajax")
 	public String checkID(String userId) {
-		int checkIDres = mapper.checkID(userId);
-		if(checkIDres == 0) {
-			return "OK";
-		}else {
+		try {
+			int checkIDres = mapper.checkID(userId);
+			if(checkIDres == 0) {
+				return "OK";
+			}else {
+				return "ERROR";
+			}
+		} catch(Exception e) {
+			System.out.println("아이디 중복확인 에러");
+			e.printStackTrace();
 			return "ERROR";
-		}
+		}		
+		
 	}
 	
 	@ResponseBody

@@ -13,7 +13,7 @@
 </head>
 <body>
     <section id="join">
-        <form name="f" action="/join" method="post">
+        <form name="f" action="/join" method="post" onsubmit="return finalCheck()">
             <div class="logo_box">
                 <p>java<em>bank</em></p>
             </div>            
@@ -59,7 +59,8 @@
                 <div class="my_box">
                     <div class="id_box">
                         <label>
-                            <input type="text" name="userId" placeholder="아이디" oninput="validateId(this)" maxlength="10" required>
+                            <input type="text" name="userid" placeholder="아이디" oninput="validateId(this)" maxlength="10" required>
+                            <input type="hidden" name="userId" >
                         </label>
                         <button class="repeat_btn" type="button" name="checkIdBtn" onclick="checkID()">중복확인</button>
                     </div>
@@ -79,14 +80,11 @@
 </body>
 
 <script>
-	let nameCheck = false;
-	let birthCheck = false;
-	let telCheck = false;
-	let idCheck = false;
-	let pwCheck = false;
-	let timeout = false;
-	let mailCheck = false;
-	let confirmCheck = false;
+	let idCheck = false; // 아이디 중복확인
+	let pwCheck = false; // 패스워드 일치
+	let mailCheck = false; // 메일 발송
+	let timeout = false; // 인증 타임아웃
+	let confirmCheck = false; // 인증확인
 
 	function validateName(input) {
 	    input.value = input.value.replace(/[^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]/g, ''); // 영문, 한글 허용
@@ -136,6 +134,7 @@
 	    } else if (pw2.length > 0) {
 	    	noti.textContent = '불일치';
 	    	noti.style.color = 'red'; // 불일치할 경우 빨간색으로 표시
+	    	pwCheck = false;
 	    } else {
 	    	noti.textContent = ''; // 비밀번호가 입력되지 않은 경우
 	    }
@@ -208,6 +207,7 @@
 					mailCheck = true;
 				} else {
 					alert("메일 발송 중 에러가 발생했습니다. 관리자에게 문의해주세요. (에러코드:AB03)");
+					mailCheck = false;
 				}
 			},
 			error : function(err){
@@ -239,12 +239,14 @@
 					confirmBtn.textContent = "인증완료";
 					confirmBtn.style.backgroundColor = "grey";
 					document.getElementsByName('confirmNum')[0].disabled = true;
+					confirmCheck = true;
 				}else if(res === 'ERROR'){
 					alert("인증에 실패하였습니다. 인증코드를 다시 입력해주세요.")
                 	document.getElementsByName('confirmNum')[0].focus();
 					confirmBtn.disabled = false;
 					confirmBtn.textContent = "인증확인";
 					confirmBtn.style.backgroundColor = "";
+					confirmCheck = false;
 				}
 			},
 			error : function(err){
@@ -255,11 +257,12 @@
 	
 	function checkID(){
 		let csrfToken = '${_csrf.token}';
-		let id = document.getElementsByName('userId')[0].value;
+		let id = document.getElementsByName('userid')[0].value;
+		let Id = document.getElementsByName('userId')[0];
+		Id.value = id;
+		let userId = Id.value;
 		let checkIdBtn = document.getElementsByName('checkIdBtn')[0];
-		console.log(id);
-		console.log(checkIdBtn);
-		
+
 		$.ajax({
 			url : "checkID.ajax",
 			type : "POST",
@@ -267,22 +270,24 @@
                 "X-CSRF-TOKEN": csrfToken
             },
 			data : {
-				"userId" : id
+				"userId" : userId
 			},
 			success : function(res){
-				if(res == 'OK'){
+				if(res === 'OK'){
 					alert("사용 가능한 아이디입니다.")
 					checkIdBtn.disabled = true;
 					checkIdBtn.textContent = "확인완료";
 					checkIdBtn.style.backgroundColor = "grey";
-					document.getElementsByName('userId')[0].disabled = true;
+					document.getElementsByName('userid')[0].disabled = true;
+					idCheck = true;
 				}else{
 					alert("이미 사용중인 아이디입니다.")
-					document.getElementsByName('userId')[0].value = '';
-                	document.getElementsByName('userId')[0].focus();
+					document.getElementsByName('userid')[0].value = '';
+                	document.getElementsByName('userid')[0].focus();
                 	checkIdBtn.disabled = false;
 					checkIdBtn.textContent = "중복확인";
 					checkIdBtn.style.backgroundColor = "";
+					idCheck = false;
 				}
 			},
 			error : function(err){
@@ -290,6 +295,24 @@
 			}
 		});
 	}
+	
+	function finalCheck(){
+
+		console.log(idCheck); //t
+		console.log(pwCheck); //t
+		console.log(mailCheck); //t
+		console.log(timeout);
+		console.log(confirmCheck);//t
+		
+		if (idCheck && pwCheck && mailCheck && !timeout && confirmCheck) {
+		    return true;
+		} else {
+		    return false;
+		}
+
+	}
+
+	
 	
 </script>
 
