@@ -11,10 +11,11 @@ public class AccountDTO {
 	private int deltaAmount;
 	private int accountBalance;
 	private String accountRegDate;
-	private String expiryDate;
 	private double interestRate;
 	private int interestAmount;
+	private int accountLimit;
 	private String mainAccount;
+	
 	public String getDepositAccount() {
 		return depositAccount;
 	}
@@ -75,12 +76,6 @@ public class AccountDTO {
 	public void setAccountRegDate(String accountRegDate) {
 		this.accountRegDate = accountRegDate;
 	}
-	public String getExpiryDate() {
-		return expiryDate;
-	}
-	public void setExpiryDate(String expiryDate) {
-		this.expiryDate = expiryDate;
-	}
 	public double getInterestRate() {
 		return interestRate;
 	}
@@ -93,12 +88,19 @@ public class AccountDTO {
 	public void setInterestAmount(int interestAmount) {
 		this.interestAmount = interestAmount;
 	}
+	public int getAccountLimit() {
+		return accountLimit;
+	}
+	public void setAccountLimit(int accountLimit) {
+		this.accountLimit = accountLimit;
+	}
 	public String getMainAccount() {
 		return mainAccount;
 	}
 	public void setMainAccount(String mainAccount) {
 		this.mainAccount = mainAccount;
 	}
+	
 	
 	
 }
