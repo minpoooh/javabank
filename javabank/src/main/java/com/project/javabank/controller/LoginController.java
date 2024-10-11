@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.project.javabank.mapper.LoginMapper;
+import com.project.javabank.mapper.JoinMapper;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -34,7 +34,7 @@ import jakarta.servlet.http.HttpSession;
 public class LoginController {
 	
 	@Autowired
-	LoginMapper mapper;
+	JoinMapper mapper;
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;

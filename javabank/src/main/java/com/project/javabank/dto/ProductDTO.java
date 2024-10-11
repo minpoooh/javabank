@@ -5,18 +5,13 @@ public class ProductDTO {
 	private int productPw;
 	private String userId;
 	private String category;
-	private String productType;
-	private String updateDate;
-	private String productMemo;
-	private int deltaAmount;
-	private int accountBalance;
 	private String autoTransferDate;
 	private int monthlyPayment;
-	private String accountRegDate;
+	private String regDate;
 	private String expiryDate;
 	private double interestRate;
-	private int interestAmount;
 	private String depositAccount;
+	
 	public String getProductAccount() {
 		return productAccount;
 	}
@@ -41,36 +36,6 @@ public class ProductDTO {
 	public void setCategory(String category) {
 		this.category = category;
 	}
-	public String getProductType() {
-		return productType;
-	}
-	public void setProductType(String productType) {
-		this.productType = productType;
-	}
-	public String getUpdateDate() {
-		return updateDate;
-	}
-	public void setUpdateDate(String updateDate) {
-		this.updateDate = updateDate;
-	}
-	public String getProductMemo() {
-		return productMemo;
-	}
-	public void setProductMemo(String productMemo) {
-		this.productMemo = productMemo;
-	}
-	public int getDeltaAmount() {
-		return deltaAmount;
-	}
-	public void setDeltaAmount(int deltaAmount) {
-		this.deltaAmount = deltaAmount;
-	}
-	public int getAccountBalance() {
-		return accountBalance;
-	}
-	public void setAccountBalance(int accountBalance) {
-		this.accountBalance = accountBalance;
-	}
 	public String getAutoTransferDate() {
 		return autoTransferDate;
 	}
@@ -83,11 +48,11 @@ public class ProductDTO {
 	public void setMonthlyPayment(int monthlyPayment) {
 		this.monthlyPayment = monthlyPayment;
 	}
-	public String getAccountRegDate() {
-		return accountRegDate;
+	public String getRegDate() {
+		return regDate;
 	}
-	public void setAccountRegDate(String accountRegDate) {
-		this.accountRegDate = accountRegDate;
+	public void setRegDate(String regDate) {
+		this.regDate = regDate;
 	}
 	public String getExpiryDate() {
 		return expiryDate;
@@ -101,18 +66,13 @@ public class ProductDTO {
 	public void setInterestRate(double interestRate) {
 		this.interestRate = interestRate;
 	}
-	public int getInterestAmount() {
-		return interestAmount;
-	}
-	public void setInterestAmount(int interestAmount) {
-		this.interestAmount = interestAmount;
-	}
 	public String getDepositAccount() {
 		return depositAccount;
 	}
 	public void setDepositAccount(String depositAccount) {
 		this.depositAccount = depositAccount;
 	}
-
+	
+	
 	
 }

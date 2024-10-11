@@ -6,7 +6,7 @@
 <mapper namespace="mybatis.javabank.javabank-mapper">
 
 	<select id="findUsernameById" parameterType="String" resultType="UserDTO">
-		select * from javabankUser
+		select * from JB_USER
 		where userId = #{insertedUserId}
 	</select>
     
@@ -16,7 +16,19 @@
     </insert>
     
     <select id="checkID" parameterType="String" resultType="int">
-    	select count(*) from javabankUser
+    	select count(*) from JB_USER
+    	where userId = #{userId}
+    </select>
+    
+    <select id="getUserName" parameterType="String" resultType="String">
+    	select userName from JB_USER
+    	where userId = #{userId}
+    </select>
+    
+    <select id="getAccountList" parameterType="String" resultType="DepositDTO">
+    	select A.*, B.balance from JB_DEPOSIT A
+    						  join JB_Dtransaction B
+    								on A.depositAccount = B.depositAccount
     	where userId = #{userId}
     </select>
     
