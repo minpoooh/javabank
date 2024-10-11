@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.javabank.dto.DepositDTO;
+import com.project.javabank.dto.ProductDTO;
 import com.project.javabank.mapper.BankMapper;
 
-import ch.qos.logback.core.subst.Token.Type;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
@@ -38,16 +38,23 @@ public class BankController {
 			// 등록된 입출금계좌 있는지 확인
 			List<DepositDTO> accountList = mapper.getAccountList(userId);
 
-
-			
 			if(accountList.size() > 0) {
 				req.setAttribute("accountList", accountList);
 			}
 			
 			// 등록된 예금계좌 있는지 확인
+			List<ProductDTO> fixedDepositList = mapper.getFixedDepositList(userId);
+			
+			if(fixedDepositList.size() > 0) {
+				req.setAttribute("fixedDepositList", fixedDepositList);
+			}
 			
 			// 등록된 적금계좌 있는지 확인
-		
+			List<ProductDTO> periodicalDepositList = mapper.getPeriodicalDepositList(userId);
+			
+			if(periodicalDepositList.size() > 0) {
+				req.setAttribute("periodicalDepositList", periodicalDepositList);
+			}
 		
 		return "index";
 	}

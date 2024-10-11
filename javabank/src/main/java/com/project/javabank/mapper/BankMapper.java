@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.javabank.dto.DepositDTO;
+import com.project.javabank.dto.ProductDTO;
 
 @Service
 public class BankMapper {
@@ -20,6 +21,14 @@ public class BankMapper {
 	
 	public List<DepositDTO> getAccountList(String userId) {
 		return sqlSession.selectList("getAccountList", userId);
+	}
+	
+	public List<ProductDTO> getFixedDepositList(String userId){
+		return sqlSession.selectList("getFixedDepositList", userId);
+	}
+	
+	public List<ProductDTO> getPeriodicalDepositList(String userId){
+		return sqlSession.selectList("getPeriodicalDepositList", userId);
 	}
 }
 

@@ -32,4 +32,22 @@
     	where userId = #{userId}
     </select>
     
+    <select id="getFixedDepositList" parameterType="String" resultType="ProductDTO">
+    	select A.*, B.balance from JB_PRODUCT A
+    						  join JB_Ptransaction B
+    								on A.productAccount = B.productAccount
+    	where userId = #{userId}
+    	and A.category = '정기예금'
+    </select>
+    
+    <select id="getPeriodicalDepositList" parameterType="String" resultType="ProductDTO">
+    	select A.*, B.balance from JB_PRODUCT A
+    						  join JB_Ptransaction B
+    								on A.productAccount = B.productAccount
+    	where userId = #{userId}
+    	and A.category = '정기적금'
+    </select>
+    
+    
+    
 </mapper>

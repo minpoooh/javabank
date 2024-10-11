@@ -10,7 +10,7 @@
             <p>java<em>bank</em></p>
             <p>${userName}님의 통장</p>
         </div>
-        <form name="f" action="" method="post">
+        <form name="f" action="/createDeposit" method="post">
             <div>
                 <p>통장 비밀번호 설정</p>
                 <div class="passwd_box">
@@ -25,9 +25,9 @@
 
             <div>
                 <p>금융거래 1일 이체한도</p>
-                <div class="">
+                <div class="passwd_box">
                     <label>
-                        <input type="text" name="accountLimit" value="">
+                        <input type="text" name="accountLimit" value=""> <span>원</span>
                     </label>
                 </div>
             </div>
