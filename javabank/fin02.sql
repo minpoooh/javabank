@@ -85,7 +85,7 @@ CREATE TABLE JB_Alarm (
     CONSTRAINT fk_userId_al FOREIGN KEY (userId) REFERENCES JB_USER(userId)
 );
 
-// PW : testPW
+// 유저
 INSERT INTO JB_USER (userId, userPw, userName, userBirth, userEmail, userTel, userRoles, userRegDate) 
 VALUES ('testID', '$2a$10$McjJtxR8ikZl0/2UT.Lv.usk9lcmj5hGIORSaOwXNGX20QQGpdsAi', 'test', TO_DATE('2024-10-01', 'YYYY-MM-DD'), 'test@test.com', '00000000000', 'USER', TO_DATE('2024-10-05', 'YYYY-MM-DD'));
 
