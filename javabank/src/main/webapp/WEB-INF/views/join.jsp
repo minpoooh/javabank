@@ -298,11 +298,11 @@
 	
 	function finalCheck(){
 
-		console.log(idCheck); //t
-		console.log(pwCheck); //t
-		console.log(mailCheck); //t
+		console.log(idCheck);
+		console.log(pwCheck);
+		console.log(mailCheck);
 		console.log(timeout);
-		console.log(confirmCheck);//t
+		console.log(confirmCheck);
 		
 		if (idCheck && pwCheck && mailCheck && !timeout && confirmCheck) {
 		    return true;

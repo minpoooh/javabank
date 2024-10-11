@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ include file="top.jsp"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%-- <jsp:include page="index_top.jsp"/> --%>
 	<!-- s: content -->
@@ -7,7 +8,7 @@
         <p>입출금통장 개설</p>
         <div class="txt_box bg_yellow">
             <p>java<em>bank</em></p>
-            <p>user님의 통장</p>
+            <p>${userName}님의 통장</p>
         </div>
         <form name="f" action="" method="post">
             <div>
@@ -38,4 +39,4 @@
         </form>
     </section>
     <!-- e: content -->
-<%-- <jsp:include page="index_bottom.jsp"/> --%>
+<%@ include file="bottom.jsp"%>
