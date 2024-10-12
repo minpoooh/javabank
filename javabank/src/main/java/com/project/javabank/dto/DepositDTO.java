@@ -3,7 +3,7 @@ package com.project.javabank.dto;
 public class DepositDTO {
 	private String depositAccount;
 	private int depositPw;
-	private String userid;
+	private String userId;
 	private String category;
 	private String regDate;
 	private double interestRate;
@@ -22,11 +22,11 @@ public class DepositDTO {
 	public void setDepositPw(int depositPw) {
 		this.depositPw = depositPw;
 	}
-	public String getUserid() {
-		return userid;
+	public String getUserId() {
+		return userId;
 	}
-	public void setUserid(String userid) {
-		this.userid = userid;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 	public String getCategory() {
 		return category;
@@ -58,7 +58,6 @@ public class DepositDTO {
 	public void setMainAccount(String mainAccount) {
 		this.mainAccount = mainAccount;
 	}
-	
 	// 조인용 컬럼
 	private int balance;
 

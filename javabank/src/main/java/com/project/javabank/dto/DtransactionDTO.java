@@ -3,13 +3,12 @@ package com.project.javabank.dto;
 public class DtransactionDTO {
 	private int accountSeq;
 	private String depositAccount;
+	private String userId;
 	private String updateDate;
 	private String type;
 	private String memo;
 	private int deltaAmount;
 	private int balance;
-	
-	
 	public int getAccountSeq() {
 		return accountSeq;
 	}
@@ -21,6 +20,12 @@ public class DtransactionDTO {
 	}
 	public void setDepositAccount(String depositAccount) {
 		this.depositAccount = depositAccount;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 	public String getUpdateDate() {
 		return updateDate;
@@ -52,6 +57,7 @@ public class DtransactionDTO {
 	public void setBalance(int balance) {
 		this.balance = balance;
 	}
+	
 	
 	
 	
