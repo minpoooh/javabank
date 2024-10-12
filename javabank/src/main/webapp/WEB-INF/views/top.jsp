@@ -14,7 +14,7 @@
 <body>
     <header>
         <div class="logo_box">
-            <p>java<em>bank</em></p>
+            <a href="/index"><p>java<em>bank</em></p></a>
         </div>
 
         <div class="icon_box">
