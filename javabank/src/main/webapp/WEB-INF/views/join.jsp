@@ -91,7 +91,7 @@
 	}
 	
 	function validateBirth(input) {
-		let value = input.value.replace(/[^0-9\-]/g, ''); // 숫자, - 허용
+		let value = input.value.replace(/[^0-9]/g, ''); // 숫자만 허용
 	    
 	    if (value.length > 4 && value[4] !== '-'){
 	    	value = value.slice(0, 4) + '-' + value.slice(4);
@@ -105,7 +105,7 @@
 	}
 	
 	function validateTel(input) {
-		let value = input.value.replace(/[^0-9\-]/g, ''); // 숫자, - 허용
+		let value = input.value.replace(/[^0-9]/g, ''); // 숫자만 허용
 	    
 	    if (value.length > 3 && value[3] !== '-'){
 	    	value = value.slice(0, 3) + '-' + value.slice(3);
