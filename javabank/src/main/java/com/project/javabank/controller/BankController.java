@@ -1,6 +1,9 @@
 package com.project.javabank.controller;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -71,17 +74,66 @@ public class BankController {
 	}
 	
 	@PostMapping("/createDeposit")
-	public String createDepositProcess() {
+	public String createDepositProcess(@AuthenticationPrincipal User user, String depositPw, String transactionLimit) {
 		
-		/*
-		 	챙겨야할것
-		 	1. 계좌번호 랜덤생성
-		 	2. 아이디 꺼내오기
-		 	3. 1일 이체한도, 비밀번호 입력받기
-		 	4. 첫 개설이면 주거래계좌 Y 처리 아니면 N 처리
-		 */
+		// 계좌 생성 파라미터
+		Map<String, Object> params = new HashMap<>();
+		params.put("depositPw", depositPw);
+		params.put("transactionLimit", transactionLimit);
 		
+		// 1. 유저 ID 뽑기
+		String userId = user.getUsername();
+		params.put("userId", userId);
 		
-		return "";
+		// 2. 계좌번호 랜덤으로 생성하기
+		//System.out.println((Math.random() * 9)+1); // 1 ~ 10
+		//System.out.println((Math.random() * 9000000) + 1000000); // 1000000 ~ 10000000
+		//System.out.println((Math.random() * 9000000) + 1000000); 	
+		
+		int randomNum = 0;
+		int depositAccountCheck = 9999;
+		
+		while(depositAccountCheck > 0) {
+			randomNum = (int) (Math.random() * 9000000) + 1000000;
+			String depositNum = "3333-01-" + String.valueOf(randomNum);
+			System.out.println("최초 번호:"+depositNum);
+			
+			// 생성된 계좌번호 중복 체크
+			depositAccountCheck = mapper.getDepositAccountCheck(depositNum);
+			
+			if(depositAccountCheck == 0) {
+				System.out.println("확정된 계좌번호:"+ depositNum);
+				params.put("depositAccount", depositNum);
+				break;
+			}
+		}
+		
+		// 3. 통장 비밀번호, 이체한도 확인
+		System.out.println("통장 비밀번호: " + depositPw);
+		System.out.println("이체한도: " + 	transactionLimit);
+		
+		// 4. 해당 유저의 입출금통장 첫 개설인지 확인
+		int depositAccountCnt = mapper.getDepositAccountCnt(userId);
+		
+		String mainAccount;
+		if (depositAccountCnt == 0) {
+			// 첫 개설이면
+			mainAccount = "Y";
+		} else {
+			// 첫 개설이 아니면
+			mainAccount = "N";
+		}
+		params.put("mainAccount", mainAccount);
+		
+		// 5. Deposit, Dtransaction 테이블 INSERT
+		try {
+			mapper.insertDeposit(params);
+		} catch(Exception e) {
+			System.out.println("Deposit, Dtransaction 테이블 INSERT 에러");
+			e.printStackTrace();
+		}
+		
+				
+		return "redirect:/index";
 	}
 }

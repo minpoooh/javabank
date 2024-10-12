@@ -29,10 +29,12 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 		http	
 			.authorizeHttpRequests(request -> request
-					.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+					.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE).permitAll()
 					.requestMatchers("/css/**", "/images/**", "/js/**").permitAll()
-					.requestMatchers("/", "/login", "/join", "/joinProcess", "/logout", "/findId", "/findPw", 
-									"checkID.ajax", "/sendEmail.ajax", "/favicon.ico", "/confirmCode.ajax", "/error").permitAll()
+					.requestMatchers("/", "/login", "/logout", "/join", "/joinProcess", "/findId", "/findPw", "/favicon.ico",
+									"checkID.ajax", "/sendEmail.ajax", "/confirmCode.ajax", "/error",
+									"/createDeposit"
+									).permitAll()
 					.anyRequest().authenticated()
 			)
 			.formLogin(form -> form					

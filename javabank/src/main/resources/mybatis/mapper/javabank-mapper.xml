@@ -6,34 +6,34 @@
 <mapper namespace="mybatis.javabank.javabank-mapper">
 
 	<select id="findUsernameById" parameterType="String" resultType="UserDTO">
-		select * from JB_USER
+		select * from JB_User
 		where userId = #{insertedUserId}
 	</select>
     
     <insert id="joinUser" parameterType="java.util.Map">
-    	insert into javabankUser (userId, userPw, userName, userBirth, userEmail, userTel, userRoles, userRegDate)
+    	insert into JB_User (userId, userPw, userName, userBirth, userEmail, userTel, userRoles, userRegDate)
     	values (#{userId}, #{userPw}, #{userName}, #{userBirth}, #{userEmail}, #{userTel}, 'USER', SYSDATE)
     </insert>
     
     <select id="checkID" parameterType="String" resultType="int">
-    	select count(*) from JB_USER
+    	select count(*) from JB_User
     	where userId = #{userId}
     </select>
     
     <select id="getUserName" parameterType="String" resultType="String">
-    	select userName from JB_USER
+    	select userName from JB_User
     	where userId = #{userId}
     </select>
     
     <select id="getAccountList" parameterType="String" resultType="DepositDTO">
-    	select A.*, B.balance from JB_DEPOSIT A
+    	select A.*, B.balance from JB_Deposit A
     						  join JB_Dtransaction B
     								on A.depositAccount = B.depositAccount
-    	where userId = #{userId}
+    	where A.userId = #{userId}
     </select>
     
     <select id="getFixedDepositList" parameterType="String" resultType="ProductDTO">
-    	select A.*, B.balance from JB_PRODUCT A
+    	select A.*, B.balance from JB_Product A
     						  join JB_Ptransaction B
     								on A.productAccount = B.productAccount
     	where userId = #{userId}
@@ -41,13 +41,31 @@
     </select>
     
     <select id="getPeriodicalDepositList" parameterType="String" resultType="ProductDTO">
-    	select A.*, B.balance from JB_PRODUCT A
+    	select A.*, B.balance from JB_Product A
     						  join JB_Ptransaction B
     								on A.productAccount = B.productAccount
     	where userId = #{userId}
     	and A.category = '정기적금'
     </select>
     
+    <select id="getDepositAccountCheck" parameterType="String" resultType="int">
+    	select count(*) from JB_Deposit
+    	where depositAccount = #{depositNum}
+    </select>
     
+    <select id="getDepositAccountCnt" parameterType="String" resultType="int">
+    	select count(*) from JB_Deposit
+    	where userId = #{userId}
+    </select>
+    
+    <insert id="insertDeposit" parameterType="java.util.Map">
+    	insert into JB_Deposit(depositAccount, userId, depositPw, category, regDate, interestRate, transactionLimit, mainAccount) 
+    	values (#{depositAccount}, #{userId}, #{depositPw}, '입출금통장', SYSDATE, 0.1, #{transactionLimit}, #{mainAccount})
+    </insert>
+    
+    <insert id="insertTransaction" parameterType="java.util.Map">
+    	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance) 
+    	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '개설', NULL, 0, 0)
+    </insert>
     
 </mapper>

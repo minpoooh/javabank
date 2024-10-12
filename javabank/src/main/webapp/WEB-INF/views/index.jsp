@@ -20,6 +20,17 @@
             </c:if>
             
             <c:if test="${not empty accountList}">
+	            <li class="nolist">
+	                <a href="/createDeposit">
+	                    <p>입출금통장 추가 개설</p>
+	                    <div class="img_box">
+	                        <img src="images/icons/account.png">
+	                    </div>
+	                </a>
+	            </li>
+            </c:if>
+            
+            <c:if test="${not empty accountList}">
             	<c:forEach var="accountList" items="${accountList}">
 		            <li class="account_item bg_yellow">
 		                <div class="txt_box">
