@@ -176,6 +176,8 @@ footer p {margin-top: 16px; font-size: 14px; text-align: center; color: #666;}
 .add_bank form div > p {font-size: 18px;}
 .add_bank form .passwd_box {display: flex; flex-direction: column;}
 .add_bank form .passwd_box label + label {margin-top: 10px;}
+.add_bank form .limit_box {display: flex; flex-direction: column;}
+.add_bank form .limit_box label + label {margin-top: 10px;}
 .add_bank form div input, 
 .add_bank form div select {padding: 4px 10px; font-size: 16px;}
 
