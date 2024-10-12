@@ -29,9 +29,18 @@
             
             <div class="input_box">
             	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <label>
-                    <input type="text" name="userId" placeholder="ID" required>
-                </label>
+            	
+            	<c:if test="${empty cookie['saveId']}">
+	                <label>
+	                    <input type="text" name="userId" placeholder="ID" required>
+	                </label>
+                </c:if>
+                <c:if test="${not empty cookie['saveId']}">
+	                <label>
+	                    <input type="text" name="userId" placeholder="ID" value="${cookie['saveId'].value}" required>
+	                </label>
+                </c:if>
+                
                 <label>
                     <input type="password" name="userPw" placeholder="PASSWORD" required>
                 </label>
