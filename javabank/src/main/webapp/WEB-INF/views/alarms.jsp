@@ -17,7 +17,7 @@
         <ul class="alarm_list">
             <li class="alarm_items">
                 <div class="img_box">
-                    <img src="/@sources/images/icons/message.png">
+                    <img src="images/icons/message.png">
                 </div>
                 <div class="txt_box">
                     <p>정기적금 입급 성공</p>

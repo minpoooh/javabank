@@ -1,46 +1,77 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="css/reset.css">
-	<link rel="stylesheet" type="text/css" href="css/style.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="js/script.js"></script>
-    <title>javabank_Login</title>
-</head>
-<body>
-    <section id="login">
-        <form name="f" action="" method="post">
-            <div class="logo_box">
-                <p>java<em>bank</em></p>
-            </div>
-            
-            <div class="input_box">
-                <label>
-                    <input type="text" placeholder="ID" required>
-                </label>
-                <label>
-                    <input type="password" placeholder="PASSWORD" required>
-                </label>
-                <button class="login_btn" type="button">로그인</button>
-            </div>
+<!-- s: content -->
+    <section id="my_account" class="content">
+        <p>내 계좌</p>
+        <div class="account_box">
+            <p class="account_tit">입출금</p>
+            <ul>
+                <li class="nolist">
+                    <p>나의 입출금 계좌가 없습니다.</p>
+                    <div class="img_box">
+                        <img src="../../images/icons/account.png">
+                    </div>
+                </li>
 
-            <div class="save_box">
-                <label> 아이디저장<input type="checkbox">
-                </label>
-            </div>
+                <li class="account_item bg_yellow">
+                    <!-- 주거래: star.png / 주거래X: star_line.png -->
+                    <div class="img_box">
+                        <img src="../../images/icons/star_line.png">
+                    </div>
+                    <div class="txt_box">
+                        <p class="account_name">계좌명(입출금/예금/적금)</p>
+                        <p class="account_number">0000-0000-0000-0000</p>
+                        <p class="account_amount">0원</p>
+                    </div>
+                    <div class="btn_box">
+                        <button type="button">조회</button>
+                        <button type="button">이체</button>
+                        <button type="button">계좌삭제</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
 
-            <div class="join_box">
-                <a href="javascript:;">회원가입</a>
-                <ul class="find_box">
-                    <li><a href="javascript:;">아이디찾기</a></li>
-                    <li><a href="javascript:;">비밀번호찾기</a></li>
-                </ul>
-            </div>
-        </form>
+        <div class="account_box">
+            <p class="account_tit">예금</p>
+            <ul>
+
+	            <li class="account_item bg_green">
+	                <div class="txt_box">
+	                    <p class="account_name">${deposit.category}</p>
+	                    <p class="account_number">${deposit.productAccount}</p>
+	                    <p class="account_amount">${deposit.accountBalance}원</p>
+	                </div>
+	                <div class="btn_box">
+	                    <button type="button">조회</button>
+	                    <button type="button">이체</button>
+	                    <button type="button">계좌삭제</button>
+	                </div>
+	            </li>
+
+            </ul>
+        </div>
+	
+
+        <div class="account_box">
+            <p class="account_tit">적금</p>
+            <ul>
+			    
+                <li class="account_item bg_green">
+                    <div class="txt_box">
+                        <p class="account_name">${savingAccount.category}</p>
+                        <p class="account_number">${savingAccount.productAccount}</p>
+                        <p class="account_amount">${savingAccount.accountBalance}원</p>
+                    </div>
+                    <div class="btn_box">
+                        <button type="button">조회</button>
+                        <button type="button">이체</button>
+                        <button type="button">계좌삭제</button>
+                    </div>
+                </li>
+			  
+            </ul>
+        </div>
+		
     </section>
-</body>
-</html>
+    <!-- e: content -->

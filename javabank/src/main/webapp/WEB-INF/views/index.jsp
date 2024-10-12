@@ -91,11 +91,9 @@
     </div>
     </c:if>
 	
-	<c:if test="${empty fixedDepositList && empty periodicalDepositList}">
     <div class="account_box">
         <p class="account_tit">상품가입</p>
         <ul class="product_list">
-        	<c:if test="${empty fixedDepositList}">
             <li>
                 <a href="javascript:;">
                     <div class="img_box">
@@ -105,8 +103,7 @@
                     <p class="txt_noti">6개월 기준 기본 3.0%</p>
                 </a>
             </li>
-            </c:if>
-            <c:if test="${empty periodicalDepositList}">
+
             <li>
                 <a href="javascript:;">
                     <div class="img_box">
@@ -116,10 +113,9 @@
                     <p class="txt_noti">6개월 기준 기본 3.5%</p>
                 </a>
             </li>
-            </c:if>
         </ul>
     </div>
-    </c:if>
+
 </section>
 <!-- e: content -->
 <%@ include file="bottom.jsp"%>

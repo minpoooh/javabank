@@ -2,7 +2,6 @@
     pageEncoding="UTF-8"%>
 <%@ include file="top.jsp"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%-- <jsp:include page="index_top.jsp"/> --%>
 	<!-- s: content -->
     <section id="add_account" class="content add_bank">
         <p>입출금통장 개설</p>
