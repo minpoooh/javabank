@@ -8,13 +8,17 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.project.javabank.dto.DepositDTO;
+import com.project.javabank.dto.DtransactionDTO;
 import com.project.javabank.dto.ProductDTO;
 import com.project.javabank.mapper.BankMapper;
 
@@ -25,6 +29,9 @@ public class BankController {
 	
 	@Autowired
 	BankMapper mapper;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@GetMapping("/index")
 	public String index(@AuthenticationPrincipal User user,
@@ -74,7 +81,7 @@ public class BankController {
 	}
 	
 	@PostMapping("/createDeposit")
-	public String createDepositProcess(@AuthenticationPrincipal User user, String depositPw, String transactionLimit) {
+	public String createDepositProcess(@AuthenticationPrincipal User user, RedirectAttributes red, String depositPw, String transactionLimit) {
 		
 		// 계좌 생성 파라미터
 		Map<String, Object> params = new HashMap<>();
@@ -102,15 +109,15 @@ public class BankController {
 			depositAccountCheck = mapper.getDepositAccountCheck(depositNum);
 			
 			if(depositAccountCheck == 0) {
-				System.out.println("확정된 계좌번호:"+ depositNum);
+				//System.out.println("확정된 계좌번호:"+ depositNum);
 				params.put("depositAccount", depositNum);
 				break;
 			}
 		}
 		
 		// 3. 통장 비밀번호, 이체한도 확인
-		System.out.println("통장 비밀번호: " + depositPw);
-		System.out.println("이체한도: " + 	transactionLimit);
+		//System.out.println("통장 비밀번호: " + depositPw);
+		//System.out.println("이체한도: " + 	transactionLimit);
 		
 		// 4. 해당 유저의 입출금통장 첫 개설인지 확인
 		int depositAccountCnt = mapper.getDepositAccountCnt(userId);
@@ -128,12 +135,73 @@ public class BankController {
 		// 5. Deposit, Dtransaction 테이블 INSERT
 		try {
 			mapper.insertDeposit(params);
+			red.addFlashAttribute("msg", "입출금 통장이 개설되었습니다.");
 		} catch(Exception e) {
 			System.out.println("Deposit, Dtransaction 테이블 INSERT 에러");
 			e.printStackTrace();
 		}
-		
-				
 		return "redirect:/index";
+	}
+	
+	@PostMapping("/depositList")
+	public String depositList(HttpServletRequest req, String submitType, String depositAccount) {
+		
+		// 통장정보
+		DepositDTO depositInfo = mapper.getDepositInfo(depositAccount);
+		req.setAttribute("depositInfo", depositInfo);
+					
+		// 통장잔액
+		int depositBalance = mapper.getDepositBalance(depositAccount);
+		req.setAttribute("depositBalance", depositBalance);
+		
+		// 조회 버튼 클릭한 경우
+		if(submitType.equals("list")) {
+	
+			// 거래내역
+			List<DtransactionDTO> transactionList = mapper.getDepositTransaction(depositAccount);
+			req.setAttribute("transactionList", transactionList);
+			
+			return "deposit_list";
+		} 
+		// 이체 버튼 클릭한 경우
+		else {
+			req.setAttribute("depositAccount", depositAccount);
+			req.setAttribute("depositBalance", depositBalance);
+			return "transfer_money";
+		}
+		
+	}
+	
+	@ResponseBody
+	@PostMapping("/checkPwForTransfer.ajax")
+	public String checkPwForTransfer(String depositAccount, String inputPw) {
+		try {		
+			// 통장 비밀번호
+			String depositPw = mapper.getDepositPw(depositAccount);
+			
+			if(depositPw.equals(inputPw)) {
+				return "OK";
+			} else {
+				return "FAIL";
+			}
+		}catch(Exception e) {
+			System.out.println("통장 비밀번호 확인 에러");
+			e.printStackTrace();
+			return "Error";
+		}
+	}
+	
+	@GetMapping("/inputSendAccount")
+	public String inputSendAccount() {
+		return "transfer";
+	}
+	
+	
+
+	
+	@GetMapping("/alarms")
+	public String alarms() {
+		
+		return "alarms";
 	}
 }

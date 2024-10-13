@@ -33,15 +33,19 @@
             <c:if test="${not empty accountList}">
             	<c:forEach var="accountList" items="${accountList}">
 		            <li class="account_item bg_yellow">
-		                <div class="txt_box">
-		                    <p class="account_name">${accountList.category}</p>
-		                    <p class="account_number">${accountList.depositAccount}</p>
-		                    <p class="account_amount">${accountList.balance}원</p>
-		                </div>
-		                <div class="btn_box">
-		                    <button type="button">조회</button>
-		                    <button type="button">이체</button>
-		                </div>
+		            	<form action="/depositList" method="post">
+			                <div class="txt_box">
+			                    <p class="account_name">${accountList.category}</p>
+			                    <p class="account_number">${accountList.depositAccount}</p>
+			                    <p class="account_amount">${accountList.balance}원</p>
+			                </div>
+			                <div class="btn_box">
+			                	<input type="hidden" name="depositAccount" value="${accountList.depositAccount}">
+			                	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			                    <button type="submit" name="submitType" value="list">조회</button>
+			                    <button type="submit" name="submitType" value="transfer">이체</button>
+			                </div>
+		                </form>
 		            </li>
 	            </c:forEach>
             </c:if>
@@ -119,3 +123,10 @@
 </section>
 <!-- e: content -->
 <%@ include file="bottom.jsp"%>
+
+<script>
+  	let msg = "${msg}";
+	if(msg){
+		alert(msg);
+	}
+</script>

@@ -71,7 +71,7 @@
 	}
 	
 	function checkTransactionLimit(input){
-		let value = input.value.replace(/[^0-9\-]/g, ''); // 숫자, - 허용
+		let value = input.value.replace(/[^0-9]/g, ''); // 숫자만 허용
 		input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // 천단위 구분기호
 		let noti = document.querySelector('.limit_noti');
 		

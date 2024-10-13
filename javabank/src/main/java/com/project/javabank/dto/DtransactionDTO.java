@@ -9,6 +9,7 @@ public class DtransactionDTO {
 	private String memo;
 	private int deltaAmount;
 	private int balance;
+	
 	public int getAccountSeq() {
 		return accountSeq;
 	}
@@ -56,6 +57,16 @@ public class DtransactionDTO {
 	}
 	public void setBalance(int balance) {
 		this.balance = balance;
+	}
+	
+	// 조인용 컬림
+	private String userName;
+
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 	
 	

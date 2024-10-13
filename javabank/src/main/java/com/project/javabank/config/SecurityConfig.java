@@ -34,7 +34,8 @@ public class SecurityConfig {
 					.requestMatchers("/", "/login", "/logout", "/join", "/joinProcess", "/findId", "/findPw", "/favicon.ico",
 									"/checkID.ajax", "/sendEmail.ajax", "/confirmCode.ajax", "/error",
 									"/createDeposit", "/sendEmailFindId.ajax", "/confirmCodeFindId.ajax", "/findId",
-									"/sendEmailFindPw.ajax", "/confirmCodeFindPw.ajax", "/findPw"
+									"/sendEmailFindPw.ajax", "/confirmCodeFindPw.ajax", "/findPw",
+									"/depositList", "/transferMoney", "/checkPwForTransfer.ajax", "/inputSendAccount"
 									).permitAll()
 					.anyRequest().authenticated()
 			)

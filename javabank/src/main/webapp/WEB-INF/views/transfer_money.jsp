@@ -1,47 +1,172 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="css/reset.css">
-	<link rel="stylesheet" type="text/css" href="css/style.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="js/script.js"></script>
-    <title>javabank</title>
-</head>
-<body>
-    <!-- s: content -->
-    <section id="transfer_money" class="content">
-        <form name="f" action="" method="post">
-            <div class="bank_info">
-                <p>송금할 금액를 입력해주세요.</p>
-                <label>
-                    <input type="text" name="" value="" placeholder="금액입력" required>
-                </label>
-                <button class="bg_yellow" type="button">다음</button>
-            </div>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ include file="top.jsp"%>
+<!-- s: content -->
+<section id="transfer_money" class="content">
+	<div class="bank_info">
+	    <p>송금할 금액를 입력해주세요.</p>
+	    <label>
+	        <input type="text" name="amount" value="" placeholder="금액 입력" oninput="checkAmount(this)" required>
+	    </label>
+	    <button class="popup_btn" type="button" data-popup="pwbox">다음</button>
+	</div>
+	
+	<div class="select_box">
+	    <button type="button" onclick="changedAmount(10000)">1만원</button>
+	    <button type="button" onclick="changedAmount(50000)">5만원</button>
+	    <button type="button" onclick="changedAmount(100000)">10만원</button>
+	    <button type="button" onclick="changedAmount('all')">전액</button>
+	</div>
+</section>
 
-            <div class="select_box">
-                <button type="button">1만원</button>
-                <button type="button">5만원</button>
-                <button type="button">10만원</button>
-                <button type="button">전액</button>
-            </div>
-        </form>
-    </section>
-    <div class="popup_box" id="pwbox" style="display: none;">
-        <p class="popup_title">비밀번호룰 입력해주세요.</p>
-        <label>
-            <input type="password" placeholder="비밀번호 4자리 입력" maxlength="4" required>
-        </label>
-        <div class="pbtn_box">
-            <button type="button">확인</button>
-            <button type="button">취소</button>
-        </div>
+<!-- 비밀번호 입력 팝업 -->
+<div class="popup_box" id="pwbox" style="display: none;">
+    <p class="popup_title">비밀번호를 입력해주세요.</p>
+    <label>
+        <input type="password" name="inputPw" placeholder="비밀번호 4자리 입력" maxlength="4" required>
+    </label>
+    <div class="pbtn_box">
+        <button class="confirm_btn" type="button" onclick="checkPw()">확인</button>
+        <button class="close_btn" type="button">취소</button>
     </div>
-    <div class="dimm"></div>
-    <!-- e: content -->
-</body>
-</html>
+</div>
+<div class="dimm" id="dimm"></div>
+<!-- e: content -->
+<%@ include file="bottom.jsp"%>
+
+<script>
+	//팝업 열기
+	document.querySelectorAll('.popup_btn').forEach(button => {
+	    button.addEventListener('click', function (e) {
+	        e.preventDefault();
+	        let popupId = button.getAttribute('data-popup'); // 열 팝업 ID 가져오기
+	        let popup = document.getElementById(popupId);
+	        let dimm = document.getElementById('dimm');
+	
+	        if (popup) popup.style.display = 'block'; // 팝업 열기
+	        if (dimm) dimm.style.display = 'block'; // dimm 표시
+	    });
+	});
+	
+	// 팝업 닫기
+	document.querySelectorAll('.close_btn').forEach(button => {
+	    button.addEventListener('click', function (e) {
+	        e.preventDefault();
+	        let popup = document.getElementById('pwbox'); // 닫을 팝업 ID 직접 참조
+	        let dimm = document.getElementById('dimm');
+	
+	        if (popup) popup.style.display = 'none'; // 팝업 닫기
+	        if (dimm) dimm.style.display = 'none'; // dimm 숨기기
+	    });
+	});
+	
+	// dimm 클릭 시 모든 팝업 닫기
+	document.getElementById('dimm').addEventListener('click', function () {
+	    document.querySelectorAll('.popup_box').forEach(popup => {
+	        popup.style.display = 'none'; // 모든 팝업 닫기
+	    });
+	    this.style.display = 'none'; // dimm 숨기기
+	});
+	
+	// 비밀번호 입력 팝업 확인 버튼 이벤트
+	document.querySelector('.confirm_btn').addEventListener('click', function () {
+	    document.getElementById('pwbox').style.display = 'none'; // 팝업 닫기
+	    document.getElementById('dimm').style.display = 'none'; // dimm 닫기
+	});
+	
+	function checkAmount(input){
+		let value = input.value.replace(/[^0-9]/g, ''); // 숫자만 허용
+		input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // 천단위 구분기호
+	}
+		
+	function changedAmount(amount){
+		let amountBox = document.getElementsByName('amount')[0];
+		
+	    if (amount === 'all') {
+	        amount = '${depositBalance}'; 
+	    }
+		 
+		let number = String(amount).replace(/[^0-9]/g, ''); // 숫자만 허용
+		let format = number.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // 천단위 구분기호
+		amountBox.value = format;
+	}
+	
+	// 비밀번호 검증
+	let pwCheck = false;
+	let balanceCheck = false;
+	let depositAccount = '${depositAccount}';
+
+	function checkPw(){		
+		let csrfToken = '${_csrf.token}';
+		
+		// 패스워드 체크
+		let inputPw = document.getElementsByName('inputPw')[0].value;
+		
+		// 잔액 체크
+		let depositBalance = '${depositBalance}';
+		let sendAmount = document.getElementsByName('amount')[0].value;
+		sendAmount = parseInt(sendAmount.replace(/,/g, ''), 10);
+		
+		if(inputPw.length < 4){
+			alert("비밀번호 4자리를 입력해주세요.")
+			document.getElementsByName('inputPw')[0].value = '';
+			pwCheck = false
+		} else {
+			$.ajax({
+				url : "checkPwForTransfer.ajax",
+				type : "POST",
+				headers : {
+					"X-CSRF-TOKEN" : csrfToken
+				},
+				data : {
+					"depositAccount" : depositAccount,
+					"inputPw" : inputPw
+				},
+				success : function(res){
+					console.log(res);
+					if(res === 'OK'){
+						alert("비밀번호 확인이 완료되었습니다.");
+						pwCheck = true;
+						
+						console.log("잔액:" + depositBalance);
+						console.log("보낼돈:" + sendAmount);
+						
+						if (depositBalance >= sendAmount){
+							balanceCheck = true;
+						} else {
+							balanceCheck = false;
+						}
+						
+						if(pwCheck && balanceCheck){
+							location.href="/inputSendAccount";
+						}
+						
+					} else if(res === 'FAIL') {
+						alert("비밀번호가 일치하지 않습니다. 다시 확인해주세요.");
+						document.getElementsByName('inputPw')[0].value = '';
+						pwCheck = false;
+					} else {
+						alert("에러 발생! 관리자에게 문의해주세요. (에러코드:AB10)")
+						pwCheck = false;
+					}
+				},
+				error : function(err){
+					console.log(err);
+					alert("에러가 발생했습니다. 관리자에게 문의해주세요. (에러코드:AB11)");
+				}
+			});
+		}
+		
+
+
+		
+	}
+	
+	function finalCheck(){
+		console.log(pwCheck);
+		console.log(balanceCheck);
+	}
+
+</script>

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.javabank.dto.DepositDTO;
+import com.project.javabank.dto.DtransactionDTO;
 import com.project.javabank.dto.ProductDTO;
-import com.project.javabank.dto.UserDTO;
 
 @Service
 public class BankMapper {
@@ -49,6 +49,23 @@ public class BankMapper {
 		
 		// deposit transaction 테이블 인서트
 		sqlSession.insert("insertTransaction", params);
+	}
+	
+	public DepositDTO getDepositInfo(String depositAccount) {
+		return sqlSession.selectOne("getDepositInfo", depositAccount);
+	}
+	
+	public int getDepositBalance(String depositAccount) {
+		return sqlSession.selectOne("getDepositBalance", depositAccount);
+	}
+	
+	public List<DtransactionDTO> getDepositTransaction(String depositAccount){
+		return sqlSession.selectList("getDepositTransaction", depositAccount);
+	}
+	
+	public String getDepositPw(String depositAccount) {
+		System.out.println(depositAccount);
+		return sqlSession.selectOne("getDepositPw", depositAccount);
 	}
 
 }

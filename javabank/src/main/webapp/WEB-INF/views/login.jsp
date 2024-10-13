@@ -160,7 +160,7 @@
 	document.querySelectorAll('.popup_btn').forEach(button => {
 	    button.addEventListener('click', function (e) {
 	        e.preventDefault();
-	        const popupId = button.getAttribute('data-popup'); // 어떤 팝업을 열지 확인
+	        let popupId = button.getAttribute('data-popup'); // 어떤 팝업을 열지 확인
 	        document.getElementById(popupId).style.display = 'block'; // 팝업 보이기
 	        document.getElementById('dimm').style.display = 'block'; // dimm 보이기
 	    });
@@ -170,7 +170,7 @@
 	document.querySelectorAll('.close_btn').forEach(button => {
 	    button.addEventListener('click', function (e) {
 	        e.preventDefault();
-	        const popupId = button.getAttribute('data-popup'); // 닫을 팝업 ID 가져오기
+	        let popupId = button.getAttribute('data-popup'); // 닫을 팝업 ID 가져오기
 	        document.getElementById(popupId).style.display = 'none'; // 팝업 숨기기
 	        document.getElementById('dimm').style.display = 'none'; // dimm 숨기기
 	    });

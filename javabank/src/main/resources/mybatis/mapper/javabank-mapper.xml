@@ -44,9 +44,13 @@
     
     <select id="getAccountList" parameterType="String" resultType="DepositDTO">
     	select A.*, B.balance from JB_Deposit A
-    						  join JB_Dtransaction B
-    								on A.depositAccount = B.depositAccount
+    						  join (
+    						  		select accountSeq, depositAccount, balance, ROW_NUMBER() over (Partition by depositAccount order by accountSeq desc) as rn
+    						  		from JB_Dtransaction    						  
+    						  		) B
+    						  on A.depositAccount = B.depositAccount
     	where A.userId = #{userId}
+    	and B.rn = 1
     </select>
     
     <select id="getFixedDepositList" parameterType="String" resultType="ProductDTO">
@@ -84,5 +88,30 @@
     	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance) 
     	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '개설', NULL, 0, 0)
     </insert>
+    
+    <select id="getDepositInfo" parameterType="String" resultType="DepositDTO">
+    	select * from JB_Deposit
+    	where DepositAccount = #{depositAccount}
+    </select>
+    
+    <select id="getDepositBalance" parameterType="String" resultType="int">
+    	select balance from JB_Dtransaction
+    	where DepositAccount = #{depositAccount}
+    	order by AccountSeq desc
+    	fetch first 1 rows only
+    </select>
+    
+    <select id="getDepositTransaction" parameterType="String" resultType="DtransactionDTO">
+    	select A.*, B.userName from JB_Dtransaction A
+    			 join JB_User B
+    			 	on A.userId = B.userId
+    	where DepositAccount = #{depositAccount}
+    	order by AccountSeq desc
+    </select>
+    
+    <select id="getDepositPw" parameterType="String" resultType="String">
+    	select depositPw from JB_Deposit
+    	where depositAccount = #{depositAccount}
+    </select>
     
 </mapper>
