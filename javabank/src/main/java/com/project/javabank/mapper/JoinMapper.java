@@ -26,4 +26,12 @@ public class JoinMapper {
 	public List<UserDTO> getMailUser(String userEmail) {
 		return sqlSession.selectList("getMailUser", userEmail);
 	}
+	
+	public List<UserDTO> getIdMailUser(Map<String, String> params) {
+		return sqlSession.selectList("getIdMailUser", params);
+	}
+	
+	public int changedPwResult(Map<String, String> params) {
+		return sqlSession.update("changedPwResult", params);
+	}
 }

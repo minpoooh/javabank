@@ -33,7 +33,8 @@ public class SecurityConfig {
 					.requestMatchers("/css/**", "/images/**", "/js/**").permitAll()
 					.requestMatchers("/", "/login", "/logout", "/join", "/joinProcess", "/findId", "/findPw", "/favicon.ico",
 									"/checkID.ajax", "/sendEmail.ajax", "/confirmCode.ajax", "/error",
-									"/createDeposit", "/sendEmailFindId.ajax", "/confirmCodeFindId.ajax", "/findId"
+									"/createDeposit", "/sendEmailFindId.ajax", "/confirmCodeFindId.ajax", "/findId",
+									"/sendEmailFindPw.ajax", "/confirmCodeFindPw.ajax", "/findPw"
 									).permitAll()
 					.anyRequest().authenticated()
 			)

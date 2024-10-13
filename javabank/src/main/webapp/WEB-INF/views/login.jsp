@@ -74,7 +74,7 @@
         <!-- 아이디 찾기 팝업 -->            
         <div id="findbyid" class="popup_box" style="display: none;">
 	        <p class="popup_title">아이디 찾기</p>	        
-	        <form name="f" action="/findId" method="post" onsubmit="return finalCheck()">
+	        <form name="f" action="/findId" method="post" onsubmit="return idFinalCheck()">
 	        	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 	            <div class="input_box">
 	                <div class="email_box">
@@ -89,7 +89,7 @@
 	                            <option value="@gmail.com">@gmail.com</option>
 	                        </select>
 	                    </label>
-	                    <button type="button" class="confirm_btn" name=confirm_btn onclick="sendEmail()">인증번호 발송</button>
+	                    <button type="button" class="confirm_btn" name=confirm_btn onclick="idSendEmail()">인증번호 발송</button>
 	                </div>
 	            
 		            <div class="confirm_box" style="display: none">
@@ -97,11 +97,52 @@
 		                    <input type="text" class="code" name="confirmNum" value="" placeholder="인증번호 입력">		                    
 		                </label>
 		                <p class="timer"><span id="timerMin">3</span>:<span id="timerSec">00</span></p>
-		                <button class="confirm_btn" name="confirmBtn" type="button" onclick="confirm()">인증번호 확인</button>
+		                <button class="confirm_btn" name="confirmBtn" type="button" onclick="idConfirm()">인증번호 확인</button>
 		            </div>
 		            
 		            <div class="btn_box">
 			            <button class="submit_btn" type="submit">아이디 찾기</button>
+			            <button class="close_btn" data-popup="findbyid">취소</button>
+		        	</div>
+		        </div>
+		        
+	        </form>       
+    	</div>
+    	
+    	<!-- 비밀번호 찾기 팝업 -->            
+        <div id="findbypw" class="popup_box" style="display: none;">
+	        <p class="popup_title">비밀번호 찾기</p>	        
+	        <form name="f" action="/findPw" method="post" onsubmit="return pwFinalCheck()">
+	        	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+	            <div class="input_box">
+            		<label>
+                        <input type="text" class="userId" name="findPwUserId" value="" placeholder="아이디입력" required>
+                    </label>
+	                <div class="email_box">
+	                    <label>
+	                        <input type="text" class="userEmail1" name="userEmail1" value="" placeholder="이메일입력" required>
+	                    </label>
+	                    <label>
+	                        <select name="userEmail2" class="userEmail2">
+	                        	<option value="notSelected">==선택==</option>
+	                            <option value="@naver.com">@naver.com</option>
+	                            <option value="@nate.com">@nate.com</option>
+	                            <option value="@gmail.com">@gmail.com</option>
+	                        </select>
+	                    </label>
+	                    <button type="button" class="confirm_btn" name=confirm_btn onclick="pwSendEmail()">인증번호 발송</button>
+	                </div>
+	            
+		            <div class="confirm_box" style="display: none">
+		                <label>
+		                    <input type="text" class="code" name="confirmNum" value="" placeholder="인증번호 입력">		                    
+		                </label>
+		                <p class="timer"><span id="timerMin">3</span>:<span id="timerSec">00</span></p>
+		                <button class="confirm_btn" name="confirmBtn" type="button" onclick="pwConfirm()">인증번호 확인</button>
+		            </div>
+		            
+		            <div class="btn_box">
+			            <button class="submit_btn" type="submit">비밀번호 찾기</button>
 			            <button class="close_btn" data-popup="findbyid">취소</button>
 		        	</div>
 		        </div>
@@ -143,11 +184,9 @@
 	    this.style.display = 'none'; // dimm 숨기기
 	});
 	
-	// 최종 체크 항목
-	let mailCheck = false; // 메일 발송
-	let timeout = false; // 인증 타임아웃
-	let confirmCheck = false; // 인증확인
+
 	
+	// 타이머 설정
 	let timer;
 	let timeRemaining = 180;
 	
@@ -178,15 +217,21 @@
 	    }
 	}
 	
+	// 최종 체크 항목
+	let idCheck = false; // 아이디 입력
+	let mailCheck = false; // 메일 발송
+	let timeout = false; // 인증 타임아웃
+	let confirmCheck = false; // 인증확인	
 	
-	function sendEmail() {	
+	
+	// 아이디 찾기	
+	function idSendEmail() {	
 		
 		let csrfToken = '${_csrf.token}';
 		
 		let mail1 = document.getElementsByName('userEmail1')[0].value;
 		let mail2 = document.getElementsByName('userEmail2')[0].value;
 		let sendBtn = document.getElementsByName('confirm_btn')[0];
-		let confirmBox = document.querySelector('.confirm_box');
 		
 		if (mail1 === ''){
 			alert("이메일 주소를 입력해주세요.");
@@ -195,9 +240,10 @@
 			alert("이메일 주소를 선택해주세요.");
 			document.getElementsByName('userEmail2')[0].focus();
 		} else {
-			// 이메일 인증 버튼 클릭 시 인증번호 입력칸 보이기
-		    document.querySelector('.confirm_box').style.display = 'block';
-			
+			// 이메일 인증 버튼 클릭 시 인증번호 입력칸 보이기	
+			let confirmBoxes = document.querySelectorAll('.confirm_box');
+		    confirmBoxes[0].style.display = 'block'; // 첫 번째 요소에 대해 display:block 적용
+		    
 			// 타이머 시작
 			let timeRemaining = 180;
 			startTimer();
@@ -214,7 +260,6 @@
 					"mail2" : mail2
 				},
 				success : function(res){
-					console.log(res);
 					if(res === 'OK'){
 						alert("인증번호가 메일로 발송되었습니다.");
 						sendBtn.textContent = '재전송';
@@ -230,11 +275,9 @@
 				}
 			});
 		}
-		
 	}
 	
-	
-	function confirm(){
+	function idConfirm(){
 		let csrfToken = '${_csrf.token}';
 		let inputCode = document.getElementsByName('confirmNum')[0].value;
 		let confirmBtn = document.getElementsByName('confirmBtn')[0];
@@ -274,12 +317,141 @@
 		});
 	}
 	
-	function finalCheck(){
+	function idFinalCheck(){
+		console.log(mailCheck);
+		console.log(timeout);
+		console.log(confirmCheck);
+		if(!mailCheck){
+			alert("이메일을 입력하여 인증번호를 발송받아주세요.");
+		}
+		
+		if(timeout){
+			alert("인증 시간이 초과되었습니다. 새로 고침 후 다시 진행해주세요.");
+		}
+		
+		if(!confirmCheck){
+			alert("메일로 발송된 인증번호를 확인 후 입력해주세요.");
+		}
+		
+		if (mailCheck && !timeout && confirmCheck) {
+		   return true;
+		} else {
+		   return false;
+		}
+	}
+	
+	
+	// 비밀번호 찾기
+	function pwSendEmail() {	
+		let csrfToken = '${_csrf.token}';
+		
+		let id = document.getElementsByName('findPwUserId')[0].value;
+		let mail1 = document.getElementsByName('userEmail1')[1].value;
+		let mail2 = document.getElementsByName('userEmail2')[1].value;
+		let sendBtn = document.getElementsByName('confirm_btn')[1];
+		if(id === ''){
+			alert("아이디를 입력해주세요.");
+			document.getElementsById('findPwUserId')[0].focus();
+		} else if (mail1 === ''){
+			alert("이메일 주소를 입력해주세요.");
+			document.getElementsByName('userEmail1')[1].focus();
+		} else if (mail2 === 'notSelected'){
+			alert("이메일 주소를 선택해주세요.");
+			document.getElementsByName('userEmail2')[1].focus();
+		} else {
+			// 이메일 인증 버튼 클릭 시 인증번호 입력칸 보이기		
+			let confirmBoxes = document.querySelectorAll('.confirm_box');
+		    confirmBoxes[1].style.display = 'block'; // 첫 번째 요소에 대해 display:block 적용
+			
+			// 타이머 시작
+			let timeRemaining = 180;
+			startTimer();
+			
+			// 이메일 발송
+			$.ajax({
+				url : "sendEmailFindPw.ajax",
+				type : "POST",
+				headers : {
+					"X-CSRF-TOKEN" : csrfToken
+				},
+				data : {
+					"id" : id,
+					"mail1" : mail1,
+					"mail2" : mail2
+				},
+				success : function(res){
+					console.log(res);
+					if(res === 'OK'){
+						alert("인증번호가 메일로 발송되었습니다.");
+						sendBtn.textContent = '재전송';
+						mailCheck = true;
+					} else if(res === 'NOTFOUND'){
+						alert("해당 아이디와 이메일로 가입된 정보가 없습니다. 다시 진행해주세요.(에러코드:AB09)");
+						location.reload();
+						mailCheck = false;
+					} else {
+						alert("메일 발송 중 에러가 발생했습니다. 관리자에게 문의해주세요. (에러코드:AB07)");
+						mailCheck = false;
+					}
+				},
+				error : function(err){
+					console.log(err);
+					alert("에러가 발생했습니다. 관리자에게 문의해주세요. (에러코드:AB08)");
+				}
+			});
+		}
+		
+	}
+	
+	
+	function pwConfirm(){
+		let csrfToken = '${_csrf.token}';
+		
+		let inputCode = document.getElementsByName('confirmNum')[1].value;
+		let confirmBtn = document.getElementsByName('confirmBtn')[1];
+		let sendBtn = document.getElementsByName('confirm_btn')[1];
+		
+		$.ajax({
+			url : "confirmCodeFindPw.ajax",
+			type : "POST",
+			headers : {
+                "X-CSRF-TOKEN": csrfToken
+            },
+			data : {
+				"inputCode" : inputCode
+			},
+			success : function(res){
+				if(res === 'OK'){
+					alert("인증 완료되었습니다.")
+					stopTimer();
+					sendBtn.style.backgroundColor = "grey";
+					confirmBtn.disabled = true;
+					confirmBtn.textContent = "인증완료";
+					confirmBtn.style.backgroundColor = "grey";
+					document.getElementsByName('confirmNum')[1].disabled = true;
+					confirmCheck = true;
+				}else if(res === 'ERROR'){
+					alert("인증에 실패하였습니다. 인증코드를 다시 입력해주세요.")
+                	document.getElementsByName('confirmNum')[1].focus();
+					confirmBtn.disabled = false;
+					confirmBtn.textContent = "인증코드 확인";
+					confirmBtn.style.backgroundColor = "";
+					confirmCheck = false;
+				}
+			},
+			error : function(err){
+				console.log(err);
+			}
+		});
+	}
+	
+	function pwFinalCheck(){
 
 		console.log(mailCheck);
 		console.log(timeout);
 		console.log(confirmCheck);
 		
+	
 		if(!mailCheck){
 			alert("이메일을 입력하여 인증번호를 발송받아주세요.");
 		}

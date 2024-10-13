@@ -15,6 +15,18 @@
 		where userEmail = #{userEmail}
 	</select>
     
+    <select id="getIdMailUser" parameterType="java.util.Map" resultType="UserDTO">
+		select userId from JB_User
+		where userEmail = #{userEmail}
+		and userId = #{userId}
+	</select>
+	
+	<update id="changedPwResult" parameterType="java.util.Map">
+		update Jb_User
+		set userPw = #{imsiPw}
+		where userId = #{userId}
+	</update>
+    
     <insert id="joinUser" parameterType="java.util.Map">
     	insert into JB_User (userId, userPw, userName, userBirth, userEmail, userTel, userRoles, userRegDate)
     	values (#{userId}, #{userPw}, #{userName}, #{userBirth}, #{userEmail}, #{userTel}, 'USER', SYSDATE)
