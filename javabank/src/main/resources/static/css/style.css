@@ -37,10 +37,26 @@
 #login .join_box a:hover {color: #fc5c50;}
 
 /* 로그인 팝업 */
-#findbyid .input_box .email_box {margin-top: 10px; display: flex; align-items: center; gap: 10px;}
-#findbyid .input_box .email_box input, 
-#findbyid .input_box .email_box select {width: 180px;}
-#findbyid .input_box .email_box select {padding: 4px 0; font-size: 18px;}
+#login .popup_box .btn_box {text-align: center;}
+#login .popup_box .btn_box button {margin-top: 10px; width: 30px; border-radius: 2px; background-color: #ffe402; padding: 5px 0; font-size: 15px; color: #444;}
+#login .popup_box .btn_box button.confirm_btn {width: 137px;}
+#login .popup_box .submit_btn {margin-top: 30px; width: 80px;}
+#login .popup_box .close_btn {margin-top: 30px; width: 80px;}
+#login .popup_box .btn_box .setting_btn {position: relative; font-size: 14px; line-height: 18px; color: #555;}
+#login .popup_box .btn_box .setting_btn::after {content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background-color: #555;}
+#login .popup_box .input_box .email_box {margin-top: 10px; display: flex; align-items: center; gap: 10px;}
+#login .popup_box .input_box .email_box input, 
+#login .popup_box .input_box .email_box select {width: 180px;}
+#login .popup_box .input_box .email_box select {padding: 4px 0; font-size: 18px;}
+#login .popup_box .input_box button {margin-top: 10px; width: 30px; border-radius: 2px; background-color: #ececec; padding: 5px 0; font-size: 15px; color: #444;}
+#login .popup_box .input_box button.confirm_btn {width: 137px;}
+#login .popup_box .input_box .confirm_box {margin-top: 10px; display: flex; align-items: center; gap: 10px;}
+#login .popup_box .input_box .confirm_box button {margin-top: 10px; width: 30px; border-radius: 2px; background-color: #ececec; padding: 5px 0; font-size: 15px; color: #444;}
+#login .popup_box .input_box .confirm_box button.confirm_btn {width: 137px;}
+#login .popup_box .input_box .btn_box button {margin-top: 10px; width: 30px; border-radius: 2px; background-color: #ffe402; padding: 5px 0; font-size: 15px; color: #444;}
+#login .popup_box .input_box .btn_box button.submit_btn {margin-top: 30px; width: 100px;}
+#login .popup_box .input_box .btn_box button.close_btn {width: 100px;}
+
 
 /* 회원가입 */
 #join {display: grid; place-items: center; min-height: 100dvh;}

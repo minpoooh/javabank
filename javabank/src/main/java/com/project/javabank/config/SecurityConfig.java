@@ -32,8 +32,8 @@ public class SecurityConfig {
 					.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE).permitAll()
 					.requestMatchers("/css/**", "/images/**", "/js/**").permitAll()
 					.requestMatchers("/", "/login", "/logout", "/join", "/joinProcess", "/findId", "/findPw", "/favicon.ico",
-									"checkID.ajax", "/sendEmail.ajax", "/confirmCode.ajax", "/error",
-									"/createDeposit"
+									"/checkID.ajax", "/sendEmail.ajax", "/confirmCode.ajax", "/error",
+									"/createDeposit", "/sendEmailFindId.ajax", "/confirmCodeFindId.ajax", "/findId"
 									).permitAll()
 					.anyRequest().authenticated()
 			)

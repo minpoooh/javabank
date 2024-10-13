@@ -9,6 +9,11 @@
 		select * from JB_User
 		where userId = #{insertedUserId}
 	</select>
+	
+	<select id="getMailUser" parameterType="String" resultType="UserDTO">
+		select userId from JB_User
+		where userEmail = #{userEmail}
+	</select>
     
     <insert id="joinUser" parameterType="java.util.Map">
     	insert into JB_User (userId, userPw, userName, userBirth, userEmail, userTel, userRoles, userRegDate)

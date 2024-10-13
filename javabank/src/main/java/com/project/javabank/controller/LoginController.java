@@ -1,6 +1,7 @@
 package com.project.javabank.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.project.javabank.dto.UserDTO;
 import com.project.javabank.mapper.JoinMapper;
 
 import jakarta.mail.MessagingException;
@@ -167,7 +169,7 @@ public class LoginController {
 			MimeMessageHelper helper = new MimeMessageHelper(msg, true);
 			helper.setFrom("admin@javabank.com");
 			helper.setTo(email);
-	        helper.setSubject("JavaBank 이메일 인증번호입니다.");
+	        helper.setSubject("JavaBank 회원가입 인증번호입니다.");
 	        helper.setText("안녕하세요!! JavaBank 입니다.\n\n 이메일 인증번호 : " + certiCode
 	                + " \n\n 회원가입을 진행 하시려면 인증번호를 해당 칸에 입력해주세요.\n 이용해주셔서 감사합니다." + "\n\n --JavaBank--");
 	        mailSender.send(msg);	              
@@ -193,6 +195,99 @@ public class LoginController {
 			 }
 		 }
 		 return "ERROR";
+	}
+	
+	@ResponseBody
+	@PostMapping("/sendEmailFindId.ajax")
+	public String sendEmailFindId(HttpServletResponse resp, String mail1, String mail2) {
+		try {
+			String email = mail1 + mail2;
+			
+			// 인증코드
+			Random random = new Random();
+			String certiCode = String.valueOf(random.nextInt(900000) + 100000);
+			
+			// 쿠키
+			Cookie cookie = new Cookie("findIdCode", certiCode);
+			cookie.setMaxAge(3*60);
+			cookie.setPath("/");
+			resp.addCookie(cookie);
+			
+			// 이메일 전송 로직
+			MimeMessage msg = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(msg, true);
+			helper.setFrom("admin@javabank.com");
+			helper.setTo(email);
+	        helper.setSubject("JavaBank 아이디 찾기 인증번호입니다.");
+	        helper.setText("안녕하세요!! JavaBank 입니다.\n\n 이메일 인증번호 : " + certiCode
+	                + " \n\n 아이디 찾기를 진행 하시려면 인증번호를 해당 칸에 입력해주세요.\n 이용해주셔서 감사합니다." + "\n\n --JavaBank--");
+	        mailSender.send(msg);	              
+			
+			return "OK";
+		}catch(Exception e){
+			e.printStackTrace();
+			return "ERROR";
+		}
+	}
+	
+	
+	@ResponseBody
+	@PostMapping("/confirmCodeFindId.ajax")
+	public String confirmCodeFindId(HttpServletRequest req, String inputCode) {
+		Cookie [] cookies = req.getCookies();
+		 if(cookies != null) {
+			 for(Cookie cookie : cookies) {
+				 if(cookie.getName().contentEquals("findIdCode")) {
+					 if(cookie.getValue().equals(inputCode)) {
+						 return "OK";
+					 }
+				 }
+			 }
+		 }
+		 return "ERROR";
+	}
+	
+	@PostMapping("/findId")
+	public String findId(HttpServletRequest req, String userEmail1, String userEmail2) throws Exception {
+		System.out.println(userEmail1);
+		System.out.println(userEmail2);
+		
+		String userEmail = userEmail1 + userEmail2;
+		
+		System.out.println("ID찾기 이메일:"+userEmail);
+		
+		// 해당 메일 주소로 가입된 유저가 있는지 확인
+		List<UserDTO> user = mapper.getMailUser(userEmail);
+		System.out.println("userDTO"+ user);
+		
+		if(user.isEmpty() || user == null) {
+			req.setAttribute("msg", "해당 이메일로 가입된 ID가 없습니다.");
+		} else {
+			
+			// 이메일 전송 로직
+			MimeMessage msg = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(msg, true);
+			helper.setFrom("admin@javabank.com");
+			helper.setTo(userEmail);
+	        helper.setSubject("JavaBank 아이디 찾기 결과입니다.");
+	        
+	        // 사용자 ID를 수집하여 StringBuilder로 구성
+	        StringBuilder userIds = new StringBuilder();
+	        for (int i = 0; i < user.size(); i++) {
+	            userIds.append(user.get(i).getUserId());
+	            if (i < user.size() - 1) {
+	                userIds.append(", ");
+	            }
+	        }
+	        
+	        helper.setText("안녕하세요!! JavaBank 입니다.\n\n ID는 "+ userIds.toString() + "입니다. \n 이용해주셔서 감사합니다." + "\n\n --JavaBank--");
+	        mailSender.send(msg);	
+			
+			req.setAttribute("msg", "인증 받은 이메일로 아이디를 발송했습니다. 로그인 후 이용해주세요.");
+		}
+		
+		return "login";
+		
 		
 	}
 }

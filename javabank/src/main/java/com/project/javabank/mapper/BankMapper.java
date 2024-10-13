@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.project.javabank.dto.DepositDTO;
 import com.project.javabank.dto.ProductDTO;
+import com.project.javabank.dto.UserDTO;
 
 @Service
 public class BankMapper {
