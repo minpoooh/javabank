@@ -19,7 +19,7 @@
 
         <div class="icon_box">
             <div class="img_box">
-                <img src="images/icons/alarm.png">
+                <a href="/alarms"><img src="images/icons/alarm.png"></a>
             </div>
             <p class="alarm_txt">0</p>
             <div class="setting_btn img_box">
