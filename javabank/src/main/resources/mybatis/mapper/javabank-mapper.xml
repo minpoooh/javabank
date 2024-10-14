@@ -85,8 +85,8 @@
     </insert>
     
     <insert id="insertTransaction" parameterType="java.util.Map">
-    	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance) 
-    	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '개설', NULL, 0, 0)
+    	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount, transferName) 
+    	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '개설', NULL, 0, 0, NULL, NULL)
     </insert>
     
     <select id="getDepositInfo" parameterType="String" resultType="DepositDTO">
