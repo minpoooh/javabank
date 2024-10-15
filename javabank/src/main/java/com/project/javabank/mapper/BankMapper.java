@@ -64,9 +64,26 @@ public class BankMapper {
 	}
 	
 	public String getDepositPw(String depositAccount) {
-		System.out.println(depositAccount);
 		return sqlSession.selectOne("getDepositPw", depositAccount);
 	}
+	
+	public List<DepositDTO> getMyAccountList(String userId){
+		return sqlSession.selectList("getMyAccountList", userId);
+	}
+	
+	public List<DtransactionDTO> getMyTransactionList(Map<String, String> params){
+		return sqlSession.selectList("getMyTransactionList", params);
+	}
+	
+	@Transactional
+	public void transferProcess(Map<String, Object> params) {
+		//{sendMoneyAmount=10000, depositAccount=3333-01-1878191, inputAccount=3333014376949}
+		
+		// 출금계좌에서 출금 인서트
+		
+		// 수신계좌에서 입금 인서트
+	}
+	
 
 }
 

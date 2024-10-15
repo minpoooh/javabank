@@ -114,4 +114,21 @@
     	where depositAccount = #{depositAccount}
     </select>
     
+    <select id="getMyAccountList" parameterType="String" resultType="DepositDTO">
+    	select category, depositAccount from JB_Deposit
+    	where userId = #{userId}
+    	order by regDate asc
+    </select>
+    
+    <select id="getMyTransactionList" parameterType="String" resultType="DtransactionDTO">
+    	select transferName, transferAccount
+		from (
+				select transferName, transferAccount, ROW_NUMBER() over (Partition by transferAccount order by accountSeq desc) as rn
+		    	from JB_Dtransaction
+		    	where type != '개설'
+		    	and type = '출금'
+		) A
+		where rn = 1
+    </select>
+    
 </mapper>

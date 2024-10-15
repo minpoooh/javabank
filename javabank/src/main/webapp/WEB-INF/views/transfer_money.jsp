@@ -96,18 +96,22 @@
 	// 비밀번호 검증
 	let pwCheck = false;
 	let balanceCheck = false;
+	let limitCheck = false;
 	let depositAccount = '${depositAccount}';
 
 	function checkPw(){		
 		let csrfToken = '${_csrf.token}';
 		
-		// 패스워드 체크
+		// 패스워드 체크용 변수
 		let inputPw = document.getElementsByName('inputPw')[0].value;
 		
-		// 잔액 체크
+		// 잔액 체크용 변수
 		let depositBalance = '${depositBalance}';
 		let sendAmount = document.getElementsByName('amount')[0].value;
 		sendAmount = parseInt(sendAmount.replace(/,/g, ''), 10);
+		
+		// 이체한도 체크용 변수
+		let transactionLimit = '${transactionLimit}';
 		
 		if(inputPw.length < 4){
 			alert("비밀번호 4자리를 입력해주세요.")
@@ -130,17 +134,55 @@
 						alert("비밀번호 확인이 완료되었습니다.");
 						pwCheck = true;
 						
-						console.log("잔액:" + depositBalance);
-						console.log("보낼돈:" + sendAmount);
-						
+						// 잔액 체크
 						if (depositBalance >= sendAmount){
 							balanceCheck = true;
 						} else {
 							balanceCheck = false;
 						}
 						
-						if(pwCheck && balanceCheck){
-							location.href="/inputSendAccount";
+						// 이체한도 체크
+						if (transactionLimit > sendAmount){
+							limitCheck = true;
+						} else {
+							limitCheck = false;
+						}
+						
+						console.log(pwCheck);
+						console.log(balanceCheck);
+						console.log(limitCheck);
+						
+						if(pwCheck && balanceCheck && limitCheck){							
+							// 동적으로 폼 생성
+						    let form = document.createElement('form');
+						    form.method = 'POST';
+						    form.action = '/inputSendAccount'; 
+						    
+						 	// hidden input으로 금액 추가
+						    let amount = document.createElement('input');
+						    amount.type = 'hidden';
+						    amount.name = 'sendMoneyAmount';
+						    let value = document.getElementsByName('amount')[0].value;
+						    amount.value = parseInt(value.replace(/,/g, ''), 10);
+						    form.appendChild(amount);
+
+						    // hidden input으로 출금계좌번호 추가
+						    let account = document.createElement('input');
+						    account.type = 'hidden';
+						    account.name = 'depositAccount';
+						    account.value = '${depositAccount}';
+						    form.appendChild(account);
+						    
+							 // hidden input으로 토큰 추가
+						    let token = document.createElement('input');
+						    token.type = 'hidden';
+						    token.name = '_csrf';
+						    token.value = csrfToken;
+						    form.appendChild(token);
+
+						    // 폼을 body에 추가한 후 제출
+						    document.body.appendChild(form);
+						    form.submit();
 						}
 						
 					} else if(res === 'FAIL') {
@@ -163,10 +205,6 @@
 
 		
 	}
-	
-	function finalCheck(){
-		console.log(pwCheck);
-		console.log(balanceCheck);
-	}
+
 
 </script>

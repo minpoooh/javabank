@@ -167,6 +167,7 @@ public class BankController {
 		else {
 			req.setAttribute("depositAccount", depositAccount);
 			req.setAttribute("depositBalance", depositBalance);
+			req.setAttribute("transactionLimit", depositInfo.getTransactionLimit());
 			return "transfer_money";
 		}
 		
@@ -191,9 +192,45 @@ public class BankController {
 		}
 	}
 	
-	@GetMapping("/inputSendAccount")
-	public String inputSendAccount() {
+	
+	@PostMapping("/inputSendAccount")
+	public String inputSendAccount(@AuthenticationPrincipal User user, HttpServletRequest req, String depositAccount, int sendMoneyAmount) {
+		// ID 꺼내기
+		String userId = user.getUsername();
+		List<DepositDTO> myAccountList = mapper.getMyAccountList(userId);
+		
+		Map<String, String> params = new HashMap<>();
+		params.put("userId", userId);
+		params.put("depositAccount", depositAccount); // 출금 계좌번호
+		List<DtransactionDTO> myTransactionList = mapper.getMyTransactionList(params);
+		
+		req.setAttribute("myAccountList", myAccountList);  // 내 계좌리스트
+		req.setAttribute("myTransactionList", myTransactionList); // 최근 이체 내역
+		req.setAttribute("sendMoneyAmount", sendMoneyAmount); // 이체 금액
+		req.setAttribute("depositAccount", depositAccount); // 출금 계좌번호
+		
 		return "transfer";
+	}
+	
+	@PostMapping("/transferProcess")
+	public String transferProcess(String depositAccount, int sendMoneyAmount, String inputAccount) {
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("depositAccount", depositAccount);
+		params.put("sendMoneyAmount", sendMoneyAmount);
+		params.put("inputAccount", inputAccount);
+		
+		// 이체 처리
+		try {
+			mapper.transferProcess(params);
+			
+		} catch (Exception e) {
+			System.out.println("이체 처리 중 에러 발생");
+			e.printStackTrace();
+		}
+		
+		// 이체완료 페이지 이동
+		return "transfer_finish";
 	}
 	
 	
