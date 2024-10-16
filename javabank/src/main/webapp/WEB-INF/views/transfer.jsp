@@ -17,6 +17,9 @@
             <label>
                 <input type="text" name="inputAccount" value="" placeholder="계좌번호 입력" oninput="accountCheck(this)" required>
             </label>
+            <label>
+                <input type="text" name="inputMemo" value="" placeholder="메모 입력(선택)">
+            </label>
             <button class="bg_yellow" type="submit">다음</button>
         </div>
     </form>
@@ -66,7 +69,7 @@
 		                        <img src="/images/icons/passbook.png">
 		                    </div>
 		                    <div class="txt_box">
-		                        <p class="account_name">${transactionList.transferName}</p>
+		                        <p class="account_name">${transactionList.userName}  (${transactionList.updateDate})</p>
 		                        <p class="deposit_account"><span>JAVABANK</span>${transactionList.transferAccount}</p>
 		                    </div>
 		                </a>
@@ -91,34 +94,74 @@
 <!-- e: content -->
 <%@ include file="bottom.jsp"%>
 <script>
+	let sendMoney = document.getElementsByName('sendMoneyAmount')[0].value;
 	let inputBox = document.getElementsByName('inputAccount')[0];
 	function selectAccount(selected){
 		inputBox.value = '';
 		
 		let text = selected.querySelector('.deposit_account').innerText.trim();
 		let account = text.replace('JAVABANK', '');
-		let number = account.replaceAll('-', '');
 		
-		inputBox.value = number;
+		inputBox.value = account;
 	}
 	
 	function accountCheck(input){
 		let value = input.value.replace(/[^0-9]/g, ''); // 숫자만 허용
 		
-		if (value.length > 13){
-			value = value.slice(0, 13);
+	    if (value.length > 4 && value[4] !== '-'){
+	    	value = value.slice(0, 4) + '-' + value.slice(4);
+	    }
+		
+	    if (value.length > 7 && value[7] !== '-'){
+	    	value = value.slice(0, 7) + '-' + value.slice(7);
+	    }
+		
+		if (value.length > 15){
+			value = value.slice(0, 15);
 		}
 		input.value = value;
 	}
 	
 	function finalCheck(){
+		let csrfToken = '${_csrf.token}';
+		
 		if(inputBox.value.length < 13){
 			alert("계좌번호를 다시 확인해주세요.");
 			inputBox.focus();
 			return false;
+			
 		} else {
-			return true;
-		}
+			let account = inputBox.value;
+			// DB에 있는 계좌번호인지 확인
+			
+			$.ajax({
+	            url: "/checkAccountExist.ajax", // 서버의 계좌 체크 URL
+	            type: "POST",
+	            headers: {
+	                "X-CSRF-TOKEN": csrfToken
+	            },
+	            data: {
+	                "transferAccount": account
+	            },
+	            success: function(res) {
+	                console.log(res);
+	                if (res === 'OK') {
+	                	if (confirm(account + " 계좌번호로 " + sendMoney + "원 " +"이체하시겠습니까?")) {
+
+	                		document.forms['f'].submit();
+	                	} 	                	
+	                } else {
+	                    alert("없는 계좌번호 입니다. 다시 확인해주세요.");
+	                    inputBox.focus();	                    
+	                }
+	            },
+	            error: function(err) {
+	                console.log(err);
+	                alert("계좌 확인 중 오류가 발생했습니다.");
+	            }
+	        });
+	        return false;
+	    }
 	}
 
 </script>

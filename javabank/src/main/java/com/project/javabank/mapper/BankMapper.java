@@ -75,14 +75,38 @@ public class BankMapper {
 		return sqlSession.selectList("getMyTransactionList", params);
 	}
 	
+	public int getCheckAccountExist(String transferAccount) {
+		return sqlSession.selectOne("getCheckAccountExist", transferAccount);
+	}
+	
+	public String getReceiveUserId(String depositAccount) {
+		return sqlSession.selectOne("getReceiveUserId", depositAccount);
+	}
+	
 	@Transactional
 	public void transferProcess(Map<String, Object> params) {
-		//{sendMoneyAmount=10000, depositAccount=3333-01-1878191, inputAccount=3333014376949}
+		
+		// 출금계좌 잔액 조회
+		int balance = sqlSession.selectOne("getDepositBalanceOnly", params.get("depositAccount"));
+		int sendMoney = (int) params.get("sendMoneyAmount");
+		int depositBalance = balance - sendMoney;
+		params.put("depositBalance", depositBalance);
+		
+		// 수신계좌 잔액 조회
+		int rBalance = sqlSession.selectOne("getDepositBalanceOnly", params.get("inputAccount"));
+		int receiveBalance = rBalance + sendMoney;
+		params.put("receiveBalance", receiveBalance);
+		
+		//System.out.println("최종 params :" + params);
 		
 		// 출금계좌에서 출금 인서트
+		sqlSession.insert("withdrawProcess", params);
 		
 		// 수신계좌에서 입금 인서트
+		sqlSession.insert("depositProcess", params);
 	}
+	
+	
 	
 
 }

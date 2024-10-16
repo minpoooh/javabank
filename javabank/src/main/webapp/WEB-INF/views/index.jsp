@@ -124,9 +124,4 @@
 <!-- e: content -->
 <%@ include file="bottom.jsp"%>
 
-<script>
-  	let msg = "${msg}";
-	if(msg){
-		alert(msg);
-	}
-</script>
+

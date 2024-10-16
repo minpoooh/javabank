@@ -85,8 +85,8 @@
     </insert>
     
     <insert id="insertTransaction" parameterType="java.util.Map">
-    	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount, transferName) 
-    	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '개설', NULL, 0, 0, NULL, NULL)
+    	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount) 
+    	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '개설', NULL, 0, 0, NULL)
     </insert>
     
     <select id="getDepositInfo" parameterType="String" resultType="DepositDTO">
@@ -121,14 +121,49 @@
     </select>
     
     <select id="getMyTransactionList" parameterType="String" resultType="DtransactionDTO">
-    	select transferName, transferAccount
+    	select A.transferAccount, A.userID, B.userName, A.updateDate
+		from(
+		        select transferAccount, userID, updateDate
+		        from (
+		                select transferAccount, userId, updateDate, ROW_NUMBER() over (Partition by transferAccount order by accountSeq desc) as rn
+		                from JB_Dtransaction
+		                where type != '개설'
+		                and type = '출금'
+		        )
+		        where rn = 1
+		)A
+		join JB_User B
+		on A.userId = B.userId
+    </select>
+    
+    <select id="getCheckAccountExist" parameterType="String" resultType="int">
+    	select count(*) from JB_Deposit
+    	where depositAccount = #{transferAccount}
+    </select>
+    
+    <select id="getReceiveUserId" parameterType="String" resultType="String">
+    	select userId from JB_Deposit
+    	where depositAccount = #{depositAccount}
+    </select>    
+    
+    <select id="getDepositBalanceOnly" parameterType="String" resultType="int">
+    	select balance 
 		from (
-				select transferName, transferAccount, ROW_NUMBER() over (Partition by transferAccount order by accountSeq desc) as rn
-		    	from JB_Dtransaction
-		    	where type != '개설'
-		    	and type = '출금'
-		) A
+		        select depositAccount, balance, updateDate, row_number() over(Partition by depositAccount order by accountSeq desc) as rn
+		        from JB_Dtransaction
+		        where depositAccount = #{depositAccount}
+		)
 		where rn = 1
     </select>
+    
+    <insert id="withdrawProcess" parameterType="java.util.Map">
+    	insert into JB_Dtransaction (accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount)
+    	values (accountSeq.nextVal, #{depositAccount}, #{receiveUserId}, SYSDATE, '출금', #{inputMemo}, #{sendMoneyAmount}, #{depositBalance}, #{inputAccount})
+    </insert>
+    
+    <insert id="depositProcess" parameterType="java.util.Map">
+    	insert into JB_Dtransaction (accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount)
+    	values (accountSeq.nextVal, #{inputAccount}, #{userId}, SYSDATE, '입금', #{inputMemo}, #{sendMoneyAmount}, #{receiveBalance}, #{depositAccount})
+    </insert>
     
 </mapper>

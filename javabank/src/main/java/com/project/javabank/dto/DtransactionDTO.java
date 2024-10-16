@@ -10,7 +10,6 @@ public class DtransactionDTO {
 	private int deltaAmount;
 	private int balance;
 	private String transferAccount;
-	private String transferName;
 	
 	public int getAccountSeq() {
 		return accountSeq;
@@ -65,12 +64,6 @@ public class DtransactionDTO {
 	}
 	public void setTransferAccount(String transferAccount) {
 		this.transferAccount = transferAccount;
-	}
-	public String getTransferName() {
-		return transferName;
-	}
-	public void setTransferName(String transferName) {
-		this.transferName = transferName;
 	}
 
 

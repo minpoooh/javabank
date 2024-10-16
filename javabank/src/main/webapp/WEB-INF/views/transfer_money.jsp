@@ -131,12 +131,11 @@
 				success : function(res){
 					console.log(res);
 					if(res === 'OK'){
-						alert("비밀번호 확인이 완료되었습니다.");
 						pwCheck = true;
 						
 						// 잔액 체크
 						if (depositBalance >= sendAmount){
-							balanceCheck = true;
+							balanceCheck = true; 
 						} else {
 							balanceCheck = false;
 						}
@@ -151,6 +150,14 @@
 						console.log(pwCheck);
 						console.log(balanceCheck);
 						console.log(limitCheck);
+						if(!balanceCheck && limitCheck){
+							alert("금일 이체한도를 초과하였습니다.");
+						}else if(balanceCheck && !limitCheck){
+							alert("잔액이 부족합니다.");
+						}else if(!balanceCheck && !limitCheck){
+							alert("잔액 부족 및 이체한도가 초과되었습니다.");
+						}
+						
 						
 						if(pwCheck && balanceCheck && limitCheck){							
 							// 동적으로 폼 생성

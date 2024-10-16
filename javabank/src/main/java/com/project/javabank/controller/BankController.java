@@ -212,13 +212,32 @@ public class BankController {
 		return "transfer";
 	}
 	
+	@ResponseBody
+	@PostMapping("/checkAccountExist.ajax")
+	public String checkAccountExist(String transferAccount) {
+		int exist = mapper.getCheckAccountExist(transferAccount);
+		
+		if(exist > 0) {
+			return "OK";
+		} else {
+			return "NOTEXIST";
+		}
+		
+	}
+	
 	@PostMapping("/transferProcess")
-	public String transferProcess(String depositAccount, int sendMoneyAmount, String inputAccount) {
+	public String transferProcess(@AuthenticationPrincipal User user, HttpServletRequest req, String depositAccount, int sendMoneyAmount, String inputAccount, String inputMemo) {
+		
+		// 상대방 계좌번호로 아이디 가져오기
+		String receiveUserId = mapper.getReceiveUserId(inputAccount);
 		
 		Map<String, Object> params = new HashMap<>();
-		params.put("depositAccount", depositAccount);
+		params.put("depositAccount", depositAccount);	// 출금계좌
 		params.put("sendMoneyAmount", sendMoneyAmount);
-		params.put("inputAccount", inputAccount);
+		params.put("inputAccount", inputAccount);		// 입금계좌
+		params.put("userId", user.getUsername());
+		params.put("receiveUserId", receiveUserId);
+		params.put("inputMemo", inputMemo);
 		
 		// 이체 처리
 		try {
@@ -230,6 +249,7 @@ public class BankController {
 		}
 		
 		// 이체완료 페이지 이동
+		req.setAttribute("msg", "이체가 완료되었습니다.");
 		return "transfer_finish";
 	}
 	
