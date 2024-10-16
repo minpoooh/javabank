@@ -69,8 +69,9 @@
 		                        <img src="/images/icons/passbook.png">
 		                    </div>
 		                    <div class="txt_box">
-		                        <p class="account_name">${transactionList.userName}  (${transactionList.updateDate})</p>
-		                        <p class="deposit_account"><span>JAVABANK</span>${transactionList.transferAccount}</p>
+		                        <p class="account_name">${transactionList.userName}</p>
+		                        <p class="deposit_account"><span>${transactionList.transferAccount}</span></p>
+		                        <p class="update_date">${transactionList.updateDate} </p>
 		                    </div>
 		                </a>
 		            </li>
@@ -146,10 +147,27 @@
 	            success: function(res) {
 	                console.log(res);
 	                if (res === 'OK') {
-	                	if (confirm(account + " 계좌번호로 " + sendMoney + "원 " +"이체하시겠습니까?")) {
-
-	                		document.forms['f'].submit();
-	                	} 	                	
+	                	// 계좌번호가 존재하면 해당 계좌 소유자 이름 꺼내오기
+	                	$.ajax({
+	                		url: "/getAccountName.ajax", 
+	        	            type: "POST",
+	        	            headers: {
+	        	                "X-CSRF-TOKEN": csrfToken
+	        	            },
+	        	            data: {
+	        	                "depositAccount": account
+	        	            },
+	        	            success: function(res) {
+	        	            	let name = res;
+	    	                	if (confirm(account +"("+ name +")님에게 " + new Intl.NumberFormat().format(sendMoney) + "원 " +"이체하시겠습니까?")) {
+	    	                		document.forms['f'].submit();
+	    	                	} 
+	        	            },
+	        	            error: function(err){
+	        	            	console.log(err);
+	        	            }
+	                	});
+	                	
 	                } else {
 	                    alert("없는 계좌번호 입니다. 다시 확인해주세요.");
 	                    inputBox.focus();	                    

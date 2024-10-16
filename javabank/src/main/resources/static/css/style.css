@@ -180,9 +180,10 @@ footer p {margin-top: 16px; font-size: 14px; text-align: center; color: #666;}
 #transfer .bank_list .account_list li + li {border-top: 1px solid #ccc;}
 #transfer .bank_list .account_list li a {display: flex; gap: 20px; width: 100%; padding: 10px 0;}
 #transfer .bank_list .account_list li .txt_box .account_name {font-size: 18px; color: #222;}
-#transfer .bank_list .account_list li .txt_box .deposit_account {margin-top: 6px; font-size: 16px; color: #434343;}
+#transfer .bank_list .account_list li .txt_box .deposit_account { display: flex; margin-top: 6px; color: #434343;}
+#transfer .bank_list .account_list li .txt_box .update_date { display: flex; margin-top: 6px; font-size: 14px; color:#a0a0a0;}
 #transfer .bank_list .account_list li .txt_box .deposit_account span {margin-right: 10px;}
-#transfer .bank_list .account_list li .img_box {width: 30px;}
+#transfer .bank_list .account_list li .img_box {width: 30px; height: 40px;}
 
 /* transfer_money */
 #transfer_money .bank_info {text-align: center;}

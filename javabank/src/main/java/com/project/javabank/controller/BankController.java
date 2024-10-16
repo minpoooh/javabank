@@ -163,12 +163,15 @@ public class BankController {
 			Map<String, String> params = new HashMap<>();
 			params.put("depositAccount", depositAccount);
 			
-			LocalDate today = LocalDate.now();
+			LocalDate date = LocalDate.now();
+			LocalDate today = date.plusDays(1);
+			String todayDate = String.valueOf(today);
+			
 			LocalDate oneMonthAgo = today.minusMonths(1);
-			String date = String.valueOf(oneMonthAgo);
-			String day = String.valueOf(today);
-			params.put("today", day);
-			params.put("period", date);			
+			String oneMonthAgoDate = String.valueOf(oneMonthAgo);
+			
+			params.put("today", todayDate);
+			params.put("period", oneMonthAgoDate);			
 			params.put("details", "all");
 			
 			// 거래내역
@@ -196,26 +199,27 @@ public class BankController {
 		params.put("depositAccount", depositAccount);		
 		params.put("details", details);
 		
-		LocalDate today = LocalDate.now();
-		String day = String.valueOf(today);
-		params.put("today", day);
+		LocalDate date = LocalDate.now();
+		LocalDate today = date.plusDays(1); 
+		String todayDate = String.valueOf(today);
+		params.put("today", todayDate);
 		
 		if (period.equals("1M")) {
 			LocalDate oneMonthAgo = today.minusMonths(1);
-			String date = String.valueOf(oneMonthAgo);
-			params.put("period", date);
+			String oneMonthAgoDate = String.valueOf(oneMonthAgo);
+			params.put("period", oneMonthAgoDate);
 		} else if(period.equals("3M")) {
 			LocalDate threeMonthAgo = today.minusMonths(3);
-			String date = String.valueOf(threeMonthAgo);
-			params.put("period", date);
+			String threeMonthAgoDate = String.valueOf(threeMonthAgo);
+			params.put("period", threeMonthAgoDate);
 		} else if(period.equals("1Y")) {
 			LocalDate oneYearAgo = today.minusYears(1);
-			String date = String.valueOf(oneYearAgo);
-			params.put("period", date);
+			String oneYearAgoDate = String.valueOf(oneYearAgo);
+			params.put("period", oneYearAgoDate);
 		} else if(period.equals("3Y")) {
 			LocalDate threeYearAgo = today.minusYears(3);
-			String date = String.valueOf(threeYearAgo);
-			params.put("period", date);
+			String threeYearAgoDate = String.valueOf(threeYearAgo);
+			params.put("period", threeYearAgoDate);
 		}		
 		System.out.println(params);
 		List<DtransactionDTO> transactionList = mapper.getDepositTransaction(params);
@@ -279,6 +283,13 @@ public class BankController {
 			return "NOTEXIST";
 		}
 		
+	}
+	
+	@ResponseBody
+	@PostMapping("/getAccountName.ajax")
+	public String getAccountName(String depositAccount) {
+		String name = mapper.getAccountName(depositAccount);
+		return name;
 	}
 	
 	@PostMapping("/transferProcess")

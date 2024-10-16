@@ -36,7 +36,8 @@ public class SecurityConfig {
 									"/createDeposit", "/sendEmailFindId.ajax", "/confirmCodeFindId.ajax", "/findId",
 									"/sendEmailFindPw.ajax", "/confirmCodeFindPw.ajax", "/findPw",
 									"/depositList", "/transferMoney", "/checkPwForTransfer.ajax",
-									"/inputSendAccount", "/transferProcess", "/checkAccountExist.ajax", "/selectChange.ajax"
+									"/inputSendAccount", "/transferProcess", "/checkAccountExist.ajax", "/selectChange.ajax",
+									"/getAccountName.ajax"
 									).permitAll()
 					.anyRequest().authenticated()
 			)

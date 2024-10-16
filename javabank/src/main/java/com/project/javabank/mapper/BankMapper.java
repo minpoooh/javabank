@@ -80,6 +80,10 @@ public class BankMapper {
 		return sqlSession.selectOne("getCheckAccountExist", transferAccount);
 	}
 	
+	public String getAccountName(String depositAccount) {
+		return sqlSession.selectOne("getAccountName", depositAccount);
+	}
+	
 	public String getReceiveUserId(String depositAccount) {
 		return sqlSession.selectOne("getReceiveUserId", depositAccount);
 	}
