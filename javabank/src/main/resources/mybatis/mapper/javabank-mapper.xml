@@ -105,9 +105,17 @@
     	select A.*, B.userName from JB_Dtransaction A
     			 join JB_User B
     			 	on A.userId = B.userId
-    	where DepositAccount = #{depositAccount}
-    	order by AccountSeq desc
+    	where A.DepositAccount = #{depositAccount}
+    			and A.updateDate between #{period} and #{today}
+    			<if test="details == 'deposit'">
+    			and A.type = '입금'
+    			</if>
+    			<if test="details == 'withdraw'">
+    			and A.type = '출금'
+    			</if>
+    	order by A.updateDate desc
     </select>
+   
     
     <select id="getDepositPw" parameterType="String" resultType="String">
     	select depositPw from JB_Deposit

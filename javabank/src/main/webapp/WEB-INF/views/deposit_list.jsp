@@ -9,45 +9,149 @@
         <div class="txt_box">
             <p class="account_name">${depositInfo.category}</p>
             <p class="account_number">${depositInfo.depositAccount}</p>
-            <p class="account_amount">${depositBalance}원</p>
+            <p class="account_amount"><fmt:formatNumber value="${depositBalance}" pattern="###,###"/>원</p>
         </div>
         <div class="btn_box">
-            <button type="button">이체</button>
+        	<form action="/depositList" method="post">
+        		<input type="hidden" name="depositAccount" value="${depositInfo.depositAccount}">
+			    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            	<button type="submit" name="submitType" value="transfer">이체</button>
+            </form>
         </div>
     </div>
 
     <div class="account_details">
         <div class="toolbar">
-            <select name="period">
-                <option value="1M">1개월</option>
-                <option value="3M">3개월</option>
-                <option value="1Y">1년</option>
+            <select name="period" onchange="updateList()">
+                <option value="1M" ${period == '1M' ? 'selected' : ''}>1개월</option>
+                <option value="3M" ${period == '3M' ? 'selected' : ''}>3개월</option>
+                <option value="1Y" ${period == '1Y' ? 'selected' : ''}>1년</option>
+                <option value="3Y" ${period == '3Y' ? 'selected' : ''}>3년</option>
             </select>
-            <select name="details">
-                <option value="all">전체</option>
-                <option value="deposit">입금</option>
-                <option value="payment">출금</option>
+            <select name="details" onchange="updateList()">
+                <option value="all" ${details == 'all' ? 'selected' : ''}>전체</option>
+                <option value="deposit" ${details == 'deposit' ? 'selected' : ''}>입금</option>
+                <option value="withdraw" ${details == 'withdraw' ? 'selected' : ''}>출금</option>
             </select>
         </div>
-        <ul class="account_list">      
-        	<c:forEach var="transactionList" items="${transactionList}">  	
-	            <li class="account_items">
-	                <div class="txt_box">
-	                    <p class="account_date font_gray">${transaction.updateDate}</p>
-	                    <p class="account_name">${transactionList.userName}</p>
-	                    <p class="account_meno font_darkgray">${transactionList.memo}</p>
-	                    <p></p>
-	                </div>
-	                <div class="account_info">
-	                    <p class="account_type font_blue">${transactionList.type}</p>
-	                    <p class="delta_amount font_blue">${transactionList.deltaAmount}원</p>
-	                    <p class="account_balance font_darkgray">잔액 ${transactionList.balance}원</p>
-	                </div>
-	            </li>   
-            </c:forEach>         
+        <ul class="account_list">
+        	<c:if test="${empty transactionList}">
+        		 <li class="account_items">
+		                <div class="txt_box"> 거래 내역이 없습니다. </div>
+		          </li>
+        	</c:if>
+        	<c:if test="${not empty transactionList}">
+	        	<c:forEach var="transactionList" items="${transactionList}">  	
+		            <li class="account_items">
+		                <div class="txt_box">
+		                    <p class="account_date font_gray">${transactionList.updateDate}</p>
+		                    <p class="account_name">${transactionList.userName}</p>
+		                    <c:if test="${not empty transactionList.memo}">
+		                    <p class="account_meno font_darkgray"># ${transactionList.memo}</p>
+		                    </c:if>
+		                    <c:if test="${empty transactionList.memo}">
+		                    <p class="account_meno font_darkgray">${transactionList.memo}</p>
+		                    </c:if>
+		                    <p></p>
+		                </div>
+		                <c:if test="${transactionList.type eq '출금'}">
+			                <div class="account_info">
+			                    <p class="account_type font_blue">${transactionList.type}</p>
+			                    <p class="delta_amount font_blue">-<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
+			                    <p class="account_balance font_darkgray"><fmt:formatNumber value="${transactionList.balance}" pattern="###,###"/>원</p>
+			                </div>
+		                </c:if>
+		                <c:if test="${transactionList.type eq '입금'}">
+			                <div class="account_info">
+			                    <p class="account_type font_red">${transactionList.type}</p>
+			                    <p class="delta_amount font_red">+<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
+			                    <p class="account_balance font_darkgray"><fmt:formatNumber value="${transactionList.balance}" pattern="###,###"/>원</p>
+			                </div>
+		                </c:if>
+		                <c:if test="${transactionList.type eq '개설'}">
+			                <div class="account_info">
+			                    <p class="account_type font_darkgray">${transactionList.type}</p>
+			                    <p class="delta_amount font_darkgray">+<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
+			                    <p class="account_balance font_darkgray"><fmt:formatNumber value="${transactionList.balance}" pattern="###,###"/>원</p>
+			                </div>
+		                </c:if>
+		            </li>   
+	            </c:forEach>    
+	    	</c:if>     
         </ul>
         
     </div>
 </section>
 <!-- e: content -->
+<script>
+	function updateList(){
+		let csrfToken = '${_csrf.token}';
+		let period = document.getElementsByName('period')[0].value;
+		let details = document.getElementsByName('details')[0].value;
+		let depositAccount = document.getElementsByName('depositAccount')[0].value;
+		
+		
+		$.ajax({
+			url: "/selectChange.ajax",
+			type: "POST",
+			headers:{
+				"X-CSRF-TOKEN": csrfToken
+			},
+			data:{
+				"depositAccount": depositAccount,
+				"period": period,
+				"details": details
+			},
+			success:function(response){
+				let transactionList = response.transactionList;
+				
+				let newContent = '';
+				if(transactionList.length === 0){
+					newContent = '<li class="account_items"><div class="txt_box"> 거래 내역이 없습니다. </div></li>';
+				} else {
+					for (var i=0; i<transactionList.length; i++){
+						let transaction = transactionList[i];
+						newContent += '<li class="account_items">'+
+						                '<div class="txt_box">'+
+						                    '<p class="account_date font_gray">' + transaction.updateDate +'</p>'+
+						                    '<p class="account_name">' + transaction.userName +'</p>'+
+						                    (transaction.memo ? '<p class="account_meno font_darkgray"># ' + transaction.memo +'</p>' : '') +
+						                    '<p></p>'+
+						                '</div>';
+						                if(transaction.type === '출금'){
+						                	newContent += 
+						                	'<div class="account_info">'+
+							                    '<p class="account_type font_blue">' + transaction.type +'</p>'+
+							                    '<p class="delta_amount font_blue">-' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>'+
+							                    '<p class="account_balance font_darkgray">' + new Intl.NumberFormat().format(transaction.balance) +'원</p>'+
+							                '</div>';
+						                } else if(transaction.type === '입금'){
+						                	newContent += 
+							                '<div class="account_info">'+
+							                    '<p class="account_type font_red">' + transaction.type +'</p>'+
+							                    '<p class="delta_amount font_red">+' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>'+
+							                    '<p class="account_balance font_darkgray">' + new Intl.NumberFormat().format(transaction.balance) +'원</p>'+
+							                '</div>';
+						                } else if(transaction.type === '개설'){	
+						                	newContent += 
+							                '<div class="account_info">'+
+							                    '<p class="account_type font_darkgray">' + transaction.type +'</p>'+
+							                    '<p class="delta_amount font_darkgray">+' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>'+
+							                    '<p class="account_balance font_darkgray">' + new Intl.NumberFormat().format(transaction.balance) +'원</p>'+
+							                '</div>';
+						                }
+						                newContent += '</li>';
+					}
+				}
+				
+				document.querySelector('.account_list').innerHTML = newContent;
+			},
+			error:function(err){
+				console.log(err);
+			}
+		});
+	}
+</script>
+
+
 <%@ include file="bottom.jsp"%>

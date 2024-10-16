@@ -22,7 +22,7 @@
             <c:if test="${not empty accountList}">
 	            <li class="nolist">
 	                <a href="/createDeposit">
-	                    <p>입출금통장 추가 개설</p>
+	                    <p>입출금통장 추가 개설하기</p>
 	                    <div class="img_box">
 	                        <img src="images/icons/account.png">
 	                    </div>
@@ -37,7 +37,7 @@
 			                <div class="txt_box">
 			                    <p class="account_name">${accountList.category}</p>
 			                    <p class="account_number">${accountList.depositAccount}</p>
-			                    <p class="account_amount">${accountList.balance}원</p>
+			                    <p class="account_amount"><fmt:formatNumber value="${accountList.balance}" pattern="###,###"/>원</p>
 			                </div>
 			                <div class="btn_box">
 			                	<input type="hidden" name="depositAccount" value="${accountList.depositAccount}">
@@ -61,7 +61,7 @@
                 <div class="txt_box">
                     <p class="account_name">${fixedDeposit.category}</p>
                     <p class="account_number">${fixedDeposit.productAccount}</p>
-                    <p class="account_amount">${fixedDeposit.balance}원</p>
+                    <p class="account_amount"><fmt:formatNumber value="${fixedDeposit.balance}" pattern="###,###"/>원</p>
                 </div>
                 <div class="btn_box">
                     <button type="button">조회</button>

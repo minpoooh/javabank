@@ -1,11 +1,15 @@
 package com.project.javabank.controller;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -156,9 +160,20 @@ public class BankController {
 		
 		// 조회 버튼 클릭한 경우
 		if(submitType.equals("list")) {
-	
+			Map<String, String> params = new HashMap<>();
+			params.put("depositAccount", depositAccount);
+			
+			LocalDate today = LocalDate.now();
+			LocalDate oneMonthAgo = today.minusMonths(1);
+			String date = String.valueOf(oneMonthAgo);
+			String day = String.valueOf(today);
+			params.put("today", day);
+			params.put("period", date);			
+			params.put("details", "all");
+			
 			// 거래내역
-			List<DtransactionDTO> transactionList = mapper.getDepositTransaction(depositAccount);
+			List<DtransactionDTO> transactionList = mapper.getDepositTransaction(params);
+			System.out.println("리스트준비완료");
 			req.setAttribute("transactionList", transactionList);
 			
 			return "deposit_list";
@@ -172,6 +187,47 @@ public class BankController {
 		}
 		
 	}
+	
+	@ResponseBody
+	@PostMapping("/selectChange.ajax")
+	public ResponseEntity<Map<String, Object>> selectChange (String depositAccount, String period, String details) {
+	
+		Map<String, String> params = new HashMap<>();
+		params.put("depositAccount", depositAccount);		
+		params.put("details", details);
+		
+		LocalDate today = LocalDate.now();
+		String day = String.valueOf(today);
+		params.put("today", day);
+		
+		if (period.equals("1M")) {
+			LocalDate oneMonthAgo = today.minusMonths(1);
+			String date = String.valueOf(oneMonthAgo);
+			params.put("period", date);
+		} else if(period.equals("3M")) {
+			LocalDate threeMonthAgo = today.minusMonths(3);
+			String date = String.valueOf(threeMonthAgo);
+			params.put("period", date);
+		} else if(period.equals("1Y")) {
+			LocalDate oneYearAgo = today.minusYears(1);
+			String date = String.valueOf(oneYearAgo);
+			params.put("period", date);
+		} else if(period.equals("3Y")) {
+			LocalDate threeYearAgo = today.minusYears(3);
+			String date = String.valueOf(threeYearAgo);
+			params.put("period", date);
+		}		
+		System.out.println(params);
+		List<DtransactionDTO> transactionList = mapper.getDepositTransaction(params);
+		
+		Map<String, Object> response = new HashMap<>();
+		response.put("transactionList", transactionList);
+		response.put("period", period);
+		response.put("details", details);
+		
+		return ResponseEntity.ok(response);
+	}
+
 	
 	@ResponseBody
 	@PostMapping("/checkPwForTransfer.ajax")
@@ -241,20 +297,25 @@ public class BankController {
 		
 		// 이체 처리
 		try {
-			mapper.transferProcess(params);
-			
+			mapper.transferProcess(params);			
 		} catch (Exception e) {
 			System.out.println("이체 처리 중 에러 발생");
 			e.printStackTrace();
 		}
 		
+		LocalDateTime dateTime = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분");
+		String transferTime = dateTime.format(formatter);
+		
 		// 이체완료 페이지 이동
 		req.setAttribute("msg", "이체가 완료되었습니다.");
+		req.setAttribute("transferTime", transferTime);
+		req.setAttribute("depositAccount", depositAccount);
+		req.setAttribute("sendMoneyAmount", sendMoneyAmount);
+		req.setAttribute("inputAccount", inputAccount);
 		return "transfer_finish";
 	}
 	
-	
-
 	
 	@GetMapping("/alarms")
 	public String alarms() {

@@ -59,8 +59,9 @@ public class BankMapper {
 		return sqlSession.selectOne("getDepositBalance", depositAccount);
 	}
 	
-	public List<DtransactionDTO> getDepositTransaction(String depositAccount){
-		return sqlSession.selectList("getDepositTransaction", depositAccount);
+	public List<DtransactionDTO> getDepositTransaction(Map<String, String> params){
+		System.out.println(params);
+		return sqlSession.selectList("getDepositTransaction", params);
 	}
 	
 	public String getDepositPw(String depositAccount) {
