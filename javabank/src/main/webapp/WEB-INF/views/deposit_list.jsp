@@ -54,34 +54,30 @@
 		                    </c:if>
 		                    <p></p>
 		                </div>
-		                <c:if test="${transactionList.type eq '출금'}">
-			                <div class="account_info">
-			                    <p class="account_type font_blue">${transactionList.type}</p>
-			                    <p class="delta_amount font_blue">-<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
-			                    <p class="account_balance font_darkgray"><fmt:formatNumber value="${transactionList.balance}" pattern="###,###"/>원</p>
-			                </div>
-		                </c:if>
-		                <c:if test="${transactionList.type eq '입금'}">
-			                <div class="account_info">
-			                    <p class="account_type font_red">${transactionList.type}</p>
-			                    <p class="delta_amount font_red">+<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
-			                    <p class="account_balance font_darkgray"><fmt:formatNumber value="${transactionList.balance}" pattern="###,###"/>원</p>
-			                </div>
-		                </c:if>
-		                <c:if test="${transactionList.type eq '개설'}">
-			                <div class="account_info">
-			                    <p class="account_type font_darkgray">${transactionList.type}</p>
-			                    <p class="delta_amount font_darkgray">+<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
-			                    <p class="account_balance font_darkgray"><fmt:formatNumber value="${transactionList.balance}" pattern="###,###"/>원</p>
-			                </div>
-		                </c:if>
-		                <c:if test="${transactionList.type eq '이자 입금'}">
-			                <div class="account_info">
-			                    <p class="account_type font_darkgray">${transactionList.type}</p>
-			                    <p class="delta_amount font_darkgray">+<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
-			                    <p class="account_balance font_darkgray"><fmt:formatNumber value="${transactionList.balance}" pattern="###,###"/>원</p>
-			                </div>
-		                </c:if>
+		                <div class="account_info">
+		                	<c:choose>
+				                <c:when test="${transactionList.type eq '출금'}">
+				                    <p class="account_type font_blue">${transactionList.type}</p>
+				                    <p class="delta_amount font_blue">-<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
+				                </c:when>
+				                <c:when test="${transactionList.type eq '입금'}">
+				                    <p class="account_type font_red">${transactionList.type}</p>
+				                    <p class="delta_amount font_red">+<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
+				                </c:when>
+				                <c:when test="${transactionList.type eq '개설'}">
+				                    <p class="account_type font_darkgray">${transactionList.type}</p>
+				                    <p class="delta_amount font_darkgray"><fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
+				                </c:when>
+				                <c:when test="${transactionList.type eq '이자 입금'}">
+				                    <p class="account_type font_darkgray">${transactionList.type}</p>
+				                    <p class="delta_amount font_darkgray">+<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
+				                </c:when>
+				                <c:otherwise>
+				                    <p class="account_type font_darkgray">${transactionList.type}</p>
+				                </c:otherwise>
+			                </c:choose>			                	
+				            	<p class="account_balance font_darkgray"><fmt:formatNumber value="${transactionList.balance}" pattern="###,###"/>원</p>
+			            </div>
 		            </li>   
 	            </c:forEach>    
 	    	</c:if>     
@@ -124,37 +120,24 @@
 						                    '<p class="account_name">' + transaction.userName +'</p>'+
 						                    (transaction.memo ? '<p class="account_meno font_darkgray"># ' + transaction.memo +'</p>' : '') +
 						                    '<p></p>'+
-						                '</div>';
+						                '</div>' +
+						                '<div class="account_info">';
 						                if(transaction.type === '출금'){
-						                	newContent += 
-						                	'<div class="account_info">'+
-							                    '<p class="account_type font_blue">' + transaction.type +'</p>'+
-							                    '<p class="delta_amount font_blue">-' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>'+
-							                    '<p class="account_balance font_darkgray">' + new Intl.NumberFormat().format(transaction.balance) +'원</p>'+
-							                '</div>';
+						                	newContent += '<p class="account_type font_blue">' + transaction.type +'</p>'+
+						                				  '<p class="delta_amount font_blue">-' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>';
 						                } else if(transaction.type === '입금'){
-						                	newContent += 
-							                '<div class="account_info">'+
-							                    '<p class="account_type font_red">' + transaction.type +'</p>'+
-							                    '<p class="delta_amount font_red">+' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>'+
-							                    '<p class="account_balance font_darkgray">' + new Intl.NumberFormat().format(transaction.balance) +'원</p>'+
-							                '</div>';
+						                	newContent += '<p class="account_type font_red">' + transaction.type +'</p>'+
+						                				  '<p class="delta_amount font_red">+' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>';
 						                } else if(transaction.type === '개설'){	
-						                	newContent += 
-							                '<div class="account_info">'+
-							                    '<p class="account_type font_darkgray">' + transaction.type +'</p>'+
-							                    '<p class="delta_amount font_darkgray">+' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>'+
-							                    '<p class="account_balance font_darkgray">' + new Intl.NumberFormat().format(transaction.balance) +'원</p>'+
-							                '</div>';
+						                	newContent += '<p class="account_type font_darkgray">' + transaction.type +'</p>'+
+						                				  '<p class="delta_amount font_darkgray">' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>';
 						                } else if(transaction.type === '이자 입금'){	
-						                	newContent += 
-								                '<div class="account_info">'+
-								                    '<p class="account_type font_darkgray">' + transaction.type +'</p>'+
-								                    '<p class="delta_amount font_darkgray">+' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>'+
-								                    '<p class="account_balance font_darkgray">' + new Intl.NumberFormat().format(transaction.balance) +'원</p>'+
-								                '</div>';
+						                	newContent += '<p class="account_type font_darkgray">' + transaction.type +'</p>'+
+						                				  '<p class="delta_amount font_darkgray">+' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>';
 							            }
-						                newContent += '</li>';
+						 newContent += '<p class="account_balance font_darkgray">' + new Intl.NumberFormat().format(Math.floor(transaction.balance)) +'원</p>'+
+							           '</div>';
+						               '</li>';
 					}
 				}
 				

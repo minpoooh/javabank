@@ -345,9 +345,8 @@ public class BankController {
 			System.out.println("입출금통장 한달에 한번 이자 입금 처리 에러");
 		}
 		
-		
-		System.out.println("입출금통장 이자입금 완료");
-		 
+		LocalDate date = LocalDate.now();
+		System.out.println(date + " 입출금통장 이자입금 완료");
 	}
 	
 	
