@@ -81,7 +81,7 @@
     
     <insert id="insertDeposit" parameterType="java.util.Map">
     	insert into JB_Deposit(depositAccount, userId, depositPw, category, regDate, interestRate, transactionLimit, mainAccount) 
-    	values (#{depositAccount}, #{userId}, #{depositPw}, '입출금통장', SYSDATE, 0.1, #{transactionLimit}, #{mainAccount})
+    	values (#{depositAccount}, #{userId}, #{depositPw}, '입출금통장', SYSDATE, 0.001, #{transactionLimit}, #{mainAccount})
     </insert>
     
     <insert id="insertTransaction" parameterType="java.util.Map">
@@ -108,7 +108,7 @@
     	where A.DepositAccount = #{depositAccount}
     			and A.updateDate between #{period} and #{today}
     			<if test="details == 'deposit'">
-    			and A.type = '입금'
+    			and (A.type = '입금' OR A.type = '이자 입금')
     			</if>
     			<if test="details == 'withdraw'">
     			and A.type = '출금'
@@ -180,6 +180,21 @@
     <insert id="depositProcess" parameterType="java.util.Map">
     	insert into JB_Dtransaction (accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount)
     	values (accountSeq.nextVal, #{inputAccount}, #{userId}, SYSDATE, '입금', #{inputMemo}, #{sendMoneyAmount}, #{receiveBalance}, #{depositAccount})
+    </insert>
+    
+    <select id="allDepositAccountList" resultType="DepositDTO">
+		select depositAccount, interestRate, balance from (
+    							select A.depositAccount, A.interestRate, B.balance, row_number() over(partition by A.depositAccount order by accountSeq desc)as rn
+    							from JB_Deposit A
+    							join JB_Dtransaction B
+    							on A.depositAccount = B.depositAccount
+    							)
+    	where rn = 1
+    </select>
+    
+    <insert id="insertSumInterest" parameterType="java.util.Map">
+    	insert into JB_Dtransaction (accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount)
+    	values (accountSeq.nextVal, #{depositAccount}, 'JAVABANK', SYSDATE, '이자 입금', NULL, #{deltaAmount}, #{balance}, '')
     </insert>
     
 </mapper>

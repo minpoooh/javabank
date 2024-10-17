@@ -37,7 +37,7 @@
 			                </div>
 			                <div class="txt_box">
 		                        <p class="account_name">${accountList.category}</p>
-		                        <p class="deposit_account"><span>JAVABANK</span>${accountList.depositAccount}</p>
+		                        <p class="deposit_account"><span>${accountList.depositAccount}</span></p>
 			                </div>
 			                </a>
 			        	</li>
@@ -50,7 +50,7 @@
 			                </div>
 			                <div class="txt_box">
 		                        <p class="account_name">${accountList.category}</p>
-		                        <p class="deposit_account"><span>JAVABANK</span>${accountList.depositAccount} [현재계좌]</p>
+		                        <p class="deposit_account"><span>${accountList.depositAccount} [현재계좌]</span></p>
 			                </div>
 			                </a>
 			        	</li>

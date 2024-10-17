@@ -20,7 +20,7 @@
             </c:if>
             
             <c:if test="${not empty accountList}">
-	            <li class="nolist">
+	            <li class="list">
 	                <a href="/createDeposit">
 	                    <p>입출금통장 추가 개설하기</p>
 	                    <div class="img_box">

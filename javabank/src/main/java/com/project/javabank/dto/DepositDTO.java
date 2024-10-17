@@ -1,5 +1,7 @@
 package com.project.javabank.dto;
 
+import java.math.BigDecimal;
+
 public class DepositDTO {
 	private String depositAccount;
 	private int depositPw;
@@ -59,12 +61,12 @@ public class DepositDTO {
 		this.mainAccount = mainAccount;
 	}
 	// 조인용 컬럼
-	private int balance;
+	private BigDecimal balance;
 
-	public int getBalance() {
+	public BigDecimal getBalance() {
 		return balance;
 	}
-	public void setBalance(int balance) {
+	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
 	}
 	

@@ -75,6 +75,13 @@
 			                    <p class="account_balance font_darkgray"><fmt:formatNumber value="${transactionList.balance}" pattern="###,###"/>원</p>
 			                </div>
 		                </c:if>
+		                <c:if test="${transactionList.type eq '이자 입금'}">
+			                <div class="account_info">
+			                    <p class="account_type font_darkgray">${transactionList.type}</p>
+			                    <p class="delta_amount font_darkgray">+<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
+			                    <p class="account_balance font_darkgray"><fmt:formatNumber value="${transactionList.balance}" pattern="###,###"/>원</p>
+			                </div>
+		                </c:if>
 		            </li>   
 	            </c:forEach>    
 	    	</c:if>     
@@ -139,7 +146,14 @@
 							                    '<p class="delta_amount font_darkgray">+' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>'+
 							                    '<p class="account_balance font_darkgray">' + new Intl.NumberFormat().format(transaction.balance) +'원</p>'+
 							                '</div>';
-						                }
+						                } else if(transaction.type === '이자 입금'){	
+						                	newContent += 
+								                '<div class="account_info">'+
+								                    '<p class="account_type font_darkgray">' + transaction.type +'</p>'+
+								                    '<p class="delta_amount font_darkgray">+' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>'+
+								                    '<p class="account_balance font_darkgray">' + new Intl.NumberFormat().format(transaction.balance) +'원</p>'+
+								                '</div>';
+							            }
 						                newContent += '</li>';
 					}
 				}

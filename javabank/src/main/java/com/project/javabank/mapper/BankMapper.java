@@ -1,5 +1,7 @@
 package com.project.javabank.mapper;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +62,6 @@ public class BankMapper {
 	}
 	
 	public List<DtransactionDTO> getDepositTransaction(Map<String, String> params){
-		System.out.println(params);
 		return sqlSession.selectList("getDepositTransaction", params);
 	}
 	
@@ -90,7 +91,6 @@ public class BankMapper {
 	
 	@Transactional
 	public void transferProcess(Map<String, Object> params) {
-		
 		// 출금계좌 잔액 조회
 		int balance = sqlSession.selectOne("getDepositBalanceOnly", params.get("depositAccount"));
 		int sendMoney = (int) params.get("sendMoneyAmount");
@@ -103,15 +103,34 @@ public class BankMapper {
 		params.put("receiveBalance", receiveBalance);
 		
 		//System.out.println("최종 params :" + params);
-		
 		// 출금계좌에서 출금 인서트
 		sqlSession.insert("withdrawProcess", params);
-		
 		// 수신계좌에서 입금 인서트
 		sqlSession.insert("depositProcess", params);
 	}
 	
+	@Transactional
+	public void processMonthlyInterest() {
+		List<DepositDTO> allDepositAccountList = sqlSession.selectList("allDepositAccountList");
+		//System.out.println(allDepositAccountList.size());
+		if(allDepositAccountList.size() != 0) {
+			for(DepositDTO account : allDepositAccountList) {
+				BigDecimal balance = account.getBalance();
+				BigDecimal interest = balance.multiply(BigDecimal.valueOf(account.getInterestRate()));			
+				BigDecimal sumInterestBalance = balance.add(interest);
+				
+				account.setBalance(sumInterestBalance);
 	
+				Map<String, Object> params = new HashMap<>();
+				params.put("depositAccount", account.getDepositAccount());
+				params.put("userId", account.getUserId());
+				params.put("deltaAmount", interest);
+				params.put("balance", sumInterestBalance);
+				
+				sqlSession.insert("insertSumInterest", params);
+			}
+		}
+	}
 	
 
 }

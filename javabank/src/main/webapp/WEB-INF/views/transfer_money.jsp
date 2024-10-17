@@ -20,7 +20,7 @@
 	    <button type="button" onclick="changedAmount('all')">전액</button>
 	</div>
 </section>
-
+ 
 <!-- 비밀번호 입력 팝업 -->
 <div class="popup_box" id="pwbox" style="display: none;">
     <p class="popup_title">비밀번호를 입력해주세요.</p>

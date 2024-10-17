@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -69,7 +70,10 @@ public class BankController {
 			if(periodicalDepositList.size() > 0) {
 				req.setAttribute("periodicalDepositList", periodicalDepositList);
 			}
-		
+			
+		LocalDate date = LocalDate.now();
+		System.out.println(date);
+
 		return "index";
 	}
 	
@@ -176,7 +180,6 @@ public class BankController {
 			
 			// 거래내역
 			List<DtransactionDTO> transactionList = mapper.getDepositTransaction(params);
-			System.out.println("리스트준비완료");
 			req.setAttribute("transactionList", transactionList);
 			
 			return "deposit_list";
@@ -328,9 +331,30 @@ public class BankController {
 	}
 	
 	
+	
+	
+	@Scheduled(cron = "0 0 0 L * *") // 매월 마지막 날 자정(00:00:00)에 작업을 실행
+	//@Scheduled(cron = "0 0 * * * *") // 매시 정각, 1시간에 한번 작업 실행
+	public void depositInterestCal() {
+		
+		// 입출금통장 이자 입금
+		mapper.processMonthlyInterest();
+		
+		System.out.println("입출금통장 이자입금 완료");
+		 
+	}
+	
+	
+	
+	
+	
+	
+	
 	@GetMapping("/alarms")
 	public String alarms() {
 		
 		return "alarms";
 	}
+	
+	
 }

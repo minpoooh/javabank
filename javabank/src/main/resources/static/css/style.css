@@ -124,9 +124,13 @@ footer p {margin-top: 16px; font-size: 14px; text-align: center; color: #666;}
 #main .account_box .account_tit {font-size: 20px;}
 #main .account_box ul li {border-radius: 8px; padding: 30px 16px;}
 
-#main .account_box ul .nolist {display: inline-block; border: 1px solid #ccc; width: 300px; }
+#main .account_box ul .nolist {display: inline-block; border: 1px solid #ccc; width: 380px; }
 #main .account_box ul .nolist a {display: flex; align-items: center; gap: 8px; font-size: 18px;}
 #main .account_box ul .nolist .img_box {width: 40px;}
+
+#main .account_box ul .list {display: inline-block; border: 1px solid #ccc; width: 300px; }
+#main .account_box ul .list a {display: flex; align-items: center; gap: 8px; font-size: 18px;}
+#main .account_box ul .list .img_box {width: 40px;}
 
 #main .account_box ul .account_item {display: flex; align-items: center; justify-content: space-between; margin-top: 15px;}
 #main .account_box ul .account_item + .account_item {margin-top: 10px;}

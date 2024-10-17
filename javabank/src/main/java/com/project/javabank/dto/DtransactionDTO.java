@@ -1,5 +1,7 @@
 package com.project.javabank.dto;
 
+import java.math.BigDecimal;
+
 public class DtransactionDTO {
 	private int accountSeq;
 	private String depositAccount;
@@ -8,7 +10,7 @@ public class DtransactionDTO {
 	private String type;
 	private String memo;
 	private int deltaAmount;
-	private int balance;
+	private BigDecimal balance;
 	private String transferAccount;
 	
 	public int getAccountSeq() {
@@ -53,10 +55,10 @@ public class DtransactionDTO {
 	public void setDeltaAmount(int deltaAmount) {
 		this.deltaAmount = deltaAmount;
 	}
-	public int getBalance() {
+	public BigDecimal getBalance() {
 		return balance;
 	}
-	public void setBalance(int balance) {
+	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
 	}
 	public String getTransferAccount() {
