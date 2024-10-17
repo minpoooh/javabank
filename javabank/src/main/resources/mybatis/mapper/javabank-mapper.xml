@@ -111,7 +111,7 @@
     			and (A.type = '입금' OR A.type = '이자 입금')
     			</if>
     			<if test="details == 'withdraw'">
-    			and A.type = '출금'
+    			and (A.type = '출금' OR A.type = '상품가입 출금')
     			</if>
     	order by A.accountSeq desc
     </select>
@@ -221,7 +221,7 @@
     
     <insert id="insertDtransactionbyFixed" parameterType="java.util.Map">
     	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount) 
-    	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '출금', '정기예금 가입', #{payment}, #{balance}, #{productAccount})
+    	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '상품가입 출금', '정기예금', #{payment}, #{balance}, #{productAccount})
     </insert>
     
 </mapper>

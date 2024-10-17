@@ -69,8 +69,12 @@
 				                    <p class="delta_amount font_darkgray"><fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
 				                </c:when>
 				                <c:when test="${transactionList.type eq '이자 입금'}">
-				                    <p class="account_type font_darkgray">${transactionList.type}</p>
-				                    <p class="delta_amount font_darkgray">+<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
+				                    <p class="account_type font_red">${transactionList.type}</p>
+				                    <p class="delta_amount font_red">+<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
+				                </c:when>
+				                <c:when test="${transactionList.type eq '상품가입 출금'}">
+				                    <p class="account_type font_blue">${transactionList.type}</p>
+				                    <p class="delta_amount font_blue">-<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
 				                </c:when>
 				                <c:otherwise>
 				                    <p class="account_type font_darkgray">${transactionList.type}</p>
@@ -134,6 +138,9 @@
 						                } else if(transaction.type === '이자 입금'){	
 						                	newContent += '<p class="account_type font_darkgray">' + transaction.type +'</p>'+
 						                				  '<p class="delta_amount font_darkgray">+' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>';
+							            } else if(transaction.type === '상품가입 출금'){	
+						                	newContent += '<p class="account_type font_blue">' + transaction.type +'</p>'+
+			                				  			  '<p class="delta_amount font_blue">-' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>';
 							            }
 						 newContent += '<p class="account_balance font_darkgray">' + new Intl.NumberFormat().format(Math.floor(transaction.balance)) +'원</p>'+
 							           '</div>';

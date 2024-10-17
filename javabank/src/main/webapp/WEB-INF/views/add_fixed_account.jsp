@@ -72,6 +72,7 @@
 	let acCheck = false;  // 계좌선택 체크
 	let payCheck = false; // 가입금액 체크
 	let periCheck = false; // 가입기간 체크
+	let balanceCheck = false; // 입출금계좌 잔액 체크
 	
 	
 	function checkPasswords(input) {
@@ -121,7 +122,7 @@
 			payCheck = false;
 		}
 		
-		if (value > 1000000 && value <= 10000000){
+		if (value >= 1000000 && value <= 10000000){
 			noti.textContent = '';
 			payCheck = true;
 		}
@@ -133,8 +134,10 @@
 	}
 	
 	function finalCheck(){
+		let csrfToken = '${_csrf.token}';
 		console.log("pwCheck:"+pwCheck);
 		
+		// 입출금계좌 선택 체크
 		let selectAccount = document.getElementsByName('selectAccount')[0].value;
 		if (selectAccount != 'notSelected'){
 			acCheck = true;
@@ -145,18 +148,52 @@
 		console.log("acCheck:"+acCheck);
 		console.log("payCheck:"+payCheck);
 		
+		// 가입기간 체크
 		let registerMonth = document.getElementsByName('registerMonth')[0].value;
 		if (registerMonth != 'notSelected'){
 			periCheck = true;
 		} else {
 			periCheck = false;
 		}
-		console.log(periCheck);
-		
+		console.log("periCheck:"+periCheck);
+
 		// 가입금액에서 천단위 구분기호 제거
 		let payment = document.getElementsByName('payment')[0];		
 		changedValue = payment.value.replace(/,/g, '');
 		payment.value = changedValue;
+		
+		// 입출금 계좌 잔액 체크
+		$.ajax({
+			url : "balanceCheck.ajax",
+			type : "POST",
+			headers : {
+                "X-CSRF-TOKEN": csrfToken
+            },
+			data : {
+				"selectAccount" : selectAccount				
+			},
+			success : function(balance){
+
+				
+				console.log("balance:"+balance);
+				console.log("payment:"+payment.value);
+				
+				if(balance === -1){
+					console.log("잔액 확인 중 에러");
+				}
+				
+				if(balance >= payment.value){
+					balanceCheck = true;
+				}else {
+					alert("선택하신 출금계좌의 잔액이 부족합니다.");
+					balanceCheck = false;
+				}
+			},
+			error : function(err){
+				console.log(err);
+			}
+		});
+		console.log("balanceCheck: "+balanceCheck);
 		
 		if(pwCheck && acCheck && payCheck){
 			return true;

@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -416,9 +415,18 @@ public class BankController {
 		return "redirect:/index";
 	}
 	
-	
-	
-	
+	@ResponseBody
+	@PostMapping("/balanceCheck.ajax")
+	public int balanceCheck(String selectAccount) {
+		try {
+			int balance = mapper.getDepositBalance(selectAccount);
+			return balance;
+		}catch(Exception e) {
+			e.printStackTrace();
+			System.out.println("정기예금 가입 잔액확인 중 에러");
+			return -1;
+		}	
+	}	
 	
 	
 	@Scheduled(cron = "0 0 0 L * *") // 매월 마지막 날 자정(00:00:00)에 작업을 실행
