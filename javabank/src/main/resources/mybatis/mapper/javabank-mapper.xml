@@ -113,7 +113,7 @@
     			<if test="details == 'withdraw'">
     			and A.type = '출금'
     			</if>
-    	order by A.updateDate desc
+    	order by A.accountSeq desc
     </select>
    
     
@@ -195,6 +195,33 @@
     <insert id="insertSumInterest" parameterType="java.util.Map">
     	insert into JB_Dtransaction (accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount)
     	values (accountSeq.nextVal, #{depositAccount}, 'JAVABANK', SYSDATE, '이자 입금', NULL, #{deltaAmount}, #{balance}, '')
+    </insert>
+    
+    <select id="getFixedAccountCheck" parameterType="String" resultType="int">
+    	select count(*) from JB_Product
+    	where productAccount = #{depositNum}
+    </select>
+    
+    <insert id="insertProduct" parameterType="java.util.Map">
+    	insert into JB_Product(productAccount, userId, productPw, category, autoTransferDate, monthlyPayment, payment, regDate, expiryDate, interestRate, depositAccount) 
+    	values (#{productAccount}, #{userId}, #{productPw}, '정기예금', NULL, NULL, #{payment}, SYSDATE, #{expiryDate}, #{interestRate}, #{depositAccount})
+    </insert>
+    
+    <insert id="insertPtransaction" parameterType="java.util.Map">
+    	insert into JB_Ptransaction(productSeq, productAccount, updateDate, type, memo, deltaAmount, balance) 
+    	values (productSeq.NextVal, #{productAccount}, SYSDATE, '가입', NULL, #{payment}, #{payment})
+    </insert>
+    
+    <select id="getBalancebyFixed" parameterType="java.util.Map" resultType="int">
+    	select balance from JB_Dtransaction
+    	where DepositAccount = #{depositAccount}
+    	order by AccountSeq desc
+    	fetch first 1 rows only
+    </select>
+    
+    <insert id="insertDtransactionbyFixed" parameterType="java.util.Map">
+    	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount) 
+    	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '출금', '정기예금 가입', #{payment}, #{balance}, #{productAccount})
     </insert>
     
 </mapper>

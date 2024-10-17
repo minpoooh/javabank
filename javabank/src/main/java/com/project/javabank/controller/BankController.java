@@ -330,6 +330,94 @@ public class BankController {
 		return "transfer_finish";
 	}
 	
+	@GetMapping("/createProduct")
+	public String createProduct(@RequestParam(required=false) String fixed, @RequestParam(required=false) String periodical, @AuthenticationPrincipal User user, HttpServletRequest req) {
+		
+		String userName = mapper.getUserName(user.getUsername());
+		req.setAttribute("userName", userName);
+		
+		List<DepositDTO> accountList = mapper.getAccountList(user.getUsername());
+		req.setAttribute("accountList", accountList);
+		
+		
+		if(fixed != null) {
+			return "add_fixed_account";
+		} else {
+			return "add_periodical_account";
+		}
+		
+	}
+	
+	@PostMapping("/createFixedProcess")
+	public String createFixedProcess(@AuthenticationPrincipal User user, HttpServletRequest req, RedirectAttributes red, String productPw, String selectAccount, int payment, String registerMonth) {
+	
+		System.out.println(productPw);
+		System.out.println(selectAccount);
+		System.out.println(payment);
+		System.out.println(registerMonth);
+		
+		// 계좌 생성 파라미터
+		Map<String, Object> params = new HashMap<>();
+		params.put("productPw", productPw);
+		params.put("depositAccount", selectAccount);
+		params.put("payment", payment);
+		
+		// 1. 유저 ID 뽑기
+		String userId = user.getUsername();
+		params.put("userId", userId);
+		
+		// 2. 계좌번호 랜덤으로 생성하기
+		//System.out.println((Math.random() * 9)+1); // 1 ~ 9
+		//System.out.println((Math.random() * 9000000) + 1000000); // 1000000 ~ 9999999
+		
+		int randomNum = 0;
+		int depositAccountCheck = 9999;
+		
+		while(depositAccountCheck > 0) {
+			randomNum = (int) (Math.random() * 9000000) + 1000000;
+			String depositNum = "3333-02-" + String.valueOf(randomNum);
+			
+			// 생성된 계좌번호 중복 체크
+			depositAccountCheck = mapper.getFixedAccountCheck(depositNum);
+			
+			if(depositAccountCheck == 0) {
+				//System.out.println("확정된 계좌번호:"+ depositNum);
+				params.put("productAccount", depositNum);
+				break;
+			}
+		}
+		
+		// 3. 만기일자 계산
+		LocalDate date = LocalDate.now();
+		if(registerMonth.equals("6M")) {
+			LocalDate expiry = date.plusMonths(6);
+			String expiryDate = String.valueOf(expiry);
+			System.out.println("expiryDate:"+ expiryDate);
+			params.put("expiryDate", expiryDate);
+			params.put("interestRate", 0.0028);
+		} else if (registerMonth.equals("12M")) {
+			LocalDate expiry = date.plusYears(1);
+			String expiryDate = String.valueOf(expiry);
+			System.out.println("expiryDate:"+ expiryDate);
+			params.put("expiryDate", expiryDate);
+			params.put("interestRate", 0.003);
+		}
+		
+		// 4. Product, Ptransaction 테이블 INSERT
+		try {
+			mapper.insertProduct(params);
+			red.addFlashAttribute("msg", "정기예금 상품에 가입되었습니다.");
+		} catch(Exception e) {
+			System.out.println("Product, Ptransaction 테이블 INSERT 에러");
+			e.printStackTrace();
+		}
+		
+		
+		return "redirect:/index";
+	}
+	
+	
+	
 	
 	
 	

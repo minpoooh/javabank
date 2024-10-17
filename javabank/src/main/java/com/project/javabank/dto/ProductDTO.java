@@ -7,6 +7,7 @@ public class ProductDTO {
 	private String category;
 	private String autoTransferDate;
 	private int monthlyPayment;
+	private int payment;
 	private String regDate;
 	private String expiryDate;
 	private double interestRate;
@@ -48,6 +49,12 @@ public class ProductDTO {
 	public void setMonthlyPayment(int monthlyPayment) {
 		this.monthlyPayment = monthlyPayment;
 	}
+	public int getPayment() {
+		return payment;
+	}
+	public void setPayment(int payment) {
+		this.payment = payment;
+	}
 	public String getRegDate() {
 		return regDate;
 	}
@@ -73,6 +80,15 @@ public class ProductDTO {
 		this.depositAccount = depositAccount;
 	}
 	
+	// 조인용 컬럼
+	private int balance;
+
+	public int getBalance() {
+		return balance;
+	}
+	public void setBalance(int balance) {
+		this.balance = balance;
+	}
 	
 	
 }

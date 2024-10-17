@@ -68,6 +68,11 @@
 	    	noti.style.color = 'red'; // 불일치할 경우 빨간색으로 표시
 	    	pwCheck = false;
 	    }
+	    
+	    if(pw === '' && pw2 === ''){
+	    	noti.textContent = '';
+	    	pwCheck = false;
+	    }
 	}
 	
 	function checkTransactionLimit(input){

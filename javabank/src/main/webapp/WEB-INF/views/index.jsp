@@ -99,21 +99,21 @@
         <p class="account_tit">상품가입</p>
         <ul class="product_list">
             <li>
-                <a href="javascript:;">
+                <a href="/createProduct?fixed">
                     <div class="img_box">
-                        <img src="/images/icons/account.png">
+                        <img src="/images/icons/pig.png">
                     </div>
-                    <span>정기예금</span>
+                    <span>정기예금 가입하기</span>
                     <p class="txt_noti">6개월 기준 기본 3.0%</p>
                 </a>
             </li>
 
             <li>
-                <a href="javascript:;">
+                <a href="/createProduct?periodical">
                     <div class="img_box">
-                        <img src="/images/icons/account.png">
+                        <img src="/images/icons/timer_money.png">
                     </div>
-                    <span>정기적금</span>
+                    <span>정기적금 가입하기</span>
                     <p class="txt_noti">6개월 기준 기본 3.5%</p>
                 </a>
             </li>

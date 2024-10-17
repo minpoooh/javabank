@@ -111,6 +111,8 @@ public class BankMapper {
 	
 	@Transactional
 	public void processMonthlyInterest() {
+		// 이자 계산 처리
+		
 		List<DepositDTO> allDepositAccountList = sqlSession.selectList("allDepositAccountList");
 		//System.out.println(allDepositAccountList.size());
 		if(allDepositAccountList.size() != 0) {
@@ -132,6 +134,27 @@ public class BankMapper {
 		}
 	}
 	
-
+	public int getFixedAccountCheck(String depositNum){
+		return sqlSession.selectOne("getFixedAccountCheck", depositNum);
+	}
+	
+	@Transactional
+	public void insertProduct(Map<String, Object> params) {
+		// Product 테이블 인서트
+		sqlSession.insert("insertProduct", params);
+		
+		// Product transaction 테이블 인서트
+		sqlSession.insert("insertPtransaction", params);
+		
+		// Deposit 테이블 잔액 계산
+		int balance = sqlSession.selectOne("getBalancebyFixed", params);
+		int payment = (int) params.get("payment");
+		int updatedBalance = balance - payment;
+		
+		params.put("balance", updatedBalance);
+		
+		// Deposit 테이블 인서트
+		sqlSession.insert("insertDtransactionbyFixed", params);
+	}
 }
 
