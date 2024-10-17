@@ -337,8 +337,14 @@ public class BankController {
 	//@Scheduled(cron = "0 0 * * * *") // 매시 정각, 1시간에 한번 작업 실행
 	public void depositInterestCal() {
 		
-		// 입출금통장 이자 입금
-		mapper.processMonthlyInterest();
+		// 입출금통장 이자 입금 처리
+		try {
+			mapper.processMonthlyInterest();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("입출금통장 한달에 한번 이자 입금 처리 에러");
+		}
+		
 		
 		System.out.println("입출금통장 이자입금 완료");
 		 
