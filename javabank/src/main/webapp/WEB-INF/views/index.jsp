@@ -54,19 +54,23 @@
 
 	<c:if test="${not empty fixedDepositList}">
     <div class="account_box">
-        <p class="account_tit">예금</p>
+        <p class="account_tit">상품</p>
         <c:forEach var="fixedDeposit" items="${fixedDepositList}">
         <ul>
             <li class="account_item bg_green">
-                <div class="txt_box">
-                    <p class="account_name">${fixedDeposit.category}</p>
-                    <p class="account_number">${fixedDeposit.productAccount}</p>
-                    <p class="account_amount"><fmt:formatNumber value="${fixedDeposit.balance}" pattern="###,###"/>원</p>
-                </div>
-                <div class="btn_box">
-                    <button type="button">조회</button>
-                    <button type="button">이체</button>
-                </div>
+            	<form action="/productList" method="post">
+	                <div class="txt_box">
+	                    <p class="account_name">${fixedDeposit.category}</p>
+	                    <p class="account_number">${fixedDeposit.productAccount}</p>
+	                    <p class="account_amount"><fmt:formatNumber value="${fixedDeposit.balance}" pattern="###,###"/>원</p>
+	                </div>
+	                <div class="btn_box">
+	                	<input type="hidden" name="productAccount" value="${fixedDeposit.productAccount}">
+			            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+	                    <button type="submit" name="submitType" value="list">조회</button>
+	                    <button type="submit" name="submitType" value="exit">해지</button>
+	                </div>
+	            </form>
             </li>
         </ul>
         </c:forEach>
@@ -104,7 +108,7 @@
                         <img src="/images/icons/pig.png">
                     </div>
                     <span>정기예금 가입하기</span>
-                    <p class="txt_noti">6개월 기준 기본 3.0%</p>
+                    <p class="txt_noti">6개월 기준 기본 2.8%</p>
                 </a>
             </li>
 

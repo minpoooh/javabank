@@ -1,8 +1,10 @@
 package com.project.javabank.controller;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.project.javabank.dto.DepositDTO;
 import com.project.javabank.dto.DtransactionDTO;
 import com.project.javabank.dto.ProductDTO;
+import com.project.javabank.dto.PtransactionDTO;
 import com.project.javabank.mapper.BankMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -69,9 +72,6 @@ public class BankController {
 			if(periodicalDepositList.size() > 0) {
 				req.setAttribute("periodicalDepositList", periodicalDepositList);
 			}
-			
-		LocalDate date = LocalDate.now();
-		System.out.println(date);
 
 		return "index";
 	}
@@ -391,13 +391,11 @@ public class BankController {
 		if(registerMonth.equals("6M")) {
 			LocalDate expiry = date.plusMonths(6);
 			String expiryDate = String.valueOf(expiry);
-			System.out.println("expiryDate:"+ expiryDate);
 			params.put("expiryDate", expiryDate);
 			params.put("interestRate", 0.0028);
 		} else if (registerMonth.equals("12M")) {
 			LocalDate expiry = date.plusYears(1);
 			String expiryDate = String.valueOf(expiry);
-			System.out.println("expiryDate:"+ expiryDate);
 			params.put("expiryDate", expiryDate);
 			params.put("interestRate", 0.003);
 		}
@@ -427,6 +425,117 @@ public class BankController {
 			return -1;
 		}	
 	}	
+	
+	@PostMapping("/productList")
+	public String productList(HttpServletRequest req, String submitType, String productAccount) {
+		
+		// 상품정보
+		ProductDTO productInfo = mapper.getProductInfo(productAccount);
+		req.setAttribute("productInfo", productInfo);
+		
+		// 상품잔액
+		int productBalance = mapper.getProductBalance(productAccount);
+		req.setAttribute("productBalance", productBalance);
+		
+		// 조회 버튼 클릭한 경우
+		if(submitType.equals("list")) {
+			Map<String, String> params = new HashMap<>();
+			params.put("productAccount", productAccount);
+			
+			LocalDate date = LocalDate.now();
+			LocalDate today = date.plusDays(1);
+			String todayDate = String.valueOf(today);
+			
+			LocalDate oneMonthAgo = today.minusMonths(1);
+			String oneMonthAgoDate = String.valueOf(oneMonthAgo);
+			
+			params.put("today", todayDate);
+			params.put("period", oneMonthAgoDate);			
+			
+			// 거래내역
+			List<PtransactionDTO> transactionList = mapper.getProductTransaction(params);
+			req.setAttribute("transactionList", transactionList);
+			
+			return "product_list";
+		} 
+		// 해지 버튼 클릭한 경우
+		else {
+			req.setAttribute("productInfo", productInfo);
+			
+			LocalDate date = LocalDate.now();
+			String todayDate = String.valueOf(date);
+			req.setAttribute("todayDate", todayDate);
+			
+			// 가입금액
+			int payment = productInfo.getPayment();
+			
+			// 예치일 구하기
+			String regDateStr = productInfo.getRegDate();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			LocalDate regDate = LocalDate.parse(regDateStr, formatter);
+			double daysBetween = ChronoUnit.DAYS.between(regDate, date);
+			
+			// 가입기간
+			double interest = productInfo.getInterestRate();
+			int productRegPeriod;
+			if(interest == 0.0028) {
+				productRegPeriod = 180;
+			} else {
+				productRegPeriod = 365;
+			}
+			
+			// 이자 계산
+			double expiryInterest = payment * interest * daysBetween / productRegPeriod ;
+			int expiryInterestInt = (int)expiryInterest;
+			req.setAttribute("expiryInterest", expiryInterestInt);
+			
+			// 패스워드
+			req.setAttribute("productPw", productInfo.getProductPw());
+			
+			return "product_exit";
+		} 
+		
+	}
+	
+	
+	@PostMapping("/productCancel")
+	public String productCancel(@AuthenticationPrincipal User user, RedirectAttributes red, String productAccount, String depositAccount, String payment, String interest) {
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("productAccount", productAccount);
+		params.put("depositAccount", depositAccount);
+		params.put("payment", Integer.parseInt(payment));
+		params.put("interest", Integer.parseInt(interest));
+		params.put("userId", user.getUsername());
+		
+		try {
+			mapper.cancelProduct(params);
+		}catch(Exception e) {
+			e.printStackTrace();
+			System.out.println("상품해지 중 에러 발생");
+		}
+		
+		red.addFlashAttribute("msg", "상품 해지가 완료되었습니다. 이용해주셔서 감사합니다.");
+		return "redirect:/index";
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	@Scheduled(cron = "0 0 0 L * *") // 매월 마지막 날 자정(00:00:00)에 작업을 실행

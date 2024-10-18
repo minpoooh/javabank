@@ -96,6 +96,9 @@
 #transfer_complete .confirm_btn {width: 100%; height: 45px; background-color: #ffeb33; color: #555; border: none; border-radius: 5px;
     							 font-size: 1rem; cursor: pointer; margin-top: 20px;}
 #transfer_complete .confirm_btn:hover { background-color: #ffe402; }
+#transfer_complete .popup_btn {width: 100%; height: 45px; background-color: #ffeb33; color: #555; border: none; border-radius: 5px;
+    							 font-size: 1rem; cursor: pointer; margin-top: 20px;}
+#transfer_complete .popup_btn:hover { background-color: #ffe402; }
 
 
 /* header, footer */
@@ -129,15 +132,17 @@ footer p {margin-top: 16px; font-size: 14px; text-align: center; color: #666;}
 #main .account_box ul .nolist .img_box {width: 40px;}
 
 #main .account_box ul .list {display: inline-block; border: 1px solid #ccc; width: 300px; }
-#main .account_box ul .list a {display: flex; align-items: center; gap: 8px; font-size: 18px;}
+#main .account_box ul .list a {display: flex; align-items: center; gap: 8px; font-size: 18px; margin-left: 20px;}
 #main .account_box ul .list .img_box {width: 40px;}
 
 #main .account_box ul .account_item {display: flex; align-items: center; justify-content: space-between; margin-top: 15px;}
 #main .account_box ul .account_item + .account_item {margin-top: 10px;}
+#main .account_box ul .account_item form {display: flex;}
+#main .account_box ul .account_item .txt_box {margin-left: 20px;}
 #main .account_box ul .account_item .txt_box .account_name {font-size: 18px; color: #222;}
 #main .account_box ul .account_item .txt_box .account_number {margin-top: 10px; font-size: 16px; color: #656565;}
 #main .account_box ul .account_item .txt_box .account_amount {margin-top: 10px; font-size: 20px; font-weight: 700; color: #222;}
-#main .account_box ul .account_item .btn_box {margin-top: 17px;}
+#main .account_box ul .account_item .btn_box {margin-top: 20px; margin-left: 1100px;}
 #main .account_box ul .account_item .btn_box button + button {margin-left: 6px;}
 #main .account_box ul .account_item .btn_box button {border-radius: 20px; padding: 4px 12px; font-size: 18px;}
 
@@ -326,7 +331,7 @@ footer p {margin-top: 16px; font-size: 14px; text-align: center; color: #666;}
     #main .account_box ul .account_item .txt_box .account_number {margin-top: 0.4167vw; font-size: 1.1111vw;}
     #main .account_box ul .account_item .txt_box .account_amount {margin-top: 0.4167vw; font-size: 1.3889vw;}
 
-    #main .account_box ul .account_item .btn_box button + button {margin-left: 0.4167vw;}
+    #main .account_box ul .account_item .btn_box button + button {margin-top: 20px;}
     #main .account_box ul .account_item .btn_box button {border-radius: 1.3889vw; padding: 0.2778vw 0.8333vw; font-size: 1.2500vw;}
 
     #main .account_box .product_list li {width: 13.8889vw;height: 10.1389vw; border: 0.0694vw solid #ccc;}

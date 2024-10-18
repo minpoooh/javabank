@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.project.javabank.dto.DepositDTO;
 import com.project.javabank.dto.DtransactionDTO;
 import com.project.javabank.dto.ProductDTO;
+import com.project.javabank.dto.PtransactionDTO;
 
 @Service
 public class BankMapper {
@@ -155,6 +156,41 @@ public class BankMapper {
 		
 		// Deposit 테이블 인서트
 		sqlSession.insert("insertDtransactionbyFixed", params);
+	}
+	
+	public ProductDTO getProductInfo(String productAccount) {
+		return sqlSession.selectOne("getProductInfo", productAccount);
+	}
+	
+	public int getProductBalance(String productAccount) {
+		return sqlSession.selectOne("getProductBalance", productAccount);
+	}
+	
+	public List<PtransactionDTO> getProductTransaction(Map<String, String> params){
+		return sqlSession.selectList("getProductTransaction", params);
+	}
+	
+	@Transactional
+	public void cancelProduct(Map<String, Object> params) {
+		// Product 테이블 업데이트
+		sqlSession.update("updateProductEnableN", params);
+		
+		// Product transaction 테이블 인서트
+		sqlSession.insert("insertPtransactionCancel", params);
+		
+		// Deposit 테이블 잔액 계산
+		int balance = sqlSession.selectOne("getBalancebyFixed", params);
+		int payment = (int) params.get("payment");
+		int cancelInterest = (int) params.get("interest");
+		int updatedPayment = payment + cancelInterest;
+		int updatedBalance = balance + payment + cancelInterest;
+		params.put("payment", updatedPayment);
+		params.put("balance", updatedBalance);
+		
+		System.out.println("params :"+params);
+		
+		// Deposit 테이블 인서트
+		sqlSession.insert("insertDtransactionbyFixedCancel", params);
 	}
 }
 

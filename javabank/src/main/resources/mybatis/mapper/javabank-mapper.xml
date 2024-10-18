@@ -59,6 +59,7 @@
     								on A.productAccount = B.productAccount
     	where userId = #{userId}
     	and A.category = '정기예금'
+    	and A.productEnable = 'Y'
     </select>
     
     <select id="getPeriodicalDepositList" parameterType="String" resultType="ProductDTO">
@@ -67,6 +68,7 @@
     								on A.productAccount = B.productAccount
     	where userId = #{userId}
     	and A.category = '정기적금'
+    	and A.productEnable = 'Y'
     </select>
     
     <select id="getDepositAccountCheck" parameterType="String" resultType="int">
@@ -203,13 +205,13 @@
     </select>
     
     <insert id="insertProduct" parameterType="java.util.Map">
-    	insert into JB_Product(productAccount, userId, productPw, category, autoTransferDate, monthlyPayment, payment, regDate, expiryDate, interestRate, depositAccount) 
-    	values (#{productAccount}, #{userId}, #{productPw}, '정기예금', NULL, NULL, #{payment}, SYSDATE, #{expiryDate}, #{interestRate}, #{depositAccount})
+    	insert into JB_Product(productAccount, userId, productPw, category, autoTransferDate, monthlyPayment, payment, regDate, expiryDate, interestRate, depositAccount, productEnable) 
+    	values (#{productAccount}, #{userId}, #{productPw}, '정기예금', NULL, NULL, #{payment}, SYSDATE, #{expiryDate}, #{interestRate}, #{depositAccount}, 'Y')
     </insert>
     
     <insert id="insertPtransaction" parameterType="java.util.Map">
     	insert into JB_Ptransaction(productSeq, productAccount, updateDate, type, memo, deltaAmount, balance) 
-    	values (productSeq.NextVal, #{productAccount}, SYSDATE, '가입', NULL, #{payment}, #{payment})
+    	values (productSeq.NextVal, #{productAccount}, SYSDATE, '가입', '정기예금 가입', #{payment}, #{payment})
     </insert>
     
     <select id="getBalancebyFixed" parameterType="java.util.Map" resultType="int">
@@ -224,4 +226,36 @@
     	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '상품가입 출금', '정기예금', #{payment}, #{balance}, #{productAccount})
     </insert>
     
+    <select id="getProductInfo" parameterType="String" resultType="ProductDTO">
+    	select * from JB_Product
+    	where productAccount = #{productAccount}
+    </select>
+    
+    <select id="getProductBalance" parameterType="String" resultType="int">
+    	select balance from JB_Ptransaction
+    	where productAccount = #{productAccount}
+    	order by productSeq desc
+    	fetch first 1 rows only
+    </select>
+    
+    <select id="getProductTransaction" parameterType="String" resultType="PtransactionDTO">
+    	select * from JB_Ptransaction
+    	where productAccount = #{productAccount}
+    	order by productSeq desc
+    </select>
+    
+    <update id="updateProductEnableN" parameterType="java.util.Map">
+    	update JB_Product set productEnable = 'N'
+    	where productAccount = #{productAccount}
+    </update>
+    
+    <insert id="insertPtransactionCancel" parameterType="java.util.Map">
+    	insert into JB_Ptransaction(productSeq, productAccount, updateDate, type, memo, deltaAmount, balance) 
+    	values (productSeq.NextVal, #{productAccount}, SYSDATE, '중도해지', '정기예금 해지', -#{payment}, 0)
+    </insert>
+    
+    <insert id="insertDtransactionbyFixedCancel" parameterType="java.util.Map">
+    	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount) 
+    	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '상품해지 입금', '정기예금', #{payment}, #{balance}, #{productAccount})
+    </insert>
 </mapper>
