@@ -141,7 +141,7 @@
 						}
 						
 						// 이체한도 체크
-						if (transactionLimit > sendAmount){
+						if (transactionLimit >= sendAmount){
 							limitCheck = true;
 						} else {
 							limitCheck = false;
