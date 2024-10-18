@@ -12,6 +12,7 @@ public class ProductDTO {
 	private String expiryDate;
 	private double interestRate;
 	private String depositAccount;
+	private String productEnable;
 	
 	public String getProductAccount() {
 		return productAccount;
@@ -79,7 +80,15 @@ public class ProductDTO {
 	public void setDepositAccount(String depositAccount) {
 		this.depositAccount = depositAccount;
 	}
-	
+	public String getProductEnable() {
+		return productEnable;
+	}
+	public void setProductEnable(String productEnable) {
+		this.productEnable = productEnable;
+	}
+
+
+
 	// 조인용 컬럼
 	private int balance;
 
