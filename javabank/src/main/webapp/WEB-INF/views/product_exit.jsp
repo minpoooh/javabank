@@ -14,14 +14,21 @@
 			<input type="hidden" name="productAccount" value="${productInfo.productAccount}"/>
 			<input type="hidden" name="depositAccount" value="${productInfo.depositAccount}"/>
 			<input type="hidden" name="payment" value="${productInfo.payment}"/>
+			<input type="hidden" name="productBalance" value="${productBalance}"/>			
 			<input type="hidden" name="interest" value="${expiryInterest}"/>
+			<input type="hidden" name="category" value="${productInfo.category}"/>	
 			<div class="cont">
 				<label>가입상품 <input type="text" value="${productInfo.category}" disabled/></label>
 				<fmt:parseDate var="parsedRegDate" value="${productInfo.regDate}" pattern="yyyy-MM-dd" />				
 	        	<label>가입일자 <input type="text" value=<fmt:formatDate value="${parsedRegDate}" pattern="yyyy-MM-dd"/> disabled></label>
 	        	<fmt:parseDate var="parsedTodayDate" value="${todayDate}" pattern="yyyy-MM-dd" />	
 	        	<label>해지요청일자<input type="text" value=<fmt:formatDate value="${parsedTodayDate}" pattern="yyyy-MM-dd"/> disabled></label>
-	        	<label>가입금액 <input type="text" value="<fmt:formatNumber value="${productInfo.payment}" pattern="###,###"/>원" disabled></label>
+	        	<c:if test="${productInfo.category eq '정기예금'}">	        		
+	        		<label>가입금액 <input type="text" value="<fmt:formatNumber value="${productInfo.payment}" pattern="###,###"/>원" disabled></label>
+	        	</c:if>
+	        	<c:if test="${productInfo.category eq '정기적금'}">
+	        		<label>납입금액 <input type="text" value="<fmt:formatNumber value="${productBalance}" pattern="###,###"/>원" disabled></label>
+	        	</c:if>	        	
 	        	<label>중도해지이자 <input type="text" value="<fmt:formatNumber value="${expiryInterest}" pattern="###,###"/>원" disabled></label>
 			</div>
 			<div class="confirm_box">

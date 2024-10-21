@@ -171,26 +171,47 @@ public class BankMapper {
 	}
 	
 	@Transactional
-	public void cancelProduct(Map<String, Object> params) {
+	public void cancelProduct(Map<String, Object> params) {		
+		
 		// Product 테이블 업데이트
 		sqlSession.update("updateProductEnableN", params);
 		
-		// Product transaction 테이블 인서트
-		sqlSession.insert("insertPtransactionCancel", params);
+		String category = (String) params.get("category");
 		
-		// Deposit 테이블 잔액 계산
-		int balance = sqlSession.selectOne("getBalancebyFixed", params);
-		int payment = (int) params.get("payment");
-		int cancelInterest = (int) params.get("interest");
-		int deltaAmount = payment + cancelInterest;
-		int updatedBalance = balance + payment + cancelInterest;
-		params.put("deltaAmount", deltaAmount);
-		params.put("balance", updatedBalance);
+
 		
-		System.out.println("params :"+params);
-		
-		// Deposit Transaction 테이블 인서트
-		sqlSession.insert("insertDtransactionbyFixedCancel", params);
+		if(category.equals("정기예금")) {
+			// Product transaction 테이블 인서트
+			sqlSession.insert("insertPtransactionbyFixedCancel", params);
+			
+			// Deposit 테이블 잔액 계산
+			int balance = sqlSession.selectOne("getBalancebyProduct", params);
+			int payment = (int) params.get("payment");
+			int cancelInterest = (int) params.get("interest");
+			int deltaAmount = payment + cancelInterest;
+			int updatedBalance = balance + deltaAmount;
+			params.put("deltaAmount", deltaAmount);
+			params.put("balance", updatedBalance);
+			
+			// Deposit Transaction 테이블 인서트
+			sqlSession.insert("insertDtransactionbyFixedCancel", params);
+			
+		} else {
+			// Product transaction 테이블 인서트
+			sqlSession.insert("insertPtransactionbyPeriodicalCancel", params);
+			
+			// Deposit 테이블 잔액 계산
+			int balance = sqlSession.selectOne("getBalancebyProduct", params);
+			int productBalance = (int) params.get("productBalance");
+			int cancelInterest = (int) params.get("interest");
+			int deltaAmount = productBalance + cancelInterest;
+			int updatedBalance = balance + deltaAmount;
+			params.put("deltaAmount", deltaAmount);
+			params.put("balance", updatedBalance);
+			
+			// Deposit Transaction 테이블 인서트
+			sqlSession.insert("insertDtransactionbyPeriodicalCancel", params);
+		}
 	}
 	
 	public List<ProductDTO> getFixedDepositMaturity(String today){

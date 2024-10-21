@@ -249,7 +249,7 @@
     	where productAccount = #{productAccount}
     </update>
     
-    <insert id="insertPtransactionCancel" parameterType="java.util.Map">
+    <insert id="insertPtransactionbyFixedCancel" parameterType="java.util.Map">
     	insert into JB_Ptransaction(productSeq, productAccount, updateDate, type, memo, deltaAmount, balance) 
     	values (productSeq.NextVal, #{productAccount}, SYSDATE, '중도해지', '정기예금 해지', -#{payment}, 0)
     </insert>
@@ -290,5 +290,15 @@
     <insert id="insertDtransactionbyPeriodical" parameterType="java.util.Map">
     	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount) 
     	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '상품가입 출금', '정기적금', #{monthlyPayment}, #{balance}, #{productAccount})
+    </insert>
+    
+    <insert id="insertPtransactionbyPeriodicalCancel" parameterType="java.util.Map">
+    	insert into JB_Ptransaction(productSeq, productAccount, updateDate, type, memo, deltaAmount, balance) 
+    	values (productSeq.NextVal, #{productAccount}, SYSDATE, '중도해지', '정기적금 해지', -#{productBalance}, 0)
+    </insert>
+    
+    <insert id="insertDtransactionbyPeriodicalCancel" parameterType="java.util.Map">
+    	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount) 
+    	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '상품해지 입금', '정기적금', #{deltaAmount}, #{balance}, #{productAccount})
     </insert>
 </mapper>

@@ -491,14 +491,16 @@ public class BankController {
 	
 	
 	@PostMapping("/productCancel")
-	public String productCancel(@AuthenticationPrincipal User user, RedirectAttributes red, String productAccount, String depositAccount, String payment, String interest) {
+	public String productCancel(@AuthenticationPrincipal User user, RedirectAttributes red, String category, String productAccount, String depositAccount, String payment, String interest, String productBalance) {
 		
 		Map<String, Object> params = new HashMap<>();
+		params.put("category", category);
 		params.put("productAccount", productAccount);
 		params.put("depositAccount", depositAccount);
 		params.put("payment", Integer.parseInt(payment));
 		params.put("interest", Integer.parseInt(interest));
 		params.put("userId", user.getUsername());
+		params.put("productBalance", Integer.parseInt(productBalance));
 		
 		try {
 			mapper.cancelProduct(params);
@@ -618,9 +620,6 @@ public class BankController {
 			String todayDate = String.valueOf(date);
 			req.setAttribute("todayDate", todayDate);
 			
-			// 가입금액
-			int payment = productInfo.getPayment();
-			
 			// 예치일 구하기
 			String regDateStr = productInfo.getRegDate();
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -630,14 +629,14 @@ public class BankController {
 			// 가입기간
 			double interest = productInfo.getInterestRate();
 			int productRegPeriod;
-			if(interest == 0.0028) {
+			if(interest == 0.0033) {
 				productRegPeriod = 180;
 			} else {
 				productRegPeriod = 365;
 			}
 			
 			// 이자 계산
-			double expiryInterest = payment * interest * daysBetween / productRegPeriod ;
+			double expiryInterest = productBalance * interest * daysBetween / productRegPeriod ;
 			int expiryInterestInt = (int)expiryInterest;
 			req.setAttribute("expiryInterest", expiryInterestInt);
 			

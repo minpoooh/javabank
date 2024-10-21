@@ -122,7 +122,7 @@
                         <img src="/images/icons/timer_money.png">
                     </div>
                     <span>정기적금 가입하기</span>
-                    <p class="txt_noti">6개월 기준 기본 3.5%</p>
+                    <p class="txt_noti">6개월 기준 기본 3.3%</p>
                 </a>
             </li>
         </ul>
