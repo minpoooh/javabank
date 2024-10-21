@@ -28,7 +28,7 @@
         <div>
             <p>출금 계좌</p>
             <div class="info_box">
-                <select name="selectAccount">
+                <select name="selectAccount" onchange="checkAccount()">
                 	<option value="notSelected">계좌를 선택해주세요.</option>
                 	<c:forEach var="account" items="${accountList}">
                     	<option value="${account.depositAccount}">${account.depositAccount}</option>
@@ -50,7 +50,7 @@
         <div>
             <p>가입 기간</p>
             <div class="info_box">
-                <select name="registerMonth">
+                <select name="registerMonth" onchange="checkRegisterMonth()">
                 	<option value="notSelected">가입 기간을 선택해주세요.</option>
                     <option value="6M">6개월 (금리 2.8%)</option>
                     <option value="12M">1년 (금리 3.0%)</option>
@@ -104,6 +104,55 @@
 	    }
 	}
 	
+	function checkAccount(){
+		let csrfToken = '${_csrf.token}';
+		
+		// 가입금액에서 천단위 구분기호 제거
+		let payment = document.getElementsByName('payment')[0];		
+		changedValue = payment.value.replace(/,/g, '');
+		payment.value = changedValue;
+		
+		
+		// 입출금계좌 선택 체크
+		let selectAccount = document.getElementsByName('selectAccount')[0].value;
+		if (selectAccount != 'notSelected'){
+			acCheck = true;
+			
+			// 입출금 계좌 잔액 체크
+			$.ajax({
+				url : "balanceCheck.ajax",
+				type : "POST",
+				headers : {
+	                "X-CSRF-TOKEN": csrfToken
+	            },
+				data : {
+					"selectAccount" : selectAccount				
+				},
+				success : function(balance){				
+					console.log("balance:"+balance);
+					console.log("payment:"+payment.value);
+					
+					if(balance === -1){
+						console.log("잔액 확인 중 에러");
+					}
+					
+					if(balance >= payment.value){
+						balanceCheck = true;
+					}else {
+						alert("선택하신 출금계좌의 잔액이 부족합니다.");
+						balanceCheck = false;
+					}
+				},
+				error : function(err){
+					console.log(err);
+				}
+			});
+			
+			
+		} else {
+			acCheck = false;
+		}		
+	}
 
 	function checkPayment(input){
 		let value = input.value.replace(/[^0-9]/g, ''); // 숫자만 허용
@@ -133,69 +182,30 @@
 		}
 	}
 	
-	function finalCheck(){
-		let csrfToken = '${_csrf.token}';
-		console.log("pwCheck:"+pwCheck);
-		
-		// 입출금계좌 선택 체크
-		let selectAccount = document.getElementsByName('selectAccount')[0].value;
-		if (selectAccount != 'notSelected'){
-			acCheck = true;
-		} else {
-			acCheck = false;
-		}
-		
-		console.log("acCheck:"+acCheck);
-		console.log("payCheck:"+payCheck);
-		
+	function checkRegisterMonth(){
 		// 가입기간 체크
 		let registerMonth = document.getElementsByName('registerMonth')[0].value;
 		if (registerMonth != 'notSelected'){
 			periCheck = true;
 		} else {
 			periCheck = false;
-		}
-		console.log("periCheck:"+periCheck);
-
+		}		
+	}
+	
+	function finalCheck(){
+		
+		console.log("pwCheck:"+pwCheck);
+		console.log("acCheck:"+acCheck);
+		console.log("payCheck:"+payCheck);
+		console.log("balanceCheck: "+balanceCheck);
+		console.log("periCheck:"+periCheck);	
+		
 		// 가입금액에서 천단위 구분기호 제거
 		let payment = document.getElementsByName('payment')[0];		
 		changedValue = payment.value.replace(/,/g, '');
 		payment.value = changedValue;
 		
-		// 입출금 계좌 잔액 체크
-		$.ajax({
-			url : "balanceCheck.ajax",
-			type : "POST",
-			headers : {
-                "X-CSRF-TOKEN": csrfToken
-            },
-			data : {
-				"selectAccount" : selectAccount				
-			},
-			success : function(balance){
-
-				
-				console.log("balance:"+balance);
-				console.log("payment:"+payment.value);
-				
-				if(balance === -1){
-					console.log("잔액 확인 중 에러");
-				}
-				
-				if(balance >= payment.value){
-					balanceCheck = true;
-				}else {
-					alert("선택하신 출금계좌의 잔액이 부족합니다.");
-					balanceCheck = false;
-				}
-			},
-			error : function(err){
-				console.log(err);
-			}
-		});
-		console.log("balanceCheck: "+balanceCheck);
-		
-		if(pwCheck && acCheck && payCheck){
+		if(pwCheck && acCheck && payCheck && periCheck && balanceCheck){			
 			return true;
 		} else {
 			return false;

@@ -349,12 +349,6 @@ public class BankController {
 	
 	@PostMapping("/createFixedProcess")
 	public String createFixedProcess(@AuthenticationPrincipal User user, HttpServletRequest req, RedirectAttributes red, String productPw, String selectAccount, int payment, String registerMonth) {
-	
-		System.out.println(productPw);
-		System.out.println(selectAccount);
-		System.out.println(payment);
-		System.out.println(registerMonth);
-		
 		// 계좌 생성 파라미터
 		Map<String, Object> params = new HashMap<>();
 		params.put("productPw", productPw);
@@ -402,14 +396,12 @@ public class BankController {
 		
 		// 4. Product, Ptransaction 테이블 INSERT
 		try {
-			mapper.insertProduct(params);
+			mapper.insertFixedProduct(params);
 			red.addFlashAttribute("msg", "정기예금 상품에 가입되었습니다.");
 		} catch(Exception e) {
 			System.out.println("Product, Ptransaction 테이블 INSERT 에러");
 			e.printStackTrace();
 		}
-		
-		
 		return "redirect:/index";
 	}
 	
@@ -426,8 +418,8 @@ public class BankController {
 		}	
 	}	
 	
-	@PostMapping("/productList")
-	public String productList(HttpServletRequest req, String submitType, String productAccount) {
+	@PostMapping("/productFixedList")
+	public String productFixedList(HttpServletRequest req, String submitType, String productAccount) {
 		
 		// 상품정보
 		ProductDTO productInfo = mapper.getProductInfo(productAccount);
@@ -455,7 +447,7 @@ public class BankController {
 			// 거래내역
 			List<PtransactionDTO> transactionList = mapper.getProductTransaction(params);
 			req.setAttribute("transactionList", transactionList);
-			
+			req.setAttribute("category", "fixed");
 			return "product_list";
 		} 
 		// 해지 버튼 클릭한 경우
@@ -520,9 +512,142 @@ public class BankController {
 	}
 	
 	
+	@PostMapping("/createPeriodicalProcess")
+	public String createPeriodicalProcess(@AuthenticationPrincipal User user, HttpServletRequest req, RedirectAttributes red, String productPw, String selectAccount, String monthlyPayment, String registerMonth, String selectTransferDate) {
 	
+		System.out.println(productPw);
+		System.out.println(selectAccount);
+		System.out.println(monthlyPayment);
+		System.out.println(registerMonth);
+		System.out.println(selectTransferDate);
+		
+		// 계좌 생성 파라미터
+		Map<String, Object> params = new HashMap<>();
+		params.put("productPw", productPw);
+		params.put("depositAccount", selectAccount);
+		params.put("monthlyPayment", Integer.parseInt(monthlyPayment));
+		params.put("autoTransferDate", selectTransferDate);
+
+		
+		// 1. 유저 ID 뽑기
+		String userId = user.getUsername();
+		params.put("userId", userId);
+		
+		// 2. 계좌번호 랜덤으로 생성하기
+		int randomNum = 0;
+		int depositAccountCheck = 9999;
+		
+		while(depositAccountCheck > 0) {
+			randomNum = (int) (Math.random() * 9000000) + 1000000;
+			String depositNum = "3333-03-" + String.valueOf(randomNum);
+			
+			// 생성된 계좌번호 중복 체크
+			depositAccountCheck = mapper.getFixedAccountCheck(depositNum);
+			
+			if(depositAccountCheck == 0) {
+				//System.out.println("확정된 계좌번호:"+ depositNum);
+				params.put("productAccount", depositNum);
+				break;
+			}
+		}
+		
+		// 3. 만기일자 계산
+		LocalDate date = LocalDate.now();
+		if(registerMonth.equals("6M")) {
+			LocalDate expiry = date.plusMonths(6);
+			String expiryDate = String.valueOf(expiry);
+			params.put("expiryDate", expiryDate);
+			params.put("interestRate", 0.0033);
+		} else if (registerMonth.equals("12M")) {
+			LocalDate expiry = date.plusYears(1);
+			String expiryDate = String.valueOf(expiry);
+			params.put("expiryDate", expiryDate);
+			params.put("interestRate", 0.0035);
+		}
+		
+		// 4. Product, Ptransaction 테이블 INSERT
+		try {
+			System.out.println(params);
+			mapper.insertPeriodicalProduct(params);
+			red.addFlashAttribute("msg", "정기적금 상품에 가입되었습니다.");
+		} catch(Exception e) {
+			System.out.println("Product, Ptransaction 테이블 INSERT 에러");
+			e.printStackTrace();
+		}	
+		
+		return "redirect:/index";
+	}
 	
-	
+	@PostMapping("/productPeriodicalList")
+	public String productPeriodicalList(HttpServletRequest req, String submitType, String productAccount) {
+		
+		// 상품정보
+		ProductDTO productInfo = mapper.getProductInfo(productAccount);
+		req.setAttribute("productInfo", productInfo);
+		
+		// 상품잔액
+		int productBalance = mapper.getProductBalance(productAccount);
+		req.setAttribute("productBalance", productBalance);
+		
+		// 조회 버튼 클릭한 경우
+		if(submitType.equals("list")) {
+			Map<String, String> params = new HashMap<>();
+			params.put("productAccount", productAccount);
+			
+			LocalDate date = LocalDate.now();
+			LocalDate today = date.plusDays(1);
+			String todayDate = String.valueOf(today);
+			
+			LocalDate oneMonthAgo = today.minusMonths(1);
+			String oneMonthAgoDate = String.valueOf(oneMonthAgo);
+			
+			params.put("today", todayDate);
+			params.put("period", oneMonthAgoDate);			
+			
+			// 거래내역
+			List<PtransactionDTO> transactionList = mapper.getProductTransaction(params);
+			req.setAttribute("transactionList", transactionList);
+			req.setAttribute("category", "periodical");
+			return "product_list";
+		} 
+		// 해지 버튼 클릭한 경우
+		else {
+			req.setAttribute("productInfo", productInfo);
+			
+			LocalDate date = LocalDate.now();
+			String todayDate = String.valueOf(date);
+			req.setAttribute("todayDate", todayDate);
+			
+			// 가입금액
+			int payment = productInfo.getPayment();
+			
+			// 예치일 구하기
+			String regDateStr = productInfo.getRegDate();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			LocalDate regDate = LocalDate.parse(regDateStr, formatter);
+			double daysBetween = ChronoUnit.DAYS.between(regDate, date);
+			
+			// 가입기간
+			double interest = productInfo.getInterestRate();
+			int productRegPeriod;
+			if(interest == 0.0028) {
+				productRegPeriod = 180;
+			} else {
+				productRegPeriod = 365;
+			}
+			
+			// 이자 계산
+			double expiryInterest = payment * interest * daysBetween / productRegPeriod ;
+			int expiryInterestInt = (int)expiryInterest;
+			req.setAttribute("expiryInterest", expiryInterestInt);
+			
+			// 패스워드
+			req.setAttribute("productPw", productInfo.getProductPw());
+			
+			return "product_exit";
+		} 
+		
+	}
 	
 	
 	
@@ -563,7 +688,7 @@ public class BankController {
 	
 	//상품 만기해지 스케줄러
 	//@Scheduled(cron = "0 0 0 * * *") // 매일 자정(00:00:00)에 작업을 실행
-	@Scheduled(cron = "* 1 * * * *") // 매 초마다 실행 (테스트용)
+	@Scheduled(cron = "* 0 * * * *") // 매 초마다 실행 (테스트용)
 	public void fixedDepositMaturity() {
 		LocalDate todayDate = LocalDate.now();
 		String today = String.valueOf(todayDate);		
@@ -596,7 +721,6 @@ public class BankController {
 						Map<String, Object> params = new HashMap<>();
 						params.put("productAccount", product.getProductAccount());
 						params.put("payment", payment);
-						
 						
 						// 5. 입출금통장 원금 + 이자 입금
 						params.put("depositAccount", product.getDepositAccount());

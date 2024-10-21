@@ -140,15 +140,15 @@ public class BankMapper {
 	}
 	
 	@Transactional
-	public void insertProduct(Map<String, Object> params) {
+	public void insertFixedProduct(Map<String, Object> params) {
 		// Product 테이블 인서트
-		sqlSession.insert("insertProduct", params);
+		sqlSession.insert("insertFixedProduct", params);
 		
 		// Product transaction 테이블 인서트
-		sqlSession.insert("insertPtransaction", params);
+		sqlSession.insert("insertFixedPtransaction", params);
 		
 		// Deposit 테이블 잔액 계산
-		int balance = sqlSession.selectOne("getBalancebyFixed", params);
+		int balance = sqlSession.selectOne("getBalancebyProduct", params);
 		int payment = (int) params.get("payment");
 		int updatedBalance = balance - payment;
 		
@@ -215,6 +215,25 @@ public class BankMapper {
 		// Deposit Transaction 테이블 인서트
 		sqlSession.insert("insertDtransactionbyFixedExpiry", params);
 		
+	}
+	
+	@Transactional
+	public void insertPeriodicalProduct(Map<String, Object> params) {
+		// Product 테이블 인서트
+		sqlSession.insert("insertPeriodicalProduct", params);
+		
+		// Product transaction 테이블 인서트
+		sqlSession.insert("insertPeriodicalPtransaction", params);
+		
+		// Deposit 테이블 잔액 계산
+		int balance = sqlSession.selectOne("getBalancebyProduct", params);
+		int payment = (int) params.get("monthlyPayment");
+		int updatedBalance = balance - payment;
+		
+		params.put("balance", updatedBalance);
+		
+		// Deposit 테이블 인서트
+		sqlSession.insert("insertDtransactionbyPeriodical", params);
 	}
 }
 

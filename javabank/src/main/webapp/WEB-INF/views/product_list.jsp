@@ -5,7 +5,7 @@
 <%@ include file="top.jsp"%>
 <!-- s: content -->
 <section id="account_list" class="content">
-    <div class="info_box bg_yellow">
+    <div id="infoBox" class="info_box bg_yellow">
         <div class="txt_box">
             <p class="account_name">${productInfo.category}</p>
             <p class="account_number">${productInfo.productAccount}</p>
@@ -54,7 +54,17 @@
 </section>
 <!-- e: content -->
 <script>
-
+	let category = '${category}';
+	let o
+	
+	console.log(category);
+	if(category === 'periodical'){
+		infoBox.classList.remove("bg_yellow");
+		infoBox.classList.add("bg_blue");
+	} else if (category === 'fixed'){
+		infoBox.classList.remove("bg_yellow");
+		infoBox.classList.add("bg_green");
+	}
 </script>
 
 

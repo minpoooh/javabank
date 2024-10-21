@@ -58,7 +58,7 @@
         <c:forEach var="fixedDeposit" items="${fixedDepositList}">
         <ul>
             <li class="account_item bg_green">
-            	<form action="/productList" method="post">
+            	<form action="/productFixedList" method="post">
 	                <div class="txt_box">
 	                    <p class="account_name">${fixedDeposit.category}</p>
 	                    <p class="account_number">${fixedDeposit.productAccount}</p>
@@ -84,15 +84,19 @@
         <c:forEach var="periodicalDeposit" items="${periodicalDepositList}">
         <ul>
             <li class="account_item bg_blue">
-                <div class="txt_box">
-                    <p class="account_name" style="color: #dbdbdb;">${periodicalDeposit.category}</p>
-                    <p class="account_number" style="color: #c3c1c1;">${periodicalDeposit.productAccount}</p>
-                    <p class="account_amount" style="color: #dbdbdb;">${periodicalDeposit.balance}원</p>
-                </div>
-                <div class="btn_box">
-                    <button type="button">조회</button>
-                    <button type="button">이체</button>
-                </div>
+            	<form action="/productPeriodicalList" method="post">
+	                <div class="txt_box">
+	                    <p class="account_name">${periodicalDeposit.category}</p>
+	                    <p class="account_number">${periodicalDeposit.productAccount}</p>
+	                    <p class="account_amount"><fmt:formatNumber value="${periodicalDeposit.balance}" pattern="###,###"/>원</p>
+	                </div>
+	                <div class="btn_box">
+	                	<input type="hidden" name="productAccount" value="${periodicalDeposit.productAccount}">
+				        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+	                    <button type="submit" name="submitType" value="list">조회</button>
+	                    <button type="submit" name="submitType" value="exit">해지</button>
+	                </div>
+                </form>
             </li>
         </ul>
         </c:forEach>
