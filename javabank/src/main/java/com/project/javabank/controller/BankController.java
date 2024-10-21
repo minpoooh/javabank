@@ -529,6 +529,11 @@ public class BankController {
 	
 	
 	
+	@GetMapping("/alarms")
+	public String alarms() {
+		
+		return "alarms";
+	}
 	
 	
 	
@@ -538,6 +543,8 @@ public class BankController {
 	
 	
 	
+	
+	// 입출금통장 이자 지급 스케줄러
 	@Scheduled(cron = "0 0 0 L * *") // 매월 마지막 날 자정(00:00:00)에 작업을 실행
 	//@Scheduled(cron = "0 0 * * * *") // 매시 정각, 1시간에 한번 작업 실행
 	public void depositInterestCal() {
@@ -554,17 +561,67 @@ public class BankController {
 		System.out.println(date + " 입출금통장 이자입금 완료");
 	}
 	
-	
-	
-	
-	
-	
-	
-	@GetMapping("/alarms")
-	public String alarms() {
-		
-		return "alarms";
+	//상품 만기해지 스케줄러
+	//@Scheduled(cron = "0 0 0 * * *") // 매일 자정(00:00:00)에 작업을 실행
+	@Scheduled(cron = "* 1 * * * *") // 매 초마다 실행 (테스트용)
+	public void fixedDepositMaturity() {
+		LocalDate todayDate = LocalDate.now();
+		String today = String.valueOf(todayDate);		
+		System.out.println("상품 만기해지 스케줄러 시작");
+		try {
+			// 오늘이 만기인 상품리스트 찾기
+			List<ProductDTO> list = mapper.getFixedDepositMaturity(today);
+			if(list.size() > 0) {
+				for(ProductDTO product : list) {
+					if(product.getCategory().equals("정기예금")) {
+						System.out.println("정기예금 만기처리 시작");
+						// 정기예금인 경우
+						// 1. 가입금액
+						int payment = product.getPayment();
+						
+						// 2. 가입기간
+						int productRegDate;
+						double interest = product.getInterestRate();
+
+						// 3. 이자계산
+						double expiryInterest = payment * interest;
+						int expiryInterestInt = (int)expiryInterest;
+						
+						System.out.println("이자 계산완료");
+						System.out.println("payment :" + payment);
+						System.out.println("interest :"+ interest);
+						System.out.println("expiryInterestInt :"+ expiryInterestInt);
+						
+						// 4. 정기예금 통장 해지 + 출금						
+						Map<String, Object> params = new HashMap<>();
+						params.put("productAccount", product.getProductAccount());
+						params.put("payment", payment);
+						
+						
+						// 5. 입출금통장 원금 + 이자 입금
+						params.put("depositAccount", product.getDepositAccount());
+						params.put("interest", expiryInterestInt);
+						params.put("userId", product.getUserId());
+						
+						mapper.ExpiryFixedAccount(params);
+						System.out.println("정기예금 해지 완료");
+					} else {
+						// 정기적금인 경우
+					}
+				}
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+			System.out.println("만기예정 예금리스트 찾기 에러");
+		}
 	}
+	
+	
+	
+	
+	
+	
+
 	
 	
 }

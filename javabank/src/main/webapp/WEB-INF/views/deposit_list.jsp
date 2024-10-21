@@ -80,6 +80,10 @@
 				                    <p class="account_type font_red">${transactionList.type}</p>
 				                    <p class="delta_amount font_red">+<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
 				                </c:when>
+				                <c:when test="${transactionList.type eq '상품만기 입금'}">
+				                    <p class="account_type font_red">${transactionList.type}</p>
+				                    <p class="delta_amount font_red">+<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
+				                </c:when>
 				                <c:otherwise>
 				                    <p class="account_type font_darkgray">${transactionList.type}</p>
 				                </c:otherwise>
@@ -148,7 +152,10 @@
 							            } else if(transaction.type === '상품해지 입금'){	
 						                	newContent += '<p class="account_type font_red">' + transaction.type +'</p>'+
               				  			  '<p class="delta_amount font_red">+' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>';
-				            }
+				            			} else if(transaction.type === '상품만기 입금'){	
+						                	newContent += '<p class="account_type font_red">' + transaction.type +'</p>'+
+	              				  			  '<p class="delta_amount font_red">+' + new Intl.NumberFormat().format(transaction.deltaAmount) +'원</p>';
+					            		}
 						 newContent += '<p class="account_balance font_darkgray">' + new Intl.NumberFormat().format(Math.floor(transaction.balance)) +'원</p>'+
 							           '</div>';
 						               '</li>';

@@ -182,15 +182,39 @@ public class BankMapper {
 		int balance = sqlSession.selectOne("getBalancebyFixed", params);
 		int payment = (int) params.get("payment");
 		int cancelInterest = (int) params.get("interest");
-		int updatedPayment = payment + cancelInterest;
+		int deltaAmount = payment + cancelInterest;
 		int updatedBalance = balance + payment + cancelInterest;
-		params.put("payment", updatedPayment);
+		params.put("deltaAmount", deltaAmount);
 		params.put("balance", updatedBalance);
 		
 		System.out.println("params :"+params);
 		
-		// Deposit 테이블 인서트
+		// Deposit Transaction 테이블 인서트
 		sqlSession.insert("insertDtransactionbyFixedCancel", params);
+	}
+	
+	public List<ProductDTO> getFixedDepositMaturity(String today){
+		return sqlSession.selectList("getFixedDepositMaturity", today);
+	}
+	
+	@Transactional
+	public void ExpiryFixedAccount(Map<String, Object> params) {
+		// Product 테이블 업데이트
+		sqlSession.update("updateProductEnableN", params);
+		
+		// Product transaction 테이블 인서트
+		sqlSession.insert("updateExpiryFixedTransaction", params);
+		
+		// Deposit 테이블 잔액계산
+		int balance = sqlSession.selectOne("getBalancebyFixed", params);
+		int deltaAmount = (int)params.get("payment") + (int)params.get("interest");
+		int updatedBalance = balance + deltaAmount;
+		params.put("deltaAmount", deltaAmount);
+		params.put("balance", updatedBalance);
+		
+		// Deposit Transaction 테이블 인서트
+		sqlSession.insert("insertDtransactionbyFixedExpiry", params);
+		
 	}
 }
 
