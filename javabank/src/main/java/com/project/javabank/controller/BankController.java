@@ -27,6 +27,7 @@ import com.project.javabank.dto.DepositDTO;
 import com.project.javabank.dto.DtransactionDTO;
 import com.project.javabank.dto.ProductDTO;
 import com.project.javabank.dto.PtransactionDTO;
+import com.project.javabank.dto.autoTransferLogger;
 import com.project.javabank.mapper.BankMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -651,11 +652,6 @@ public class BankController {
 		
 	}
 	
-	
-	
-	
-	
-	
 	@GetMapping("/alarms")
 	public String alarms() {
 		
@@ -663,11 +659,8 @@ public class BankController {
 	}
 	
 	
-	
-	
-	
 	// 정기적금 자동이체 스케줄러
-	@Scheduled(cron = "0 25 * * * *")
+	@Scheduled(cron = "0 55 * * * *")
 	public void autoTransfer() {
 		LocalDate todayDate = LocalDate.now();
 		int date = todayDate.getDayOfMonth();
@@ -701,7 +694,8 @@ public class BankController {
 						
 						System.out.println("자동이체 처리 성공");
 					} else {
-						System.out.println("계좌잔액 부족으로 인한 자동이체 불가 : 해당 적금계좌 "+product.getProductAccount());
+						// 자동이체 실패 시 에러 로그 파일 저장
+						autoTransferLogger.logFailedTransfer(product.getProductAccount(), balance, product.getMonthlyPayment());
 					}
 					
 				}
