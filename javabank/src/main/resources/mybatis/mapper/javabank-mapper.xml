@@ -55,20 +55,28 @@
     
     <select id="getFixedDepositList" parameterType="String" resultType="ProductDTO">
     	select A.*, B.balance from JB_Product A
-    						  join JB_Ptransaction B
-    								on A.productAccount = B.productAccount
-    	where userId = #{userId}
-    	and A.category = '정기예금'
-    	and A.productEnable = 'Y'
+    							join (
+							    	select productSeq, productAccount, balance, ROW_NUMBER() over (Partition by productAccount order by productSeq desc) as rn
+							    	from JB_Ptransaction
+							    	) B
+							    on A.productAccount = B.productAccount
+		where A.userId = #{userId}
+		and A.category = '정기예금'
+		and A.productEnable = 'Y'
+		and B.rn = 1
     </select>
     
     <select id="getPeriodicalDepositList" parameterType="String" resultType="ProductDTO">
     	select A.*, B.balance from JB_Product A
-    						  join JB_Ptransaction B
-    								on A.productAccount = B.productAccount
-    	where userId = #{userId}
-    	and A.category = '정기적금'
-    	and A.productEnable = 'Y'
+    							join (
+							    	select productSeq, productAccount, balance, ROW_NUMBER() over (Partition by productAccount order by productSeq desc) as rn
+							    	from JB_Ptransaction
+							    	) B
+							    on A.productAccount = B.productAccount
+		where A.userId = #{userId}
+		and A.category = '정기적금'
+		and A.productEnable = 'Y'
+		and B.rn = 1
     </select>
     
     <select id="getDepositAccountCheck" parameterType="String" resultType="int">
@@ -313,4 +321,25 @@
     	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount) 
     	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '상품만기 입금', '정기적금', #{deltaAmount}, #{balance}, #{productAccount})
     </insert>
+    
+    <select id="getExpiryPeriodicalAccount" parameterType="int" resultType="ProductDTO">
+    	select * from JB_Product
+    	where AutoTransferDate = #{date}
+    </select>
+    
+    <insert id="insertAutoTransferDtransaction" parameterType="java.util.Map">
+    	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount) 
+    	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '출금', '적금 자동이체', #{monthlyPayment}, #{balance}, #{productAccount})
+    </insert>
+    
+    <insert id="insertAutoTransferPtransaction" parameterType="java.util.Map">
+    	insert into JB_Ptransaction(productSeq, productAccount, updateDate, type, memo, deltaAmount, balance) 
+    	values (productSeq.NextVal, #{productAccount}, SYSDATE, '입금', '자동이체 입금', #{monthlyPayment}, #{productBalance})
+    </insert>
+    
+    
+    
+    
+    
+    
 </mapper>

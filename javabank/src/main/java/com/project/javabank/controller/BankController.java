@@ -160,7 +160,7 @@ public class BankController {
 		// 통장잔액
 		int depositBalance = mapper.getDepositBalance(depositAccount);
 		req.setAttribute("depositBalance", depositBalance);
-		
+				
 		// 조회 버튼 클릭한 경우
 		if(submitType.equals("list")) {
 			Map<String, String> params = new HashMap<>();
@@ -180,7 +180,6 @@ public class BankController {
 			// 거래내역
 			List<DtransactionDTO> transactionList = mapper.getDepositTransaction(params);
 			req.setAttribute("transactionList", transactionList);
-			
 			return "deposit_list";
 		} 
 		// 이체 버튼 클릭한 경우
@@ -591,6 +590,9 @@ public class BankController {
 		int productBalance = mapper.getProductBalance(productAccount);
 		req.setAttribute("productBalance", productBalance);
 		
+		// 유저명
+		String userName = mapper.getUserName(productInfo.getUserId());
+		
 		// 조회 버튼 클릭한 경우
 		if(submitType.equals("list")) {
 			Map<String, String> params = new HashMap<>();
@@ -610,6 +612,7 @@ public class BankController {
 			List<PtransactionDTO> transactionList = mapper.getProductTransaction(params);
 			req.setAttribute("transactionList", transactionList);
 			req.setAttribute("category", "periodical");
+			req.setAttribute("userName", userName);
 			return "product_list";
 		} 
 		// 해지 버튼 클릭한 경우
@@ -663,9 +666,53 @@ public class BankController {
 	
 	
 	
-	
-	
-	
+	// 정기적금 자동이체 스케줄러
+	@Scheduled(cron = "0 25 * * * *")
+	public void autoTransfer() {
+		LocalDate todayDate = LocalDate.now();
+		int date = todayDate.getDayOfMonth();
+		System.out.println("자동이체 스케줄러 시작");
+		try {
+			// 오늘이 자동이체 날인 적금 상품 리스트 찾기
+			List<ProductDTO> list = mapper.getExpiryPeriodicalAccount(date);
+			
+			Map<String, Object> params = new HashMap<>();
+			if(list.size() > 0) {
+				for(ProductDTO product : list) {
+					params.put("depositAccount",product.getDepositAccount());
+					params.put("productAccount",product.getProductAccount());
+					params.put("monthlyPayment",product.getMonthlyPayment());
+					params.put("userId", product.getUserId());
+					
+					// deposit 테이블 잔액 계산
+					int balance = mapper.getDepositBalance(product.getDepositAccount());
+					
+					if(balance >= product.getMonthlyPayment()) {
+						int updatedDbalance = balance - product.getMonthlyPayment();
+						params.put("balance", updatedDbalance);
+											
+						// product 테이블 잔액 계산
+						int pBalance = mapper.getProductBalance(product.getProductAccount());
+						int updatedPbalance = pBalance + product.getMonthlyPayment();
+						params.put("productBalance", updatedPbalance);
+						
+						System.out.println(params);
+						mapper.autoTransfer(params);
+						
+						System.out.println("자동이체 처리 성공");
+					} else {
+						System.out.println("계좌잔액 부족으로 인한 자동이체 불가 : 해당 적금계좌 "+product.getProductAccount());
+					}
+					
+				}
+			} else {
+				System.out.println("자동이체 대상 없음");
+			}
+		} catch(Exception e) {
+			System.err.println("자동이체 스케줄러 에러 발생");
+			e.printStackTrace();
+		}
+	}
 	
 	
 	// 입출금통장 이자 지급 스케줄러
@@ -678,7 +725,7 @@ public class BankController {
 			mapper.processMonthlyInterest();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("입출금통장 한달에 한번 이자 입금 처리 에러");
+			System.err.println("입출금통장 한달에 한번 이자 입금 처리 에러");
 		}
 		
 		LocalDate date = LocalDate.now();
@@ -687,7 +734,7 @@ public class BankController {
 	
 	//상품 만기해지 스케줄러
 	//@Scheduled(cron = "0 0 0 * * *") // 매일 자정(00:00:00)에 작업을 실행
-	@Scheduled(cron = "* 30 * * * *") // 매 초마다 실행 (테스트용)
+	@Scheduled(cron = "0 * * * * *") // 매 초마다 실행 (테스트용)
 	public void fixedDepositMaturity() {
 		LocalDate todayDate = LocalDate.now();
 		String today = String.valueOf(todayDate);		
@@ -746,10 +793,12 @@ public class BankController {
 						System.err.println("만기 스케줄러 작동 중 상품 구분 에러");
 					}
 				}
+			} else {
+				System.out.println("만기 상품 없음");
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
-			System.out.println("만기예정 예금리스트 찾기 에러");
+			System.err.println("만기예정 예금리스트 찾기 에러");
 		}
 	}
 	

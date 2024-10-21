@@ -32,21 +32,40 @@
 		          </li>
         	</c:if>
         	<c:if test="${not empty transactionList}">
-	        	<c:forEach var="transactionList" items="${transactionList}">  	
-		            <li class="account_items">
-		                <div class="txt_box">
-		                    <p class="account_date font_gray">${transactionList.updateDate}</p>
-		                    <p class="account_name">신규</p>
-		                    <p class="account_meno font_darkgray"># ${transactionList.memo}</p>
-		                    <p></p>
-		                </div>
-		                <div class="account_info">
-				                <p class="account_type font_red">${transactionList.type}</p>
-				                <p class="delta_amount font_red">+<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
-				            	<p class="account_balance font_darkgray"><fmt:formatNumber value="${transactionList.balance}" pattern="###,###"/>원</p>
-			            </div>
-		            </li>   
-	            </c:forEach>    
+        		<c:if test="${productInfo.category eq '정기예금'}">
+		        	<c:forEach var="transactionList" items="${transactionList}">  	
+			            <li class="account_items">
+			                <div class="txt_box">
+			                    <p class="account_date font_gray">${transactionList.updateDate}</p>
+			                    <p class="account_name">신규</p>
+			                    <p class="account_meno font_darkgray"># ${transactionList.memo}</p>
+			                    <p></p>
+			                </div>
+			                <div class="account_info">
+					                <p class="account_type font_red">${transactionList.type}</p>
+					                <p class="delta_amount font_red">+<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
+					            	<p class="account_balance font_darkgray"><fmt:formatNumber value="${transactionList.balance}" pattern="###,###"/>원</p>
+				            </div>
+			            </li>   
+		            </c:forEach>
+	            </c:if>
+	            <c:if test="${productInfo.category eq '정기적금'}">
+		        	<c:forEach var="transactionList" items="${transactionList}">  	
+			            <li class="account_items">
+			                <div class="txt_box">
+			                    <p class="account_date font_gray">${transactionList.updateDate}</p>
+			                    <p class="account_name">${userName}</p>
+			                    <p class="account_meno font_darkgray"># ${transactionList.memo}</p>
+			                    <p></p>
+			                </div>
+			                <div class="account_info">
+					                <p class="account_type font_red">${transactionList.type}</p>
+					                <p class="delta_amount font_red">+<fmt:formatNumber value="${transactionList.deltaAmount}" pattern="###,###"/>원</p>
+					            	<p class="account_balance font_darkgray"><fmt:formatNumber value="${transactionList.balance}" pattern="###,###"/>원</p>
+				            </div>
+			            </li>   
+		            </c:forEach>
+	            </c:if>    
 	    	</c:if>     
         </ul>
         
@@ -55,8 +74,7 @@
 <!-- e: content -->
 <script>
 	let category = '${category}';
-	let o
-	
+
 	console.log(category);
 	if(category === 'periodical'){
 		infoBox.classList.remove("bg_yellow");

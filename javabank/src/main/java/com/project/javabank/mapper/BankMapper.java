@@ -172,13 +172,9 @@ public class BankMapper {
 	
 	@Transactional
 	public void cancelProduct(Map<String, Object> params) {		
-		
 		// Product 테이블 업데이트
 		sqlSession.update("updateProductEnableN", params);
-		
 		String category = (String) params.get("category");
-		
-
 		
 		if(category.equals("정기예금")) {
 			// Product transaction 테이블 인서트
@@ -242,7 +238,6 @@ public class BankMapper {
 	public void ExpiryPeriodicalAccount(Map<String, Object> params) {
 		// Product 테이블 업데이트
 		sqlSession.update("updateProductEnableN", params);
-		
 
 		// Deposit 테이블 잔액계산
 		int balance = sqlSession.selectOne("getBalancebyProduct", params);
@@ -276,6 +271,19 @@ public class BankMapper {
 		
 		// Deposit 테이블 인서트
 		sqlSession.insert("insertDtransactionbyPeriodical", params);
+	}
+	
+	public List<ProductDTO> getExpiryPeriodicalAccount(int date){
+		return sqlSession.selectList("getExpiryPeriodicalAccount", date);
+	}
+	
+	@Transactional
+	public void autoTransfer(Map<String, Object> params) {
+		// Deposit Transaction 테이블 인서트
+		sqlSession.insert("insertAutoTransferDtransaction", params);
+		
+		// Product Transaction 테이블 인서트
+		sqlSession.insert("insertAutoTransferPtransaction", params);
 	}
 }
 
