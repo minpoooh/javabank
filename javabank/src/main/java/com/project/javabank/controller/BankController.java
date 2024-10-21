@@ -687,49 +687,63 @@ public class BankController {
 	
 	//상품 만기해지 스케줄러
 	//@Scheduled(cron = "0 0 0 * * *") // 매일 자정(00:00:00)에 작업을 실행
-	@Scheduled(cron = "* 0 * * * *") // 매 초마다 실행 (테스트용)
+	@Scheduled(cron = "* 30 * * * *") // 매 초마다 실행 (테스트용)
 	public void fixedDepositMaturity() {
 		LocalDate todayDate = LocalDate.now();
 		String today = String.valueOf(todayDate);		
 		System.out.println("상품 만기해지 스케줄러 시작");
 		try {
 			// 오늘이 만기인 상품리스트 찾기
-			List<ProductDTO> list = mapper.getFixedDepositMaturity(today);
+			List<ProductDTO> list = mapper.getDepositMaturity(today);
 			if(list.size() > 0) {
 				for(ProductDTO product : list) {
 					if(product.getCategory().equals("정기예금")) {
 						System.out.println("정기예금 만기처리 시작");
-						// 정기예금인 경우
 						// 1. 가입금액
 						int payment = product.getPayment();
-						
-						// 2. 가입기간
-						int productRegDate;
-						double interest = product.getInterestRate();
-
-						// 3. 이자계산
+						// 2. 이자계산
+						double interest = product.getInterestRate();						
 						double expiryInterest = payment * interest;
 						int expiryInterestInt = (int)expiryInterest;
-						
 						System.out.println("이자 계산완료");
 						System.out.println("payment :" + payment);
 						System.out.println("interest :"+ interest);
 						System.out.println("expiryInterestInt :"+ expiryInterestInt);
-						
-						// 4. 정기예금 통장 해지 + 출금						
+						// 3. 정기예금 통장 해지 + 출금						
 						Map<String, Object> params = new HashMap<>();
 						params.put("productAccount", product.getProductAccount());
 						params.put("payment", payment);
-						
-						// 5. 입출금통장 원금 + 이자 입금
+						// 4. 입출금통장 원금 + 이자 입금
 						params.put("depositAccount", product.getDepositAccount());
 						params.put("interest", expiryInterestInt);
 						params.put("userId", product.getUserId());
-						
 						mapper.ExpiryFixedAccount(params);
 						System.out.println("정기예금 해지 완료");
+					} else if(product.getCategory().equals("정기적금")) {
+						System.out.println("정기적금 만기처리 시작");
+						// 1. 납입금액
+						int productBalance = mapper.getProductBalance(product.getProductAccount());
+						// 2. 이자계산
+						double interest = product.getInterestRate();						
+						double expiryInterest = productBalance * interest;
+						int expiryInterestInt = (int)expiryInterest;
+						System.out.println("이자 계산완료");
+						System.out.println("productBalance :" + productBalance);
+						System.out.println("interest :"+ interest);
+						System.out.println("expiryInterestInt :"+ expiryInterestInt);
+						// 3. 정기적금 통장 해지 + 출금						
+						Map<String, Object> params = new HashMap<>();
+						params.put("productAccount", product.getProductAccount());
+						params.put("productBalance", productBalance);
+						// 4. 입출금통장 원금 + 이자 입금
+						params.put("depositAccount", product.getDepositAccount());
+						params.put("interest", expiryInterestInt);
+						params.put("userId", product.getUserId());
+						System.out.println(params);
+						mapper.ExpiryPeriodicalAccount(params);
+						System.out.println("정기적금 해지 완료");
 					} else {
-						// 정기적금인 경우
+						System.err.println("만기 스케줄러 작동 중 상품 구분 에러");
 					}
 				}
 			}

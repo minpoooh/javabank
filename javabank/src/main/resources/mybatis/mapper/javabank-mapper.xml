@@ -259,7 +259,7 @@
     	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '상품해지 입금', '정기예금', #{deltaAmount}, #{balance}, #{productAccount})
     </insert>
     
-    <select id="getFixedDepositMaturity" parameterType="String" resultType="ProductDTO">
+    <select id="getDepositMaturity" parameterType="String" resultType="ProductDTO">
     	select * from JB_product
     	where expiryDate = #{today}
     	and productEnable = 'Y'
@@ -300,5 +300,17 @@
     <insert id="insertDtransactionbyPeriodicalCancel" parameterType="java.util.Map">
     	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount) 
     	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '상품해지 입금', '정기적금', #{deltaAmount}, #{balance}, #{productAccount})
+    </insert>
+    
+    <!--  -->
+    
+    <insert id="updateExpiryPeriodicalTransaction" parameterType="java.util.Map">
+    	insert into JB_Ptransaction(productSeq, productAccount, updateDate, type, memo, deltaAmount, balance) 
+    	values (productSeq.NextVal, #{productAccount}, SYSDATE, '만기해지', '정기적금 만기', -#{deltaAmount}, 0)
+    </insert>
+    
+    <insert id="insertDtransactionbyPeriodicalExpiry" parameterType="java.util.Map">
+    	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount) 
+    	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '상품만기 입금', '정기적금', #{deltaAmount}, #{balance}, #{productAccount})
     </insert>
 </mapper>

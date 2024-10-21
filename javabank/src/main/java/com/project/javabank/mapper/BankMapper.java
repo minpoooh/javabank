@@ -214,8 +214,8 @@ public class BankMapper {
 		}
 	}
 	
-	public List<ProductDTO> getFixedDepositMaturity(String today){
-		return sqlSession.selectList("getFixedDepositMaturity", today);
+	public List<ProductDTO> getDepositMaturity(String today){
+		return sqlSession.selectList("getDepositMaturity", today);
 	}
 	
 	@Transactional
@@ -227,7 +227,7 @@ public class BankMapper {
 		sqlSession.insert("updateExpiryFixedTransaction", params);
 		
 		// Deposit 테이블 잔액계산
-		int balance = sqlSession.selectOne("getBalancebyFixed", params);
+		int balance = sqlSession.selectOne("getBalancebyProduct", params);
 		int deltaAmount = (int)params.get("payment") + (int)params.get("interest");
 		int updatedBalance = balance + deltaAmount;
 		params.put("deltaAmount", deltaAmount);
@@ -235,6 +235,27 @@ public class BankMapper {
 		
 		// Deposit Transaction 테이블 인서트
 		sqlSession.insert("insertDtransactionbyFixedExpiry", params);
+		
+	}
+	
+	@Transactional
+	public void ExpiryPeriodicalAccount(Map<String, Object> params) {
+		// Product 테이블 업데이트
+		sqlSession.update("updateProductEnableN", params);
+		
+
+		// Deposit 테이블 잔액계산
+		int balance = sqlSession.selectOne("getBalancebyProduct", params);
+		int deltaAmount = (int)params.get("productBalance") + (int)params.get("interest");
+		int updatedBalance = balance + deltaAmount;
+		params.put("deltaAmount", deltaAmount);
+		params.put("balance", updatedBalance);
+		
+		// Product transaction 테이블 인서트
+		sqlSession.insert("updateExpiryPeriodicalTransaction", params);		
+		
+		// Deposit Transaction 테이블 인서트
+		sqlSession.insert("insertDtransactionbyPeriodicalExpiry", params);
 		
 	}
 	
