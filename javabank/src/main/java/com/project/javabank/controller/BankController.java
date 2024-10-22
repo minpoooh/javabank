@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.project.javabank.dto.AlarmDTO;
 import com.project.javabank.dto.DepositDTO;
 import com.project.javabank.dto.DtransactionDTO;
 import com.project.javabank.dto.ProductDTO;
@@ -140,7 +141,7 @@ public class BankController {
 		}
 		params.put("mainAccount", mainAccount);
 		
-		// 5. Deposit, Dtransaction 테이블 INSERT
+		// 5. Deposit, Dtransaction, Alarm 테이블 INSERT
 		try {
 			mapper.insertDeposit(params);
 			red.addFlashAttribute("msg", "입출금 통장이 개설되었습니다.");
@@ -298,7 +299,7 @@ public class BankController {
 	public String transferProcess(@AuthenticationPrincipal User user, HttpServletRequest req, String depositAccount, int sendMoneyAmount, String inputAccount, String inputMemo) {
 		
 		// 상대방 계좌번호로 아이디 가져오기
-		String receiveUserId = mapper.getReceiveUserId(inputAccount);
+		String receiveUserId = mapper.getDepositUserId(inputAccount);
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("depositAccount", depositAccount);	// 출금계좌
@@ -653,21 +654,26 @@ public class BankController {
 	}
 	
 	@GetMapping("/alarms")
-	public String alarms() {
+	public String alarms(@AuthenticationPrincipal User user, HttpServletRequest req) {		
+		String userId = user.getUsername();		
+		List<AlarmDTO> alarmList = mapper.getAlarmList(userId);
+		
+		req.setAttribute("alarmList", alarmList);
 		
 		return "alarms";
 	}
 	
 	
 	// 정기적금 자동이체 스케줄러
-	@Scheduled(cron = "0 55 * * * *")
+	@Scheduled(cron = "0 0 0 * * *") // 매일 자정(00:00:00)에 작업을 실행
+	//@Scheduled(cron = "0 48 * * * *") // 테스트용
 	public void autoTransfer() {
 		LocalDate todayDate = LocalDate.now();
 		int date = todayDate.getDayOfMonth();
 		System.out.println("자동이체 스케줄러 시작");
 		try {
 			// 오늘이 자동이체 날인 적금 상품 리스트 찾기
-			List<ProductDTO> list = mapper.getExpiryPeriodicalAccount(date);
+			List<ProductDTO> list = mapper.getTransferPeriodicalAccount(date);
 			
 			Map<String, Object> params = new HashMap<>();
 			if(list.size() > 0) {
@@ -689,7 +695,7 @@ public class BankController {
 						int updatedPbalance = pBalance + product.getMonthlyPayment();
 						params.put("productBalance", updatedPbalance);
 						
-						System.out.println(params);
+						//System.out.println(params);
 						mapper.autoTransfer(params);
 						
 						System.out.println("자동이체 처리 성공");
@@ -711,9 +717,8 @@ public class BankController {
 	
 	// 입출금통장 이자 지급 스케줄러
 	@Scheduled(cron = "0 0 0 L * *") // 매월 마지막 날 자정(00:00:00)에 작업을 실행
-	//@Scheduled(cron = "0 0 * * * *") // 매시 정각, 1시간에 한번 작업 실행
-	public void depositInterestCal() {
-		
+	//@Scheduled(cron = "0 24 * * * *") // 테스트용
+	public void processMonthlyInterest() {		
 		// 입출금통장 이자 입금 처리
 		try {
 			mapper.processMonthlyInterest();
@@ -727,8 +732,8 @@ public class BankController {
 	}
 	
 	//상품 만기해지 스케줄러
-	//@Scheduled(cron = "0 0 0 * * *") // 매일 자정(00:00:00)에 작업을 실행
-	@Scheduled(cron = "0 * * * * *") // 매 초마다 실행 (테스트용)
+	@Scheduled(cron = "0 0 0 * * *") // 매일 자정(00:00:00)에 작업을 실행
+	//@Scheduled(cron = "0 * * * * *") // 테스트용
 	public void fixedDepositMaturity() {
 		LocalDate todayDate = LocalDate.now();
 		String today = String.valueOf(todayDate);		
@@ -780,7 +785,6 @@ public class BankController {
 						params.put("depositAccount", product.getDepositAccount());
 						params.put("interest", expiryInterestInt);
 						params.put("userId", product.getUserId());
-						System.out.println(params);
 						mapper.ExpiryPeriodicalAccount(params);
 						System.out.println("정기적금 해지 완료");
 					} else {
@@ -796,12 +800,6 @@ public class BankController {
 		}
 	}
 	
-	
-	
-	
-	
-	
-
 	
 	
 }

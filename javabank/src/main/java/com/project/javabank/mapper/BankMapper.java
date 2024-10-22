@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.project.javabank.dto.AlarmDTO;
 import com.project.javabank.dto.DepositDTO;
 import com.project.javabank.dto.DtransactionDTO;
 import com.project.javabank.dto.ProductDTO;
@@ -45,6 +46,7 @@ public class BankMapper {
 		return sqlSession.selectOne("getDepositAccountCnt", userId);
 	}
 	
+	// 입출금통장 개설
 	@Transactional
 	public void insertDeposit(Map<String, Object> params) {
 		// deposit 테이블 인서트
@@ -52,44 +54,60 @@ public class BankMapper {
 		
 		// deposit transaction 테이블 인서트
 		sqlSession.insert("insertTransaction", params);
+		
+		params.put("alarmCate", "신규");
+		params.put("alarmCont", "입출금통장(" + params.get("depositAccount") + ")이 개설되었습니다.");
+		
+		// alarm 테이블 인서트
+		sqlSession.insert("insertAlarm", params);
 	}
 	
+	// [메인] 입출금통장 조회
 	public DepositDTO getDepositInfo(String depositAccount) {
 		return sqlSession.selectOne("getDepositInfo", depositAccount);
 	}
 	
+	// [메인, 정기예금 가입, 정기적금 자동이체 스케줄러] 입출금통장 잔액 확인
 	public int getDepositBalance(String depositAccount) {
 		return sqlSession.selectOne("getDepositBalance", depositAccount);
 	}
 	
+	// [조회] 입출금통장 거래내역
 	public List<DtransactionDTO> getDepositTransaction(Map<String, String> params){
 		return sqlSession.selectList("getDepositTransaction", params);
 	}
 	
+	// [이체] 입출금통장 비밀번호
 	public String getDepositPw(String depositAccount) {
 		return sqlSession.selectOne("getDepositPw", depositAccount);
 	}
 	
+	// [이체] 내 계좌
 	public List<DepositDTO> getMyAccountList(String userId){
 		return sqlSession.selectList("getMyAccountList", userId);
 	}
 	
+	// [이체] 최근 이체내역
 	public List<DtransactionDTO> getMyTransactionList(Map<String, String> params){
 		return sqlSession.selectList("getMyTransactionList", params);
 	}
 	
+	// [이체] 계좌번호 존재여부 확인
 	public int getCheckAccountExist(String transferAccount) {
 		return sqlSession.selectOne("getCheckAccountExist", transferAccount);
 	}
 	
+	// [이체] 계좌번호로 소유자 이름 확인
 	public String getAccountName(String depositAccount) {
 		return sqlSession.selectOne("getAccountName", depositAccount);
 	}
 	
-	public String getReceiveUserId(String depositAccount) {
-		return sqlSession.selectOne("getReceiveUserId", depositAccount);
+	// [이체] 계좌번호로 소유자 아이디 확인
+	public String getDepositUserId(String depositAccount) {
+		return sqlSession.selectOne("getDepositUserId", depositAccount);
 	}
 	
+	// [이체] 이체 처리
 	@Transactional
 	public void transferProcess(Map<String, Object> params) {
 		// 출금계좌 잔액 조회
@@ -108,14 +126,23 @@ public class BankMapper {
 		sqlSession.insert("withdrawProcess", params);
 		// 수신계좌에서 입금 인서트
 		sqlSession.insert("depositProcess", params);
+		// 이체유저 알람 인서트
+		int money = (int)params.get("sendMoneyAmount");
+		String formattedMoney = String.format("%,d", money);		
+		params.put("alarmCate", "이체");
+		params.put("alarmCont", params.get("inputAccount")+"계좌로 "+formattedMoney+"원 이체되었습니다.");
+		sqlSession.insert("insertAlarm", params);
+		// 수신유저 알람 인서트
+		params.put("alarmCate", "이체");
+		params.put("alarmCont", params.get("inputAccount")+"계좌로 "+formattedMoney+"원 입금되었습니다.");
+		sqlSession.insert("insertAlarm", params);
 	}
 	
+	// [입출금통장] 한달에 한번 이자입금 처리
 	@Transactional
 	public void processMonthlyInterest() {
-		// 이자 계산 처리
-		
+		// 이자 계산	
 		List<DepositDTO> allDepositAccountList = sqlSession.selectList("allDepositAccountList");
-		//System.out.println(allDepositAccountList.size());
 		if(allDepositAccountList.size() != 0) {
 			for(DepositDTO account : allDepositAccountList) {
 				BigDecimal balance = account.getBalance();
@@ -125,20 +152,29 @@ public class BankMapper {
 				account.setBalance(sumInterestBalance);
 	
 				Map<String, Object> params = new HashMap<>();
-				params.put("depositAccount", account.getDepositAccount());
-				params.put("userId", account.getUserId());
+				params.put("depositAccount", account.getDepositAccount());				
 				params.put("deltaAmount", interest);
 				params.put("balance", sumInterestBalance);
 				
 				sqlSession.insert("insertSumInterest", params);
+				
+				// 알람 테이블 인서트
+				params.put("userId", account.getUserId());
+				params.put("alarmCate", "이자입금");
+				params.put("alarmCont", "입출금통장("+params.get("depositAccount")+")의 이자가 입금되었습니다.");
+				
+				//System.out.println(params);
+				sqlSession.insert("insertAlarm", params);
 			}
 		}
 	}
 	
+	// [정기예금] 계좌번호 중복 체크
 	public int getFixedAccountCheck(String depositNum){
 		return sqlSession.selectOne("getFixedAccountCheck", depositNum);
 	}
 	
+	// [정기예금] 정기예금 상품 가입
 	@Transactional
 	public void insertFixedProduct(Map<String, Object> params) {
 		// Product 테이블 인서트
@@ -156,20 +192,29 @@ public class BankMapper {
 		
 		// Deposit 테이블 인서트
 		sqlSession.insert("insertDtransactionbyFixed", params);
+		
+		// 알람 테이블 인서트
+		params.put("alarmCate", "신규");
+		params.put("alarmCont", "정기예금("+params.get("productAccount")+")이 개설되었습니다.");
+		sqlSession.insert("insertAlarm", params);
 	}
 	
+	// [정기예금] 상품 정보 조회
 	public ProductDTO getProductInfo(String productAccount) {
 		return sqlSession.selectOne("getProductInfo", productAccount);
 	}
 	
+	// [정기예금] 상품 잔액 조회
 	public int getProductBalance(String productAccount) {
 		return sqlSession.selectOne("getProductBalance", productAccount);
 	}
 	
+	// [정기예금] 상품 거래내역 조회
 	public List<PtransactionDTO> getProductTransaction(Map<String, String> params){
 		return sqlSession.selectList("getProductTransaction", params);
 	}
 	
+	// [정기예금, 정기적금] 상품 해지
 	@Transactional
 	public void cancelProduct(Map<String, Object> params) {		
 		// Product 테이블 업데이트
@@ -192,6 +237,11 @@ public class BankMapper {
 			// Deposit Transaction 테이블 인서트
 			sqlSession.insert("insertDtransactionbyFixedCancel", params);
 			
+			// 알람 테이블 인서트
+			params.put("alarmCate", "중도해지");
+			params.put("alarmCont", "정기예금("+params.get("productAccount")+")이 해지되었습니다.");
+			sqlSession.insert("insertAlarm", params);
+			
 		} else {
 			// Product transaction 테이블 인서트
 			sqlSession.insert("insertPtransactionbyPeriodicalCancel", params);
@@ -207,13 +257,20 @@ public class BankMapper {
 			
 			// Deposit Transaction 테이블 인서트
 			sqlSession.insert("insertDtransactionbyPeriodicalCancel", params);
+			
+			// 알람 테이블 인서트
+			params.put("alarmCate", "중도해지");
+			params.put("alarmCont", "정기적금("+params.get("productAccount")+")이 해지되었습니다.");
+			sqlSession.insert("insertAlarm", params);
 		}
 	}
 	
+	// [정기예금, 정기적금] 만기 대상 상품 조회
 	public List<ProductDTO> getDepositMaturity(String today){
 		return sqlSession.selectList("getDepositMaturity", today);
 	}
 	
+	// [정기예금] 만기 해지 처리
 	@Transactional
 	public void ExpiryFixedAccount(Map<String, Object> params) {
 		// Product 테이블 업데이트
@@ -232,8 +289,14 @@ public class BankMapper {
 		// Deposit Transaction 테이블 인서트
 		sqlSession.insert("insertDtransactionbyFixedExpiry", params);
 		
+		// 알람 테이블 인서트
+		params.put("alarmCate", "상품만기");
+		params.put("alarmCont", "정기예금("+params.get("productAccount")+")이 만기가 되어 원금과 이자가 입금되었습니다.");
+		sqlSession.insert("insertAlarm", params);
+		
 	}
 	
+	// [정기적금] 만기 해지 처리
 	@Transactional
 	public void ExpiryPeriodicalAccount(Map<String, Object> params) {
 		// Product 테이블 업데이트
@@ -252,8 +315,13 @@ public class BankMapper {
 		// Deposit Transaction 테이블 인서트
 		sqlSession.insert("insertDtransactionbyPeriodicalExpiry", params);
 		
+		// 알람 테이블 인서트
+		params.put("alarmCate", "상품만기");
+		params.put("alarmCont", "정기적금("+params.get("productAccount")+")이 만기가 되어 원금과 이자가 입금되었습니다.");
+		sqlSession.insert("insertAlarm", params);
 	}
 	
+	// [정기적금] 정기적금 가입 처리
 	@Transactional
 	public void insertPeriodicalProduct(Map<String, Object> params) {
 		// Product 테이블 인서트
@@ -271,12 +339,19 @@ public class BankMapper {
 		
 		// Deposit 테이블 인서트
 		sqlSession.insert("insertDtransactionbyPeriodical", params);
+		
+		// 알람 테이블 인서트
+		params.put("alarmCate", "신규");
+		params.put("alarmCont", "정기적금("+params.get("productAccount")+")이 개설되었습니다.");
+		sqlSession.insert("insertAlarm", params);
 	}
 	
-	public List<ProductDTO> getExpiryPeriodicalAccount(int date){
-		return sqlSession.selectList("getExpiryPeriodicalAccount", date);
+	// [정기적금] 자동이체 대상 정기적금 계좌 조회
+	public List<ProductDTO> getTransferPeriodicalAccount(int date){
+		return sqlSession.selectList("getTransferPeriodicalAccount", date);
 	}
 	
+	// [정기적금] 자동이체 처리
 	@Transactional
 	public void autoTransfer(Map<String, Object> params) {
 		// Deposit Transaction 테이블 인서트
@@ -284,6 +359,16 @@ public class BankMapper {
 		
 		// Product Transaction 테이블 인서트
 		sqlSession.insert("insertAutoTransferPtransaction", params);
+		
+		// 알람 테이블 인서트
+		params.put("alarmCate", "이체");
+		params.put("alarmCont", "정기적금("+params.get("productAccount")+")으로 자동이체 금액이 입금되었습니다.");
+		sqlSession.insert("insertAlarm", params);
+	}
+	
+	// [알람] 알람 내역 조회
+	public List<AlarmDTO> getAlarmList(String userId){
+		return sqlSession.selectList("getAlarmList", userId);		
 	}
 }
 

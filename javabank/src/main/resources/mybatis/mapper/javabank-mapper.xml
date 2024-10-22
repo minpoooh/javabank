@@ -167,7 +167,7 @@
     	
     </select>
     
-    <select id="getReceiveUserId" parameterType="String" resultType="String">
+    <select id="getDepositUserId" parameterType="String" resultType="String">
     	select userId from JB_Deposit
     	where depositAccount = #{depositAccount}
     </select>    
@@ -193,13 +193,16 @@
     </insert>
     
     <select id="allDepositAccountList" resultType="DepositDTO">
-		select depositAccount, interestRate, balance from (
-    							select A.depositAccount, A.interestRate, B.balance, row_number() over(partition by A.depositAccount order by accountSeq desc)as rn
-    							from JB_Deposit A
-    							join JB_Dtransaction B
-    							on A.depositAccount = B.depositAccount
-    							)
-    	where rn = 1
+		select D.userId, C.depositAccount, C.interestRate, C.balance 
+			from(
+	             select A.depositAccount, A.interestRate, A.userId, B.balance, row_number() over(partition by A.depositAccount order by accountSeq desc)as rn
+	             from JB_Deposit A
+	             join JB_Dtransaction B
+	             on A.depositAccount = B.depositAccount
+	        ) C
+	        join JB_User D
+            on C.userId = D.userId
+        where C.rn = 1
     </select>
     
     <insert id="insertSumInterest" parameterType="java.util.Map">
@@ -322,7 +325,7 @@
     	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '상품만기 입금', '정기적금', #{deltaAmount}, #{balance}, #{productAccount})
     </insert>
     
-    <select id="getExpiryPeriodicalAccount" parameterType="int" resultType="ProductDTO">
+    <select id="getTransferPeriodicalAccount" parameterType="int" resultType="ProductDTO">
     	select * from JB_Product
     	where AutoTransferDate = #{date}
     </select>
@@ -337,8 +340,16 @@
     	values (productSeq.NextVal, #{productAccount}, SYSDATE, '입금', '자동이체 입금', #{monthlyPayment}, #{productBalance})
     </insert>
     
+    <select id="getAlarmList" parameterType="String" resultType="AlarmDTO">
+    	select * from JB_Alarm
+    	where userId = #{userId}
+    	order by alarmRegDate desc
+    </select>
     
-    
+    <insert id="insertAlarm" parameterType="java.util.Map">
+    	insert into JB_alarm(alarmSeq, userId, alarmIsRead, alarmCate, alarmCont, alarmRegDate)
+    	values (alarmSeq.nextVal, #{userId}, 'N', #{alarmCate}, #{alarmCont}, SYSDATE)
+    </insert>
     
     
     
