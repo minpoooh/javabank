@@ -42,6 +42,7 @@ public class BankController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	// 메인페이지
 	@GetMapping("/index")
 	public String index(@AuthenticationPrincipal User user,
 						@RequestParam(value="javabank", required=false) String javabank, HttpServletRequest req, Model model) {
@@ -78,6 +79,7 @@ public class BankController {
 		return "index";
 	}
 	
+	// 입출금통장 개설 페이지 이동
 	@GetMapping("/createDeposit")
 	public String createDeposit(@AuthenticationPrincipal User user, HttpServletRequest req) {
 		
@@ -89,6 +91,7 @@ public class BankController {
 		return "add_account";
 	}
 	
+	// 입출금통장 개설 처리
 	@PostMapping("/createDeposit")
 	public String createDepositProcess(@AuthenticationPrincipal User user, RedirectAttributes red, String depositPw, String transactionLimit) {
 		
@@ -103,7 +106,7 @@ public class BankController {
 		
 		// 2. 계좌번호 랜덤으로 생성하기
 		//System.out.println((Math.random() * 9)+1); // 1 ~ 10
-		//System.out.println((Math.random() * 9000000) + 1000000); // 1000000 ~ 10000000
+		//System.out.println((Math.random() * 9000000) + 1000000); // 1000000 ~ 9999999
 		//System.out.println((Math.random() * 9000000) + 1000000); 	
 		
 		int randomNum = 0;
@@ -152,6 +155,7 @@ public class BankController {
 		return "redirect:/index";
 	}
 	
+	// 입출금통장 처리
 	@PostMapping("/depositList")
 	public String depositList(HttpServletRequest req, String submitType, String depositAccount) {
 		
@@ -194,6 +198,7 @@ public class BankController {
 		
 	}
 	
+	// 입출금통장 거래내역 정렬옵션 변경
 	@ResponseBody
 	@PostMapping("/selectChange.ajax")
 	public ResponseEntity<Map<String, Object>> selectChange (String depositAccount, String period, String details) {
@@ -224,7 +229,7 @@ public class BankController {
 			String threeYearAgoDate = String.valueOf(threeYearAgo);
 			params.put("period", threeYearAgoDate);
 		}		
-		System.out.println(params);
+		//System.out.println(params);
 		List<DtransactionDTO> transactionList = mapper.getDepositTransaction(params);
 		
 		Map<String, Object> response = new HashMap<>();
@@ -235,7 +240,7 @@ public class BankController {
 		return ResponseEntity.ok(response);
 	}
 
-	
+	// 이체 시 비밀번호 확인
 	@ResponseBody
 	@PostMapping("/checkPwForTransfer.ajax")
 	public String checkPwForTransfer(String depositAccount, String inputPw) {
@@ -255,7 +260,7 @@ public class BankController {
 		}
 	}
 	
-	
+	// 계좌번호 입력 페이지 이동
 	@PostMapping("/inputSendAccount")
 	public String inputSendAccount(@AuthenticationPrincipal User user, HttpServletRequest req, String depositAccount, int sendMoneyAmount) {
 		// ID 꺼내기
@@ -275,6 +280,7 @@ public class BankController {
 		return "transfer";
 	}
 	
+	// 이체 시 계좌번호가 존재하는지 확인
 	@ResponseBody
 	@PostMapping("/checkAccountExist.ajax")
 	public String checkAccountExist(String transferAccount) {
@@ -285,9 +291,9 @@ public class BankController {
 		} else {
 			return "NOTEXIST";
 		}
-		
 	}
 	
+	// 입출금통장 소유자 이름 조회
 	@ResponseBody
 	@PostMapping("/getAccountName.ajax")
 	public String getAccountName(String depositAccount) {
@@ -295,6 +301,7 @@ public class BankController {
 		return name;
 	}
 	
+	// 이체 처리
 	@PostMapping("/transferProcess")
 	public String transferProcess(@AuthenticationPrincipal User user, HttpServletRequest req, String depositAccount, int sendMoneyAmount, String inputAccount, String inputMemo) {
 		
@@ -313,7 +320,7 @@ public class BankController {
 		try {
 			mapper.transferProcess(params);			
 		} catch (Exception e) {
-			System.out.println("이체 처리 중 에러 발생");
+			System.err.println("이체 처리 중 에러 발생");
 			e.printStackTrace();
 		}
 		
@@ -330,6 +337,7 @@ public class BankController {
 		return "transfer_finish";
 	}
 	
+	// 예적금 가입 페이지 이동
 	@GetMapping("/createProduct")
 	public String createProduct(@RequestParam(required=false) String fixed, @RequestParam(required=false) String periodical, @AuthenticationPrincipal User user, HttpServletRequest req) {
 		
@@ -339,7 +347,6 @@ public class BankController {
 		List<DepositDTO> accountList = mapper.getAccountList(user.getUsername());
 		req.setAttribute("accountList", accountList);
 		
-		
 		if(fixed != null) {
 			return "add_fixed_account";
 		} else {
@@ -348,6 +355,7 @@ public class BankController {
 		
 	}
 	
+	// 예금가입 처리
 	@PostMapping("/createFixedProcess")
 	public String createFixedProcess(@AuthenticationPrincipal User user, HttpServletRequest req, RedirectAttributes red, String productPw, String selectAccount, int payment, String registerMonth) {
 		// 계좌 생성 파라미터
@@ -406,6 +414,7 @@ public class BankController {
 		return "redirect:/index";
 	}
 	
+	// 입출금통장 잔액 확인
 	@ResponseBody
 	@PostMapping("/balanceCheck.ajax")
 	public int balanceCheck(String selectAccount) {
@@ -419,6 +428,7 @@ public class BankController {
 		}	
 	}	
 	
+	// 메인 - 예금 리스트 조회, 해지 페이지 이동
 	@PostMapping("/productFixedList")
 	public String productFixedList(HttpServletRequest req, String submitType, String productAccount) {
 		
@@ -487,12 +497,12 @@ public class BankController {
 			
 			return "product_exit";
 		} 
-		
 	}
 	
-	
+	// 상품 해지 처리
 	@PostMapping("/productCancel")
-	public String productCancel(@AuthenticationPrincipal User user, RedirectAttributes red, String category, String productAccount, String depositAccount, String payment, String interest, String productBalance) {
+	public String productCancel(@AuthenticationPrincipal User user, RedirectAttributes red, String category, String productAccount, 
+								String depositAccount, String payment, String interest, String productBalance) {
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("category", category);
@@ -507,23 +517,18 @@ public class BankController {
 			mapper.cancelProduct(params);
 		}catch(Exception e) {
 			e.printStackTrace();
-			System.out.println("상품해지 중 에러 발생");
+			System.err.println("상품해지 중 에러 발생");
 		}
 		
 		red.addFlashAttribute("msg", "상품 해지가 완료되었습니다. 이용해주셔서 감사합니다.");
 		return "redirect:/index";
 	}
 	
-	
+	// 적금가입 처리
 	@PostMapping("/createPeriodicalProcess")
-	public String createPeriodicalProcess(@AuthenticationPrincipal User user, HttpServletRequest req, RedirectAttributes red, String productPw, String selectAccount, String monthlyPayment, String registerMonth, String selectTransferDate) {
+	public String createPeriodicalProcess(@AuthenticationPrincipal User user, HttpServletRequest req, RedirectAttributes red, 
+			String productPw, String selectAccount, String monthlyPayment, String registerMonth, String selectTransferDate) {
 	
-		System.out.println(productPw);
-		System.out.println(selectAccount);
-		System.out.println(monthlyPayment);
-		System.out.println(registerMonth);
-		System.out.println(selectTransferDate);
-		
 		// 계좌 생성 파라미터
 		Map<String, Object> params = new HashMap<>();
 		params.put("productPw", productPw);
@@ -531,7 +536,6 @@ public class BankController {
 		params.put("monthlyPayment", Integer.parseInt(monthlyPayment));
 		params.put("autoTransferDate", selectTransferDate);
 
-		
 		// 1. 유저 ID 뽑기
 		String userId = user.getUsername();
 		params.put("userId", userId);
@@ -574,13 +578,14 @@ public class BankController {
 			mapper.insertPeriodicalProduct(params);
 			red.addFlashAttribute("msg", "정기적금 상품에 가입되었습니다.");
 		} catch(Exception e) {
-			System.out.println("Product, Ptransaction 테이블 INSERT 에러");
+			System.err.println("Product, Ptransaction 테이블 INSERT 에러");
 			e.printStackTrace();
 		}	
 		
 		return "redirect:/index";
 	}
 	
+	// 메인 - 적금 조회, 이체 페이지 이동
 	@PostMapping("/productPeriodicalList")
 	public String productPeriodicalList(HttpServletRequest req, String submitType, String productAccount) {
 		
@@ -653,6 +658,7 @@ public class BankController {
 		
 	}
 	
+	// 알람페이지 이동
 	@GetMapping("/alarms")
 	public String alarms(@AuthenticationPrincipal User user, HttpServletRequest req) {		
 		String userId = user.getUsername();		

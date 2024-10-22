@@ -22,26 +22,32 @@ public class BankMapper {
 	@Autowired
 	SqlSession sqlSession;
 	
+	// userId로 userName 조회
 	public String getUserName(String userId) {
 		return sqlSession.selectOne("getUserName", userId);
 	}
 	
+	// userId가 보유한 입출금통장 조회  
 	public List<DepositDTO> getAccountList(String userId) {
 		return sqlSession.selectList("getAccountList", userId);
 	}
 	
+	// userId가 보유한 정기예금 조회
 	public List<ProductDTO> getFixedDepositList(String userId){
 		return sqlSession.selectList("getFixedDepositList", userId);
 	}
 	
+	// userId가 보유한 정기적금 조회
 	public List<ProductDTO> getPeriodicalDepositList(String userId){
 		return sqlSession.selectList("getPeriodicalDepositList", userId);
 	}
 	
+	// 랜덤으로 생성한 계좌번호 중복체크
 	public int getDepositAccountCheck(String depositNum){
 		return sqlSession.selectOne("getDepositAccountCheck", depositNum);
 	}
 	
+	// userId가 보유한 입출금통장 계좌 개수
 	public int getDepositAccountCnt(String userId) {
 		return sqlSession.selectOne("getDepositAccountCnt", userId);
 	}
