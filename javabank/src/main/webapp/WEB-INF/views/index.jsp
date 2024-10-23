@@ -42,8 +42,8 @@
 			                <div class="btn_box">
 			                	<input type="hidden" name="depositAccount" value="${accountList.depositAccount}">
 			                	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-			                    <button type="submit" name="submitType" value="list">조회</button>
-			                    <button type="submit" name="submitType" value="transfer">이체</button>
+			                    <button type="submit" name="submitType" value="list">거래내역</button>
+			                    <button type="submit" name="submitType" value="transfer">계좌이체</button>
 			                </div>
 		                </form>
 		            </li>
@@ -54,7 +54,7 @@
 
 	<c:if test="${not empty fixedDepositList}">
     <div class="account_box">
-        <p class="account_tit">상품</p>
+        <p class="account_tit">예금상품</p>
         <c:forEach var="fixedDeposit" items="${fixedDepositList}">
         <ul>
             <li class="account_item bg_green">
@@ -67,8 +67,8 @@
 	                <div class="btn_box">
 	                	<input type="hidden" name="productAccount" value="${fixedDeposit.productAccount}">
 			            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-	                    <button type="submit" name="submitType" value="list">조회</button>
-	                    <button type="submit" name="submitType" value="exit">해지</button>
+	                    <button type="submit" name="submitType" value="list">거래내역</button>
+	                    <button type="submit" name="submitType" value="detail">계좌정보</button>
 	                </div>
 	            </form>
             </li>
@@ -80,7 +80,7 @@
 	
 	<c:if test="${not empty periodicalDepositList}">
     <div class="account_box">
-        <p class="account_tit">적금</p>
+        <p class="account_tit">적금상품</p>
         <c:forEach var="periodicalDeposit" items="${periodicalDepositList}">
         <ul>
             <li class="account_item bg_blue">
@@ -93,8 +93,8 @@
 	                <div class="btn_box">
 	                	<input type="hidden" name="productAccount" value="${periodicalDeposit.productAccount}">
 				        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-	                    <button type="submit" name="submitType" value="list">조회</button>
-	                    <button type="submit" name="submitType" value="exit">해지</button>
+	                    <button type="submit" name="submitType" value="list">거래내역</button>
+	                    <button type="submit" name="submitType" value="detail">계좌정보</button>
 	                </div>
                 </form>
             </li>

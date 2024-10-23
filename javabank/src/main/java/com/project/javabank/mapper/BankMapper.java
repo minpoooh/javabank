@@ -175,6 +175,18 @@ public class BankMapper {
 		}
 	}
 	
+	// [입출금통장] 해지
+	@Transactional
+	public void cancelAccount(Map<String, Object> params) {
+		// Deposit 테이블 업데이트
+		sqlSession.update("cancelAccount", params);
+		
+		// 알람 테이블 인서트
+		params.put("alarmCate", "중도해지");
+		params.put("alarmCont", "입출금통장("+params.get("depositAccount")+")이 해지되었습니다.");
+		sqlSession.insert("insertAlarm", params);
+	}
+	
 	// [정기예금] 계좌번호 중복 체크
 	public int getFixedAccountCheck(String depositNum){
 		return sqlSession.selectOne("getFixedAccountCheck", depositNum);
@@ -395,6 +407,14 @@ public class BankMapper {
 	// [알람] 미열람 알림 체크
 	public int checkNotReadAlarm(String userId) {
 		return sqlSession.selectOne("checkNotReadAlarm", userId);
+	}
+	
+	// [계좌관리] 해지계좌 조회
+	public List<DepositDTO> getExpiryDepositList(String userId){
+		return sqlSession.selectList("getExpiryDepositList", userId);
+	}
+	public List<ProductDTO> getExpiryProductList(String userId){
+		return sqlSession.selectList("getExpiryProductList", userId);
 	}
 }
 

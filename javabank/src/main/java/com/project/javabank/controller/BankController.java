@@ -1,5 +1,6 @@
 package com.project.javabank.controller;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -49,44 +50,36 @@ public class BankController {
 			// 로그인 정보 꺼내기
 			String userId = user.getUsername();
 			String userName = mapper.getUserName(user.getUsername());
-			
 			if (javabank != null) {
 		    	model.addAttribute("msg", userName+"님 환영합니다.");
 			}
 			
 			// 등록된 입출금계좌 있는지 확인
 			List<DepositDTO> accountList = mapper.getAccountList(userId);
-
 			if(accountList.size() > 0) {
 				req.setAttribute("accountList", accountList);
 			}
 			
 			// 등록된 예금계좌 있는지 확인
 			List<ProductDTO> fixedDepositList = mapper.getFixedDepositList(userId);
-			
 			if(fixedDepositList.size() > 0) {
 				req.setAttribute("fixedDepositList", fixedDepositList);
 			}
 			
 			// 등록된 적금계좌 있는지 확인
 			List<ProductDTO> periodicalDepositList = mapper.getPeriodicalDepositList(userId);
-			
 			if(periodicalDepositList.size() > 0) {
 				req.setAttribute("periodicalDepositList", periodicalDepositList);
 			}
-
 		return "index";
 	}
 	
 	// 입출금통장 개설 페이지 이동
 	@GetMapping("/createDeposit")
 	public String createDeposit(@AuthenticationPrincipal User user, HttpServletRequest req) {
-		
 		// 로그인 정보 꺼내기
 		String userName = mapper.getUserName(user.getUsername());
-		
 		req.setAttribute("userName", userName);
-		
 		return "add_account";
 	}
 	
@@ -145,7 +138,6 @@ public class BankController {
 	// 입출금통장 처리
 	@PostMapping("/depositList")
 	public String depositList(HttpServletRequest req, String submitType, String depositAccount) {
-		
 		// 통장정보
 		DepositDTO depositInfo = mapper.getDepositInfo(depositAccount);
 		req.setAttribute("depositInfo", depositInfo);
@@ -174,15 +166,39 @@ public class BankController {
 			List<DtransactionDTO> transactionList = mapper.getDepositTransaction(params);
 			req.setAttribute("transactionList", transactionList);
 			return "deposit_list";
-		} 
-		// 이체 버튼 클릭한 경우
-		else {
+			
+		} else if(submitType.equals("transfer")) {
+			// 이체 버튼 클릭한 경우
 			req.setAttribute("depositAccount", depositAccount);
 			req.setAttribute("depositBalance", depositBalance);
 			req.setAttribute("transactionLimit", depositInfo.getTransactionLimit());
 			return "transfer_money";
+			
+		} else if(submitType.equals("detail")) {
+			// 계좌상세버튼 클릭한 경우
+			// 이자율
+			double interestRate = (double)depositInfo.getInterestRate();
+			double percent = interestRate * 100;
+			DecimalFormat df = new DecimalFormat("0.00");
+	        String formattedPercent = df.format(percent);
+			String interestRateStr = formattedPercent + "%";
+			req.setAttribute("interestRate", interestRateStr);
+			return "deposit_detail";
+			
+		} else {
+			// 해지버튼 클릭한 경우
+			LocalDate date = LocalDate.now();
+			String todayDate = String.valueOf(date);
+			req.setAttribute("todayDate", todayDate);
+			
+			// 패스워드
+			req.setAttribute("depositPw", depositInfo.getDepositPw());
+			
+			// 잔액
+			req.setAttribute("depositBalance", depositBalance);
+			
+			return "deposit_exit";
 		}
-		
 	}
 	
 	// 입출금통장 거래내역 정렬옵션 변경
@@ -324,13 +340,31 @@ public class BankController {
 		return "transfer_finish";
 	}
 	
+	// 입출금통장 해지 처리
+	@PostMapping("/depositCancel")
+	public String cancelDeposit(@AuthenticationPrincipal User user, RedirectAttributes red, String depositAccount) {
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("userId", user.getUsername());
+		params.put("depositAccount", depositAccount);
+		
+		try {
+			mapper.cancelAccount(params);
+		} catch(Exception e) {
+			System.err.println("입출금 통장 해지 에러");
+			e.printStackTrace();
+		}
+		
+		red.addFlashAttribute("msg", "입출금통장 해지가 완료되었습니다. 이용해주셔서 감사합니다.");
+		return "redirect:/index";
+	}
+	
+	
 	// 예적금 가입 페이지 이동
 	@GetMapping("/createProduct")
 	public String createProduct(@RequestParam(required=false) String fixed, @RequestParam(required=false) String periodical, @AuthenticationPrincipal User user, HttpServletRequest req) {
-		
 		String userName = mapper.getUserName(user.getUsername());
 		req.setAttribute("userName", userName);
-		
 		List<DepositDTO> accountList = mapper.getAccountList(user.getUsername());
 		req.setAttribute("accountList", accountList);
 		
@@ -339,7 +373,6 @@ public class BankController {
 		} else {
 			return "add_periodical_account";
 		}
-		
 	}
 	
 	// 예금가입 처리
@@ -395,7 +428,7 @@ public class BankController {
 			mapper.insertFixedProduct(params);
 			red.addFlashAttribute("msg", "정기예금 상품에 가입되었습니다.");
 		} catch(Exception e) {
-			System.out.println("Product, Ptransaction 테이블 INSERT 에러");
+			System.err.println("Product, Ptransaction 테이블 INSERT 에러");
 			e.printStackTrace();
 		}
 		return "redirect:/index";
@@ -410,7 +443,7 @@ public class BankController {
 			return balance;
 		}catch(Exception e) {
 			e.printStackTrace();
-			System.out.println("정기예금 가입 잔액확인 중 에러");
+			System.err.println("정기예금 가입 잔액확인 중 에러");
 			return -1;
 		}	
 	}	
@@ -447,11 +480,8 @@ public class BankController {
 			req.setAttribute("transactionList", transactionList);
 			req.setAttribute("category", "fixed");
 			return "product_list";
-		} 
-		// 해지 버튼 클릭한 경우
-		else {
-			req.setAttribute("productInfo", productInfo);
-			
+		} else if(submitType.equals("exit")){
+			// 해지 버튼 클릭한 경우
 			LocalDate date = LocalDate.now();
 			String todayDate = String.valueOf(date);
 			req.setAttribute("todayDate", todayDate);
@@ -483,7 +513,26 @@ public class BankController {
 			req.setAttribute("productPw", productInfo.getProductPw());
 			
 			return "product_exit";
-		} 
+		} else {
+			// 상품 계좌상세 클릭한 경우
+			// 이자율
+			double interestRate = (double)productInfo.getInterestRate();
+			double percent = interestRate * 100;
+			DecimalFormat df = new DecimalFormat("0.00");
+	        String formattedPercent = df.format(percent);
+			String interestRateStr = formattedPercent + "%";
+			req.setAttribute("interestRate", interestRateStr);
+			
+	        // 가입기간
+ 			String productPeriod; 			
+			if(interestRate == 0.0028) {
+ 				productPeriod = "6개월";
+ 			} else {
+ 				productPeriod = "1년";
+ 			}
+	        req.setAttribute("productPeriod", productPeriod);
+			return "product_detail";
+		}
 	}
 	
 	// 상품 해지 처리
@@ -561,7 +610,7 @@ public class BankController {
 		
 		// 4. Product, Ptransaction 테이블 INSERT
 		try {
-			System.out.println(params);
+			//System.out.println(params);
 			mapper.insertPeriodicalProduct(params);
 			red.addFlashAttribute("msg", "정기적금 상품에 가입되었습니다.");
 		} catch(Exception e) {
@@ -608,11 +657,9 @@ public class BankController {
 			req.setAttribute("category", "periodical");
 			req.setAttribute("userName", userName);
 			return "product_list";
-		} 
-		// 해지 버튼 클릭한 경우
-		else {
-			req.setAttribute("productInfo", productInfo);
 			
+		} else if(submitType.equals("exit")){
+			// 해지 버튼 클릭한 경우
 			LocalDate date = LocalDate.now();
 			String todayDate = String.valueOf(date);
 			req.setAttribute("todayDate", todayDate);
@@ -641,7 +688,27 @@ public class BankController {
 			req.setAttribute("productPw", productInfo.getProductPw());
 			
 			return "product_exit";
-		} 
+		} else {
+			// 상품 계좌상세 클릭한 경우
+			// 이자율
+			double interestRate = (double)productInfo.getInterestRate();
+			double percent = interestRate * 100;
+			DecimalFormat df = new DecimalFormat("0.00");
+	        String formattedPercent = df.format(percent);
+			String interestRateStr = formattedPercent + "%";
+			req.setAttribute("interestRate", interestRateStr);
+			
+	        // 가입기간
+ 			String productPeriod; 			
+			if(interestRate == 0.0033) {
+ 				productPeriod = "6개월";
+ 			} else {
+ 				productPeriod = "1년";
+ 			}
+	        req.setAttribute("productPeriod", productPeriod);
+ 			
+			return "product_detail";
+		}
 		
 	}
 	
@@ -720,9 +787,45 @@ public class BankController {
 	}
 	
 	
+	// 읽지않은 알림 개수 표시
+	@ResponseBody
+	@PostMapping("/getNotReadAlarm.ajax")
+	public int getNotReadAlarm(@AuthenticationPrincipal User user) {
+		String userId = user.getUsername();
+		int notReadAlarmCnt = mapper.checkNotReadAlarm(userId);
+		return notReadAlarmCnt;
+	}
+	
+	//내계좌 모아보기
+	@GetMapping("/myAccount")
+	public String myAccount(@AuthenticationPrincipal User user, HttpServletRequest req) {
+		String userId = user.getUsername();
+		
+		// 입출금통장
+		List<DepositDTO> depositList = mapper.getAccountList(userId);
+		
+		// 예금
+		List<ProductDTO> fixedList = mapper.getFixedDepositList(userId);
+		
+		// 적금
+		List<ProductDTO> periodList = mapper.getPeriodicalDepositList(userId);
+		
+		// 해지
+		List<DepositDTO> expiryDepositList = mapper.getExpiryDepositList(userId);
+		List<ProductDTO> expiryProductList = mapper.getExpiryProductList(userId);
+		
+		req.setAttribute("depositList", depositList);
+		req.setAttribute("fixedList", fixedList);
+		req.setAttribute("periodList", periodList);
+		req.setAttribute("expiryDepositList", expiryDepositList);
+		req.setAttribute("expiryProductList", expiryProductList);
+		
+		return "my_account";
+	}
+	
 	// 정기적금 자동이체 스케줄러
-	@Scheduled(cron = "0 0 0 * * *") // 매일 자정(00:00:00)에 작업을 실행
-	//@Scheduled(cron = "0 48 * * * *") // 테스트용
+	//@Scheduled(cron = "0 0 0 * * *") // 매일 자정(00:00:00)에 작업을 실행
+	@Scheduled(cron = "0 2 * * * *") // 테스트용
 	public void autoTransfer() {
 		LocalDate todayDate = LocalDate.now();
 		int date = todayDate.getDayOfMonth();
@@ -770,10 +873,9 @@ public class BankController {
 		}
 	}
 	
-	
 	// 입출금통장 이자 지급 스케줄러
-	@Scheduled(cron = "0 0 0 L * *") // 매월 마지막 날 자정(00:00:00)에 작업을 실행
-	//@Scheduled(cron = "0 24 * * * *") // 테스트용
+	//@Scheduled(cron = "0 0 0 L * *") // 매월 마지막 날 자정(00:00:00)에 작업을 실행
+	@Scheduled(cron = "0 48 * * * *") // 테스트용
 	public void processMonthlyInterest() {		
 		// 입출금통장 이자 입금 처리
 		try {
@@ -782,14 +884,13 @@ public class BankController {
 			e.printStackTrace();
 			System.err.println("입출금통장 한달에 한번 이자 입금 처리 에러");
 		}
-		
 		LocalDate date = LocalDate.now();
 		System.out.println(date + " 입출금통장 이자입금 완료");
 	}
 	
 	//상품 만기해지 스케줄러
-	@Scheduled(cron = "0 0 0 * * *") // 매일 자정(00:00:00)에 작업을 실행
-	//@Scheduled(cron = "0 * * * * *") // 테스트용
+	//@Scheduled(cron = "0 0 0 * * *") // 매일 자정(00:00:00)에 작업을 실행
+	@Scheduled(cron = "0 46 * * * *") // 테스트용
 	public void fixedDepositMaturity() {
 		LocalDate todayDate = LocalDate.now();
 		String today = String.valueOf(todayDate);		
@@ -855,15 +956,5 @@ public class BankController {
 			System.err.println("만기예정 예금리스트 찾기 에러");
 		}
 	}
-	
-	// 읽지않은 알림 개수 표시
-	@ResponseBody
-	@PostMapping("/getNotReadAlarm.ajax")
-	public int getNotReadAlarm(@AuthenticationPrincipal User user) {
-		String userId = user.getUsername();
-		int notReadAlarmCnt = mapper.checkNotReadAlarm(userId);
-		return notReadAlarmCnt;
-	}
-	
 	
 }

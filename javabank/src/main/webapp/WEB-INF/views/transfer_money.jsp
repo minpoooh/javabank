@@ -151,13 +151,12 @@
 						console.log(balanceCheck);
 						console.log(limitCheck);
 						if(!balanceCheck && limitCheck){
-							alert("금일 이체한도를 초과하였습니다.");
+							alert("입출금통장 잔액이 부족합니다.");
 						}else if(balanceCheck && !limitCheck){
-							alert("잔액이 부족합니다.");
+							alert("금일 이체한도를 초과하였습니다.");
 						}else if(!balanceCheck && !limitCheck){
 							alert("잔액 부족 및 이체한도가 초과되었습니다.");
 						}
-						
 						
 						if(pwCheck && balanceCheck && limitCheck){							
 							// 동적으로 폼 생성

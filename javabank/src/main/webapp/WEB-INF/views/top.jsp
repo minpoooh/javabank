@@ -52,7 +52,7 @@
                 <img src="images/icons/setting.png">
             </div>
             <ul class="setting_box" style="display: none;">
-                <li><a href="javascript:;">내계좌 모아보기</a></li>
+                <li><a href="/myAccount">계좌관리</a></li>
                 <li><a href="/logout">로그아웃</a></li>
             </ul>
         </div>

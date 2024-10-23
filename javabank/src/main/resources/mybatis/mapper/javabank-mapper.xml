@@ -50,6 +50,7 @@
     						  		) B
     						  on A.depositAccount = B.depositAccount
     	where A.userId = #{userId}
+    	and A.depositEnable = 'Y'
     	and B.rn = 1
     </select>
     
@@ -87,11 +88,12 @@
     <select id="getDepositAccountCnt" parameterType="String" resultType="int">
     	select count(*) from JB_Deposit
     	where userId = #{userId}
+    	and depositEnable = 'Y'
     </select>
     
     <insert id="insertDeposit" parameterType="java.util.Map">
-    	insert into JB_Deposit(depositAccount, userId, depositPw, category, regDate, interestRate, transactionLimit, mainAccount) 
-    	values (#{depositAccount}, #{userId}, #{depositPw}, '입출금통장', SYSDATE, 0.001, #{transactionLimit}, #{mainAccount})
+    	insert into JB_Deposit(depositAccount, userId, depositPw, category, regDate, interestRate, transactionLimit, mainAccount, depositEnable) 
+    	values (#{depositAccount}, #{userId}, #{depositPw}, '입출금통장', SYSDATE, 0.001, #{transactionLimit}, #{mainAccount}, 'Y')
     </insert>
     
     <insert id="insertTransaction" parameterType="java.util.Map">
@@ -135,6 +137,7 @@
     <select id="getMyAccountList" parameterType="String" resultType="DepositDTO">
     	select category, depositAccount from JB_Deposit
     	where userId = #{userId}
+    	and depositEnable = 'Y'
     	order by regDate asc
     </select>
     
@@ -199,6 +202,7 @@
 	             from JB_Deposit A
 	             join JB_Dtransaction B
 	             on A.depositAccount = B.depositAccount
+	             where A.depositEnable = 'Y'
 	        ) C
 	        join JB_User D
             on C.userId = D.userId
@@ -209,6 +213,11 @@
     	insert into JB_Dtransaction (accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount)
     	values (accountSeq.nextVal, #{depositAccount}, 'JAVABANK', SYSDATE, '이자 입금', NULL, #{deltaAmount}, #{balance}, '')
     </insert>
+    
+    <update id="cancelAccount" parameterType="java.util.Map">
+    	update JB_deposit set depositEnable = 'N'
+    	where depositAccount = #{depositAccount}
+    </update>
     
     <select id="getFixedAccountCheck" parameterType="String" resultType="int">
     	select count(*) from JB_Product
@@ -376,5 +385,19 @@
     	select count(*) from JB_alarm
     	where userId = #{userId}
     	and alarmIsRead = 'N'
+    </select>
+    
+    <select id="getExpiryDepositList" parameterType="String" resultType="DepositDTO">
+    	select * from JB_Deposit
+    	where userId = #{userId}
+    	and depositEnable = 'N'
+    	order by regDate desc
+    </select>
+    
+    <select id="getExpiryProductList" parameterType="String" resultType="ProductDTO">
+    	select * from JB_Product
+    	where userId = #{userId}
+    	and productEnable = 'N'
+    	order by expiryDate desc
     </select>
 </mapper>

@@ -11,6 +11,7 @@ public class DepositDTO {
 	private double interestRate;
 	private int transactionLimit;
 	private String mainAccount;
+	private String depositEnable;
 	
 	public String getDepositAccount() {
 		return depositAccount;
@@ -60,6 +61,15 @@ public class DepositDTO {
 	public void setMainAccount(String mainAccount) {
 		this.mainAccount = mainAccount;
 	}
+	public String getDepositEnable() {
+		return depositEnable;
+	}
+	public void setDepositEnable(String depositEnable) {
+		this.depositEnable = depositEnable;
+	}
+
+
+
 	// 조인용 컬럼
 	private BigDecimal balance;
 

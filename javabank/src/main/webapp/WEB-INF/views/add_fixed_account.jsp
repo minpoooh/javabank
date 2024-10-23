@@ -105,52 +105,54 @@
 	}
 	
 	function checkAccount(){
-		let csrfToken = '${_csrf.token}';
+		// 입출금계좌 선택 체크
+		let selectAccount = document.getElementsByName('selectAccount')[0].value;
+		if (selectAccount != 'notSelected'){
+			acCheck = true;
+			checkBalance();
+		} else {
+			acCheck = false;
+		}
+	}
+	
+	function checkBalance(){
+		let csrfToken = '${_csrf.token}';	
+		let selectAccount = document.getElementsByName('selectAccount')[0].value;
 		
 		// 가입금액에서 천단위 구분기호 제거
 		let payment = document.getElementsByName('payment')[0];		
 		changedValue = payment.value.replace(/,/g, '');
 		payment.value = changedValue;
 		
-		
-		// 입출금계좌 선택 체크
-		let selectAccount = document.getElementsByName('selectAccount')[0].value;
-		if (selectAccount != 'notSelected'){
-			acCheck = true;
-			
-			// 입출금 계좌 잔액 체크
-			$.ajax({
-				url : "balanceCheck.ajax",
-				type : "POST",
-				headers : {
-	                "X-CSRF-TOKEN": csrfToken
-	            },
-				data : {
-					"selectAccount" : selectAccount				
-				},
-				success : function(balance){				
-					console.log("balance:"+balance);
-					console.log("payment:"+payment.value);
-					
-					if(balance === -1){
-						console.log("잔액 확인 중 에러");
-					}
-					
-					if(balance >= payment.value){
-						balanceCheck = true;
-					}else {
-						balanceCheck = false;
-					}
-				},
-				error : function(err){
-					console.log(err);
+		// 입출금 계좌 잔액 체크
+		$.ajax({
+			url : "balanceCheck.ajax",
+			type : "POST",
+			headers : {
+                "X-CSRF-TOKEN": csrfToken
+            },
+			data : {
+				"selectAccount" : selectAccount				
+			},
+			success : function(balance){				
+				console.log("balance:"+balance);
+				console.log("payment:"+payment.value);
+				
+				if(balance === -1){
+					console.log("잔액 확인 중 에러");
 				}
-			});
+				
+				if(balance >= payment.value){
+					balanceCheck = true;
+				}else {
+					balanceCheck = false;
+				}
+			},
+			error : function(err){
+				console.log(err);
+			}
+		});
 			
-			
-		} else {
-			acCheck = false;
-		}		
 	}
 
 	function checkPayment(input){
@@ -201,22 +203,27 @@
 		
 		if(!pwCheck){
 			alert("비밀번호를 확인해주세요.");
+			return false;
 		}
 		
 		if(!payCheck){
 			alert("가입금액을 확인해주세요.");
+			return false;
 		}
 		
 		if(!periCheck){
 			alert("가입기간을 확인해주세요.");
+			return false;
 		}
 		
 		if(!balanceCheck){
 			alert("선택하신 출금 계좌 잔액이 부족합니다.");
+			return false;
 		}
 		
 		if(!acCheck){
 			alert("출금 계좌를 확인해주세요.");
+			return false;
 		}
 		
 		// 가입금액에서 천단위 구분기호 제거
