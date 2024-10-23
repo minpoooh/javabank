@@ -96,6 +96,14 @@
 		console.log(pwCheck);
 		console.log(limitCheck);
 		
+		if(!pwCheck){
+			alert("비밀번호를 확인해주세요.");
+		}
+		
+		if(!limitCheck){
+			alert("이체한도를 확인해주세요.");
+		}
+		
 		// 이체한도에서 천단위 구분기호 제거
 		let transactionLimit = document.getElementsByName('transactionLimit')[0];		
 		changedValue = transactionLimit.value.replace(/,/g, '');

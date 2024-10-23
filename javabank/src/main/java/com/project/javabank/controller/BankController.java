@@ -106,33 +106,21 @@ public class BankController {
 		// 2. 계좌번호 랜덤으로 생성하기
 		//System.out.println((Math.random() * 9)+1); // 1 ~ 10
 		//System.out.println((Math.random() * 9000000) + 1000000); // 1000000 ~ 9999999
-		//System.out.println((Math.random() * 9000000) + 1000000); 	
-		
 		int randomNum = 0;
 		int depositAccountCheck = 9999;
-		
 		while(depositAccountCheck > 0) {
 			randomNum = (int) (Math.random() * 9000000) + 1000000;
 			String depositNum = "3333-01-" + String.valueOf(randomNum);
-			System.out.println("최초 번호:"+depositNum);
-			
 			// 생성된 계좌번호 중복 체크
 			depositAccountCheck = mapper.getDepositAccountCheck(depositNum);
-			
 			if(depositAccountCheck == 0) {
-				//System.out.println("확정된 계좌번호:"+ depositNum);
 				params.put("depositAccount", depositNum);
 				break;
 			}
 		}
 		
-		// 3. 통장 비밀번호, 이체한도 확인
-		//System.out.println("통장 비밀번호: " + depositPw);
-		//System.out.println("이체한도: " + 	transactionLimit);
-		
-		// 4. 해당 유저의 입출금통장 첫 개설인지 확인
+		// 3. 해당 유저의 입출금통장 첫 개설인지 확인
 		int depositAccountCnt = mapper.getDepositAccountCnt(userId);
-		
 		String mainAccount;
 		if (depositAccountCnt == 0) {
 			// 첫 개설이면
@@ -143,7 +131,7 @@ public class BankController {
 		}
 		params.put("mainAccount", mainAccount);
 		
-		// 5. Deposit, Dtransaction, Alarm 테이블 INSERT
+		// 4. Deposit, Dtransaction, Alarm 테이블 INSERT
 		try {
 			mapper.insertDeposit(params);
 			red.addFlashAttribute("msg", "입출금 통장이 개설되었습니다.");
