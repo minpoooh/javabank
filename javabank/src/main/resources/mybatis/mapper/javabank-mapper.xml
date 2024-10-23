@@ -343,6 +343,14 @@
     <select id="getAlarmList" parameterType="String" resultType="AlarmDTO">
     	select * from JB_Alarm
     	where userId = #{userId}
+    	and alarmIsRead = 'Y'
+    	order by alarmRegDate desc
+    </select>
+    
+    <select id="getNewAlarmList" parameterType="String" resultType="AlarmDTO">
+    	select * from JB_Alarm
+    	where userId = #{userId}
+    	and alarmIsRead = 'N'
     	order by alarmRegDate desc
     </select>
     
@@ -351,6 +359,16 @@
     	values (alarmSeq.nextVal, #{userId}, 'N', #{alarmCate}, #{alarmCont}, SYSDATE)
     </insert>
     
+    <update id="updateReadY" parameterType="String">
+    	update JB_alarm set alarmIsRead = 'Y'
+    	where alarmIsRead = 'N'
+    	and userId = #{userId}
+    </update>
     
-    
+    <select id="getSortedAlarmList" parameterType="java.util.Map" resultType="AlarmDTO">
+    	select * from JB_alarm
+    	where userId = #{userId}
+    	and alarmCate = #{alarmCate}
+    	order by alarmRegDate desc
+    </select>
 </mapper>

@@ -376,5 +376,20 @@ public class BankMapper {
 	public List<AlarmDTO> getAlarmList(String userId){
 		return sqlSession.selectList("getAlarmList", userId);		
 	}
+	
+	// [알람] 신규 알람 내역 조회
+	public List<AlarmDTO> getNewAlarmList(String userId){
+		return sqlSession.selectList("getNewAlarmList", userId);		
+	}
+	
+	// [알람] 알림 읽음 처리
+	public void updateReadY(String userId) {
+		sqlSession.update("updateReadY", userId);
+	}
+	
+	// [알람] 정렬별 알람리스트
+	public List<AlarmDTO> getSortedAlarmList(Map<String, Object> params){
+		return sqlSession.selectList("getSortedAlarmList", params);
+	}
 }
 

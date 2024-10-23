@@ -44,5 +44,13 @@ public class AlarmDTO {
 		this.alarmRegDate = alarmRegDate;
 	}
 	
+	// 화면 출력용
+	private String formattedAlarmRegDate;
+	public String getFormattedAlarmRegDate() {
+		return formattedAlarmRegDate;
+	}
+	public void setFormattedAlarmRegDate(String formattedAlarmRegDate) {
+		this.formattedAlarmRegDate = formattedAlarmRegDate;
+	}
 	
 }

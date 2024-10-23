@@ -234,6 +234,16 @@ footer p {margin-top: 16px; font-size: 14px; text-align: center; color: #666;}
 #alarms .alarm_list li + li {border-top: 1px solid #ccc;}
 #alarms .alarm_list .alarm_items {display: flex; align-items: flex-start; gap: 20px; padding: 10px 20px;}
 #alarms .alarm_list .alarm_items .img_box {width: 40px;}
+#alarms .alarm_list .alarm_items .txt_box {color: #959595;}
+#alarms .alarm_list .alarm_items .txt_box > p {color: #959595;}
+#alarms .alarm_list .alarm_items .new_box {color: #271f2a;}
+#alarms .alarm_list .alarm_items .new_box > p {color: #271f2a;}
+	
+
+
+#alarms .alarm_list .toolbar {padding: 10px 20px; text-align: right;}
+#alarms .alarm_list .toolbar select {width: 80px; padding: 4px 0; font-size: 18px;}
+#alarms .alarm_list .toolbar select + select {margin-left: 6px;}
 
 /* my_account */
 #my_account .account_box, #my_account .account_box ul  {margin-top: 20px;}

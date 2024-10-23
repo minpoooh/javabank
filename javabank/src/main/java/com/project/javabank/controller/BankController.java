@@ -1,6 +1,7 @@
 package com.project.javabank.controller;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -8,6 +9,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -661,12 +663,75 @@ public class BankController {
 	// 알람페이지 이동
 	@GetMapping("/alarms")
 	public String alarms(@AuthenticationPrincipal User user, HttpServletRequest req) {		
-		String userId = user.getUsername();		
-		List<AlarmDTO> alarmList = mapper.getAlarmList(userId);
+		String userId = user.getUsername();
+		// 읽지 않은 알람 리스트
+		List<AlarmDTO> newAlarmList = mapper.getNewAlarmList(userId);
+		req.setAttribute("newAlarmList", newAlarmList);
 		
+		// 읽은 알람 리스트
+		List<AlarmDTO> alarmList = mapper.getAlarmList(userId);
 		req.setAttribute("alarmList", alarmList);
 		
 		return "alarms";
+	}
+	
+	// 알람페이지 이동 후 알림 읽음 처리
+	@ResponseBody
+	@PostMapping("/updateAlarmRead.ajax")
+	public String updateAlarmRead(@AuthenticationPrincipal User user) {
+		String userId = user.getUsername();
+		try {
+			// 알림 읽음 처리
+			mapper.updateReadY(userId);
+		}catch(Exception e) {
+			e.printStackTrace();
+			System.err.println("알림 읽음 처리 중 에러");
+		}
+		return "OK";
+	}
+	
+	// 알람 정렬
+	@ResponseBody
+	@PostMapping("/updateAlarmList.ajax")
+	public ResponseEntity<Map<String, Object>> updateAlarmList(@AuthenticationPrincipal User user, String alarmCate) {
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("userId", user.getUsername());
+		
+		// 정렬 기준에 맞는 리스트 조회
+		List<AlarmDTO> sortedAlarmList = null;
+		
+		if(alarmCate.equals("all")) {
+			sortedAlarmList = mapper.getAlarmList((String)params.get("userId"));
+		} else if (alarmCate.equals("new")) {
+			params.put("alarmCate", "신규");
+			sortedAlarmList = mapper.getSortedAlarmList(params);
+		} else if (alarmCate.equals("transfer")) {
+			params.put("alarmCate", "이체");
+			sortedAlarmList = mapper.getSortedAlarmList(params);
+		} else if (alarmCate.equals("maturity")) {
+			params.put("alarmCate", "상품만기");
+			sortedAlarmList = mapper.getSortedAlarmList(params);
+		} else if (alarmCate.equals("interest")) {
+			params.put("alarmCate", "이자입금");
+			sortedAlarmList = mapper.getSortedAlarmList(params);
+		} else if (alarmCate.equals("close")) {
+			params.put("alarmCate", "중도해지");
+			sortedAlarmList = mapper.getSortedAlarmList(params);
+		} 
+		
+		if(sortedAlarmList.size() > 0) {		
+			for(AlarmDTO alarm : sortedAlarmList) { 
+				String alarmDate = alarm.getAlarmRegDate();
+				String alarmDateF = alarmDate.substring(0, 16);
+				alarm.setFormattedAlarmRegDate(alarmDateF);
+			}			
+		}
+		
+		Map<String, Object> response = new HashMap<>();
+		response.put("alarmList", sortedAlarmList);
+		
+		return ResponseEntity.ok(response);
 	}
 	
 	
