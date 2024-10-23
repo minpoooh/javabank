@@ -15,24 +15,26 @@
     		let csrfToken = '${_csrf.token}';
     		let alarmCount = document.querySelector('.alarm_txt');
         	
-        	$.ajax ({
-	        	url : "/getNotReadAlarm.ajax",
-	        	type : "post",
-	        	headers : {
-	        		"X-CSRF-TOKEN": csrfToken
-	        	},
-	        	data : {
-	        		
-	        	},
-	        	success : function(res){
-	        		alarmCount.textContent = res;
-	        	},
-	        	error : function(err){
-	        		console.log(err);
-	        	}
-        	});
-        	
-        	
+    		function checkAlarm(){
+    			$.ajax ({
+    	        	url : "/getNotReadAlarm.ajax",
+    	        	type : "post",
+    	        	headers : {
+    	        		"X-CSRF-TOKEN": csrfToken
+    	        	},
+    	        	data : {
+    	        		
+    	        	},
+    	        	success : function(res){
+    	        		alarmCount.textContent = res;
+    	        		console.log("알람 개수 체크 완료");
+    	        	},
+    	        	error : function(err){
+    	        		console.log(err);
+    	        	}
+            	});
+    		}       	
+        	setInterval(checkAlarm, 10000); // 10초마다 함수 실행
     	};
     	
     </script>

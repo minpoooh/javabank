@@ -359,6 +359,17 @@ public class BankController {
 		return "redirect:/index";
 	}
 	
+	// 입출금통장 매달 이자입금 처리
+	public void monthlyInterest() {
+		try {
+			mapper.processMonthlyInterest();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("입출금통장 한달에 한번 이자 입금 처리 에러");
+		}
+		LocalDate date = LocalDate.now();
+		System.out.println(date + " 입출금통장 이자입금 완료");
+	}
 	
 	// 예적금 가입 페이지 이동
 	@GetMapping("/createProduct")
@@ -448,7 +459,7 @@ public class BankController {
 		}	
 	}	
 	
-	// 메인 - 예금 리스트 조회, 해지 페이지 이동
+	// 메인 - 예금 페이지 이동 처리
 	@PostMapping("/productFixedList")
 	public String productFixedList(HttpServletRequest req, String submitType, String productAccount) {
 		
@@ -621,7 +632,7 @@ public class BankController {
 		return "redirect:/index";
 	}
 	
-	// 메인 - 적금 조회, 이체 페이지 이동
+	// 메인 - 적금 페이지 이동 처리
 	@PostMapping("/productPeriodicalList")
 	public String productPeriodicalList(HttpServletRequest req, String submitType, String productAccount) {
 		
@@ -712,120 +723,7 @@ public class BankController {
 		
 	}
 	
-	// 알람페이지 이동
-	@GetMapping("/alarms")
-	public String alarms(@AuthenticationPrincipal User user, HttpServletRequest req) {		
-		String userId = user.getUsername();
-		// 읽지 않은 알람 리스트
-		List<AlarmDTO> newAlarmList = mapper.getNewAlarmList(userId);
-		req.setAttribute("newAlarmList", newAlarmList);
-		
-		// 읽은 알람 리스트
-		List<AlarmDTO> alarmList = mapper.getAlarmList(userId);
-		req.setAttribute("alarmList", alarmList);
-		
-		return "alarms";
-	}
-	
-	// 알람페이지 이동 후 알림 읽음 처리
-	@ResponseBody
-	@PostMapping("/updateAlarmRead.ajax")
-	public String updateAlarmRead(@AuthenticationPrincipal User user) {
-		String userId = user.getUsername();
-		try {
-			// 알림 읽음 처리
-			mapper.updateReadY(userId);
-		}catch(Exception e) {
-			e.printStackTrace();
-			System.err.println("알림 읽음 처리 중 에러");
-		}
-		return "OK";
-	}
-	
-	// 알람 정렬
-	@ResponseBody
-	@PostMapping("/updateAlarmList.ajax")
-	public ResponseEntity<Map<String, Object>> updateAlarmList(@AuthenticationPrincipal User user, String alarmCate) {
-		
-		Map<String, Object> params = new HashMap<>();
-		params.put("userId", user.getUsername());
-		
-		// 정렬 기준에 맞는 리스트 조회
-		List<AlarmDTO> sortedAlarmList = null;
-		
-		if(alarmCate.equals("all")) {
-			sortedAlarmList = mapper.getAlarmList((String)params.get("userId"));
-		} else if (alarmCate.equals("new")) {
-			params.put("alarmCate", "신규");
-			sortedAlarmList = mapper.getSortedAlarmList(params);
-		} else if (alarmCate.equals("transfer")) {
-			params.put("alarmCate", "이체");
-			sortedAlarmList = mapper.getSortedAlarmList(params);
-		} else if (alarmCate.equals("maturity")) {
-			params.put("alarmCate", "상품만기");
-			sortedAlarmList = mapper.getSortedAlarmList(params);
-		} else if (alarmCate.equals("interest")) {
-			params.put("alarmCate", "이자입금");
-			sortedAlarmList = mapper.getSortedAlarmList(params);
-		} else if (alarmCate.equals("close")) {
-			params.put("alarmCate", "중도해지");
-			sortedAlarmList = mapper.getSortedAlarmList(params);
-		} 
-		
-		if(sortedAlarmList.size() > 0) {		
-			for(AlarmDTO alarm : sortedAlarmList) { 
-				String alarmDate = alarm.getAlarmRegDate();
-				String alarmDateF = alarmDate.substring(0, 16);
-				alarm.setFormattedAlarmRegDate(alarmDateF);
-			}			
-		}
-		
-		Map<String, Object> response = new HashMap<>();
-		response.put("alarmList", sortedAlarmList);
-		
-		return ResponseEntity.ok(response);
-	}
-	
-	
-	// 읽지않은 알림 개수 표시
-	@ResponseBody
-	@PostMapping("/getNotReadAlarm.ajax")
-	public int getNotReadAlarm(@AuthenticationPrincipal User user) {
-		String userId = user.getUsername();
-		int notReadAlarmCnt = mapper.checkNotReadAlarm(userId);
-		return notReadAlarmCnt;
-	}
-	
-	//내계좌 모아보기
-	@GetMapping("/myAccount")
-	public String myAccount(@AuthenticationPrincipal User user, HttpServletRequest req) {
-		String userId = user.getUsername();
-		
-		// 입출금통장
-		List<DepositDTO> depositList = mapper.getAccountList(userId);
-		
-		// 예금
-		List<ProductDTO> fixedList = mapper.getFixedDepositList(userId);
-		
-		// 적금
-		List<ProductDTO> periodList = mapper.getPeriodicalDepositList(userId);
-		
-		// 해지
-		List<DepositDTO> expiryDepositList = mapper.getExpiryDepositList(userId);
-		List<ProductDTO> expiryProductList = mapper.getExpiryProductList(userId);
-		
-		req.setAttribute("depositList", depositList);
-		req.setAttribute("fixedList", fixedList);
-		req.setAttribute("periodList", periodList);
-		req.setAttribute("expiryDepositList", expiryDepositList);
-		req.setAttribute("expiryProductList", expiryProductList);
-		
-		return "my_account";
-	}
-	
-	// 정기적금 자동이체 스케줄러
-	//@Scheduled(cron = "0 0 0 * * *") // 매일 자정(00:00:00)에 작업을 실행
-	@Scheduled(cron = "0 2 * * * *") // 테스트용
+	// 적금 자동이체 처리
 	public void autoTransfer() {
 		LocalDate todayDate = LocalDate.now();
 		int date = todayDate.getDayOfMonth();
@@ -873,25 +771,8 @@ public class BankController {
 		}
 	}
 	
-	// 입출금통장 이자 지급 스케줄러
-	//@Scheduled(cron = "0 0 0 L * *") // 매월 마지막 날 자정(00:00:00)에 작업을 실행
-	@Scheduled(cron = "0 48 * * * *") // 테스트용
-	public void processMonthlyInterest() {		
-		// 입출금통장 이자 입금 처리
-		try {
-			mapper.processMonthlyInterest();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println("입출금통장 한달에 한번 이자 입금 처리 에러");
-		}
-		LocalDate date = LocalDate.now();
-		System.out.println(date + " 입출금통장 이자입금 완료");
-	}
-	
-	//상품 만기해지 스케줄러
-	//@Scheduled(cron = "0 0 0 * * *") // 매일 자정(00:00:00)에 작업을 실행
-	@Scheduled(cron = "0 46 * * * *") // 테스트용
-	public void fixedDepositMaturity() {
+	// 상품 만기해지 처리
+	public void productMaturity(){
 		LocalDate todayDate = LocalDate.now();
 		String today = String.valueOf(todayDate);		
 		System.out.println("상품 만기해지 스케줄러 시작");
@@ -955,6 +836,140 @@ public class BankController {
 			e.printStackTrace();
 			System.err.println("만기예정 예금리스트 찾기 에러");
 		}
+	}
+
+	
+	// 알람페이지 이동
+	@GetMapping("/alarms")
+	public String alarms(@AuthenticationPrincipal User user, HttpServletRequest req) {		
+		String userId = user.getUsername();
+		// 읽지 않은 알람 리스트
+		List<AlarmDTO> newAlarmList = mapper.getNewAlarmList(userId);
+		req.setAttribute("newAlarmList", newAlarmList);
+		
+		// 읽은 알람 리스트
+		List<AlarmDTO> alarmList = mapper.getAlarmList(userId);
+		req.setAttribute("alarmList", alarmList);
+		
+		return "alarms";
+	}
+	
+	// 알람페이지 이동 후 알림 읽음 처리
+	@ResponseBody
+	@PostMapping("/updateAlarmRead.ajax")
+	public String updateAlarmRead(@AuthenticationPrincipal User user) {
+		String userId = user.getUsername();
+		try {
+			// 알림 읽음 처리
+			mapper.updateReadY(userId);
+		}catch(Exception e) {
+			e.printStackTrace();
+			System.err.println("알림 읽음 처리 중 에러");
+		}
+		return "OK";
+	}
+	
+	// 알람 정렬
+	@ResponseBody
+	@PostMapping("/updateAlarmList.ajax")
+	public ResponseEntity<Map<String, Object>> updateAlarmList(@AuthenticationPrincipal User user, String alarmCate) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("userId", user.getUsername());
+		
+		// 정렬 기준에 맞는 리스트 조회
+		List<AlarmDTO> sortedAlarmList = null;
+		
+		if(alarmCate.equals("all")) {
+			sortedAlarmList = mapper.getAlarmList((String)params.get("userId"));
+		} else if (alarmCate.equals("new")) {
+			params.put("alarmCate", "신규");
+			sortedAlarmList = mapper.getSortedAlarmList(params);
+		} else if (alarmCate.equals("transfer")) {
+			params.put("alarmCate", "이체");
+			sortedAlarmList = mapper.getSortedAlarmList(params);
+		} else if (alarmCate.equals("maturity")) {
+			params.put("alarmCate", "상품만기");
+			sortedAlarmList = mapper.getSortedAlarmList(params);
+		} else if (alarmCate.equals("interest")) {
+			params.put("alarmCate", "이자입금");
+			sortedAlarmList = mapper.getSortedAlarmList(params);
+		} else if (alarmCate.equals("close")) {
+			params.put("alarmCate", "중도해지");
+			sortedAlarmList = mapper.getSortedAlarmList(params);
+		} 
+		
+		if(sortedAlarmList.size() > 0) {		
+			for(AlarmDTO alarm : sortedAlarmList) { 
+				String alarmDate = alarm.getAlarmRegDate();
+				String alarmDateF = alarmDate.substring(0, 16);
+				alarm.setFormattedAlarmRegDate(alarmDateF);
+			}			
+		}
+		Map<String, Object> response = new HashMap<>();
+		response.put("alarmList", sortedAlarmList);
+		return ResponseEntity.ok(response);
+	}
+	
+	
+	// 읽지않은 알림 개수 표시
+	@ResponseBody
+	@PostMapping("/getNotReadAlarm.ajax")
+	public int getNotReadAlarm(@AuthenticationPrincipal User user) {
+		String userId = user.getUsername();
+		int notReadAlarmCnt = mapper.checkNotReadAlarm(userId);
+		return notReadAlarmCnt;
+	}
+	
+	//내계좌 모아보기
+	@GetMapping("/myAccount")
+	public String myAccount(@AuthenticationPrincipal User user, HttpServletRequest req) {
+		String userId = user.getUsername();
+		
+		// 입출금통장
+		List<DepositDTO> depositList = mapper.getAccountList(userId);
+		
+		// 예금
+		List<ProductDTO> fixedList = mapper.getFixedDepositList(userId);
+		
+		// 적금
+		List<ProductDTO> periodList = mapper.getPeriodicalDepositList(userId);
+		
+		// 해지
+		List<DepositDTO> expiryDepositList = mapper.getExpiryDepositList(userId);
+		List<ProductDTO> expiryProductList = mapper.getExpiryProductList(userId);
+		
+		req.setAttribute("depositList", depositList);
+		req.setAttribute("fixedList", fixedList);
+		req.setAttribute("periodList", periodList);
+		req.setAttribute("expiryDepositList", expiryDepositList);
+		req.setAttribute("expiryProductList", expiryProductList);
+		
+		return "my_account";
+	}
+	
+	
+	//===============================================================================================
+	
+	
+	// 정기적금 자동이체 스케줄러
+	//@Scheduled(cron = "0 0 0 * * *") // 매일 자정(00:00:00)에 작업을 실행
+	@Scheduled(cron = "0 20 * * * *") // 테스트용
+	public void autoTransferSchedule() {
+		autoTransfer();
+	}
+	
+	// 입출금통장 이자 지급 스케줄러
+	//@Scheduled(cron = "0 0 0 L * *") // 매월 마지막 날 자정(00:00:00)에 작업을 실행
+	@Scheduled(cron = "0 21 * * * *") // 테스트용
+	public void monthlyInterestSchedule() {		
+		monthlyInterest();
+	}
+	
+	//상품 만기해지 스케줄러
+	//@Scheduled(cron = "0 0 0 * * *") // 매일 자정(00:00:00)에 작업을 실행
+	@Scheduled(cron = "0 22 * * * *") // 테스트용
+	public void productMaturitySchedule() {
+		productMaturity();
 	}
 	
 }
