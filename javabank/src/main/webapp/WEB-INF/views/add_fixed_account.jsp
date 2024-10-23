@@ -139,7 +139,6 @@
 					if(balance >= payment.value){
 						balanceCheck = true;
 					}else {
-						alert("선택하신 출금계좌의 잔액이 부족합니다.");
 						balanceCheck = false;
 					}
 				},
@@ -199,6 +198,26 @@
 		console.log("payCheck:"+payCheck);
 		console.log("balanceCheck: "+balanceCheck);
 		console.log("periCheck:"+periCheck);	
+		
+		if(!pwCheck){
+			alert("비밀번호를 확인해주세요.");
+		}
+		
+		if(!payCheck){
+			alert("가입금액을 확인해주세요.");
+		}
+		
+		if(!periCheck){
+			alert("가입기간을 확인해주세요.");
+		}
+		
+		if(!balanceCheck){
+			alert("선택하신 출금 계좌 잔액이 부족합니다.");
+		}
+		
+		if(!acCheck){
+			alert("출금 계좌를 확인해주세요.");
+		}
 		
 		// 가입금액에서 천단위 구분기호 제거
 		let payment = document.getElementsByName('payment')[0];		

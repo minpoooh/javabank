@@ -371,4 +371,10 @@
     	and alarmCate = #{alarmCate}
     	order by alarmRegDate desc
     </select>
+    
+    <select id="checkNotReadAlarm" parameterType="String" resultType="int">
+    	select count(*) from JB_alarm
+    	where userId = #{userId}
+    	and alarmIsRead = 'N'
+    </select>
 </mapper>

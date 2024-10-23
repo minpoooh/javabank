@@ -201,7 +201,6 @@
 						balanceCheck = true;
 						
 					}else {
-						alert("선택하신 출금계좌의 잔액이 부족합니다.");
 						balanceCheck = false;
 					}
 				},
@@ -223,6 +222,30 @@
 		console.log("transferDateCheck:"+transferDateCheck);
 		console.log("balanceCheck:"+balanceCheck);
 		console.log("acCheck:"+acCheck);
+		
+		if(!pwCheck){
+			alert("비밀번호를 확인해주세요.");
+		}
+		
+		if(!payCheck){
+			alert("자동이체 금액을 확인해주세요.");
+		}
+		
+		if(!periCheck){
+			alert("가입기간을 확인해주세요.");
+		}
+		
+		if(!transferDateCheck){
+			alert("자동이체일을 확인해주세요.");
+		}
+		
+		if(!balanceCheck){
+			alert("선택하신 자동이체 계좌 잔액이 부족합니다.");
+		}
+		
+		if(!acCheck){
+			alert("자동이체 계좌를 확인해주세요.");
+		}
 
 	 	// 최종 점검
 		if(pwCheck && acCheck && payCheck && periCheck && transferDateCheck && balanceCheck){

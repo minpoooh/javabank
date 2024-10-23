@@ -391,5 +391,10 @@ public class BankMapper {
 	public List<AlarmDTO> getSortedAlarmList(Map<String, Object> params){
 		return sqlSession.selectList("getSortedAlarmList", params);
 	}
+	
+	// [알람] 미열람 알림 체크
+	public int checkNotReadAlarm(String userId) {
+		return sqlSession.selectOne("checkNotReadAlarm", userId);
+	}
 }
 

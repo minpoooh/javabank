@@ -1,7 +1,5 @@
 package com.project.javabank.controller;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -9,7 +7,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -871,6 +868,14 @@ public class BankController {
 		}
 	}
 	
+	// 읽지않은 알림 개수 표시
+	@ResponseBody
+	@PostMapping("/getNotReadAlarm.ajax")
+	public int getNotReadAlarm(@AuthenticationPrincipal User user) {
+		String userId = user.getUsername();
+		int notReadAlarmCnt = mapper.checkNotReadAlarm(userId);
+		return notReadAlarmCnt;
+	}
 	
 	
 }

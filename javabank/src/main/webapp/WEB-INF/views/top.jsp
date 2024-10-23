@@ -10,6 +10,32 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="js/script.js"></script>
     <title>javabank</title>
+    <script type="text/javascript">
+    	window.onload = function(){
+    		let csrfToken = '${_csrf.token}';
+    		let alarmCount = document.querySelector('.alarm_txt');
+        	
+        	$.ajax ({
+	        	url : "/getNotReadAlarm.ajax",
+	        	type : "post",
+	        	headers : {
+	        		"X-CSRF-TOKEN": csrfToken
+	        	},
+	        	data : {
+	        		
+	        	},
+	        	success : function(res){
+	        		alarmCount.textContent = res;
+	        	},
+	        	error : function(err){
+	        		console.log(err);
+	        	}
+        	});
+        	
+        	
+    	};
+    	
+    </script>
 </head>
 <body>
     <header>
