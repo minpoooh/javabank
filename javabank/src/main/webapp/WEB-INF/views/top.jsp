@@ -34,7 +34,7 @@
     	        	}
             	});
     		}       	
-        	setInterval(checkAlarm, 10000); // 10초마다 함수 실행
+        	setInterval(checkAlarm, 3000); // 3초마다 함수 실행
     	};
     	
     </script>
