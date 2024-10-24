@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -945,6 +946,47 @@ public class BankController {
 		req.setAttribute("expiryProductList", expiryProductList);
 		
 		return "my_account";
+	}
+	
+	// 메인 통장 변경
+	@ResponseBody
+	@PostMapping("/changeMainAccount.ajax")
+	public String changeMainAccount(@AuthenticationPrincipal User user, String depositAccount) {
+		
+		String userId = user.getUsername();
+		String msg;
+		
+		// 입출금통장 개수 확인
+		int accountCnt = mapper.getAccountCnt(userId);
+		
+		if(accountCnt <= 1) {
+			msg = "하나 이상의 주거래통장이 있어야 서비스가 가능하여 주거래통장 해제가 불가합니다.";
+		} else {
+			// 해당 계좌번호가 메인 통장인지 확인
+			String mainAccount = mapper.getMainAccount(depositAccount);			
+			
+			// 주거래 통장 개수 확인
+			int mainAccountCnt = mapper.getMainAccountCnt(userId);
+			
+			if(mainAccountCnt == 1) {
+				if (mainAccount.equals("Y")) {
+					mapper.updateMainAccountN(depositAccount);
+					msg = "주거래통장 해제되었습니다. 다른 계좌를 주거래통장으로 설정해주세요.";
+				} else {
+					mapper.updateMainAccountY(depositAccount);
+					msg = "주거래통장 설정되었습니다.";
+				}
+			} else {
+				if (mainAccount.equals("Y")) {
+					mapper.updateMainAccountN(depositAccount);
+					msg = "주거래통장 해제되었습니다.";
+				} else {
+					mapper.updateMainAccountY(depositAccount);
+					msg = "주거래통장 설정되었습니다.";
+				}
+			}
+		}		
+		return msg;
 	}
 	
 	

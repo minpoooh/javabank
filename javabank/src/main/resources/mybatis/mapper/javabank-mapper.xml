@@ -52,6 +52,7 @@
     	where A.userId = #{userId}
     	and A.depositEnable = 'Y'
     	and B.rn = 1
+    	order by mainAccount desc
     </select>
     
     <select id="getFixedDepositList" parameterType="String" resultType="ProductDTO">
@@ -400,4 +401,33 @@
     	and productEnable = 'N'
     	order by expiryDate desc
     </select>
+    
+    <select id="getAccountCnt" parameterType="String" resultType="int">
+    	select count(*) from JB_Deposit
+    	where userId = #{userId}
+    	and depositEnable = 'Y'
+    </select>
+    
+    <select id="getMainAccountCnt" parameterType="String" resultType="int">
+    	select count(*) from JB_Deposit
+    	where userId = #{userId}
+    	and mainAccount = 'Y'
+    	and depositEnable = 'Y'
+    </select>
+    
+    <select id="getMainAccount" parameterType="String" resultType="String">
+    	select mainAccount from JB_Deposit
+    	where depositAccount = #{depositAccount}
+    	and depositEnable = 'Y'
+    </select>
+    
+    <update id="updateMainAccountN" parameterType="String">
+    	update JB_deposit set mainAccount = 'N'
+    	where depositAccount = #{depositAccount}
+    </update>
+    
+    <update id="updateMainAccountY" parameterType="String">
+    	update JB_deposit set mainAccount = 'Y'
+    	where depositAccount = #{depositAccount}
+    </update>
 </mapper>

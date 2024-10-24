@@ -416,5 +416,29 @@ public class BankMapper {
 	public List<ProductDTO> getExpiryProductList(String userId){
 		return sqlSession.selectList("getExpiryProductList", userId);
 	}
+	
+	// [계좌관리] 입출금통장 계좌 개수 확인
+	public int getAccountCnt(String userId) {
+		return sqlSession.selectOne("getAccountCnt", userId);
+	}
+	
+	// [계좌관리] 메인계좌 통장 개수 확인
+	public int getMainAccountCnt(String userId) {
+		return sqlSession.selectOne("getMainAccountCnt", userId);
+	}
+	
+	// [계좌관리] 메인계좌 여부 확인
+	public String getMainAccount(String depositAccount) {
+		return sqlSession.selectOne("getMainAccount", depositAccount);
+	}
+	
+	// [계좌관리] 메인계좌 변경
+	public void updateMainAccountN(String depositAccount) {
+		sqlSession.update("updateMainAccountN", depositAccount);
+	}
+	
+	public void updateMainAccountY(String depositAccount) {
+		sqlSession.update("updateMainAccountY", depositAccount);
+	}
 }
 

@@ -25,12 +25,12 @@
 			                <!-- 주거래: star.png / 주거래X: star_line.png -->
 			                <c:if test="${depositList.mainAccount eq 'Y'}">
 				                <div class="img_box">
-				                    <img src="../../images/icons/star.png">
+				                    <img src="../../images/icons/star.png" data-depositAccount="${depositList.depositAccount}" onclick="changeMainAccount(this)">
 				                </div>
 			                </c:if>
 			                <c:if test="${depositList.mainAccount eq 'N'}">
 				                <div class="img_box">
-				                    <img src="../../images/icons/star_line.png">
+				                    <img src="../../images/icons/star_line.png" data-depositAccount="${depositList.depositAccount}" onclick="changeMainAccount(this)">
 				                </div>
 			                </c:if>
 			                <div class="txt_box">
@@ -169,3 +169,28 @@
 </section>
 <!-- e: content -->
 <%@ include file="bottom.jsp"%>
+
+<script type="text/javascript">
+	function changeMainAccount(element){
+		let csrfToken = '${_csrf.token}';
+		let depositAccount = element.getAttribute('data-depositAccount');
+		$.ajax({
+			url : "/changeMainAccount.ajax",
+			type : "post",
+			headers : {
+				"X-CSRF-TOKEN": csrfToken
+			},
+			data : {
+				depositAccount : depositAccount
+			},
+			success : function(res){
+				alert(res);
+				location.reload();
+			},
+			error : function(err){
+				console.log(err);
+			}
+		});
+	}
+
+</script>
