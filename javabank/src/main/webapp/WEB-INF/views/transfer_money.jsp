@@ -93,25 +93,58 @@
 		amountBox.value = format;
 	}
 	
-	// 비밀번호 검증
+	
 	let pwCheck = false;
 	let balanceCheck = false;
 	let limitCheck = false;
 	let depositAccount = '${depositAccount}';
+	
+	
+	function checkLimit(){
+		let csrfToken = '${_csrf.token}';
+		
+		// 이체한도 체크용 변수
+		let transferMoneySum = '${transferMoneySum}';
+		transferMoneySum = Number(transferMoneySum);
 
+		let transactionLimit = '${transactionLimit}';
+		let depositBalance = '${depositBalance}';
+		let sendAmount = document.getElementsByName('amount')[0].value;
+		
+		// 송금 금액 천단위 구분기호 제거
+		sendAmount = sendAmount.replace(/,/g, '');
+		sendAmount = Number(sendAmount);
+		
+		let sum = transferMoneySum + sendAmount;
+		
+		if (sum <= transactionLimit){
+			limitCheck = true;
+		} else {
+			limitCheck = false;
+		}
+		
+	}
+	
+	function checkBalance(){
+
+		// 잔액 체크용 변수
+		let depositBalance = '${depositBalance}';
+		let sendAmount = document.getElementsByName('amount')[0].value;
+		sendAmount = parseInt(sendAmount.replace(/,/g, ''), 10);
+
+		// 잔액 체크
+		if (depositBalance >= sendAmount){
+			balanceCheck = true; 
+		} else {
+			balanceCheck = false;
+		}
+	}
+	
 	function checkPw(){		
 		let csrfToken = '${_csrf.token}';
 		
 		// 패스워드 체크용 변수
 		let inputPw = document.getElementsByName('inputPw')[0].value;
-		
-		// 잔액 체크용 변수
-		let depositBalance = '${depositBalance}';
-		let sendAmount = document.getElementsByName('amount')[0].value;
-		sendAmount = parseInt(sendAmount.replace(/,/g, ''), 10);
-		
-		// 이체한도 체크용 변수
-		let transactionLimit = '${transactionLimit}';
 		
 		if(inputPw.length < 4){
 			alert("비밀번호 4자리를 입력해주세요.")
@@ -133,29 +166,20 @@
 					if(res === 'OK'){
 						pwCheck = true;
 						
-						// 잔액 체크
-						if (depositBalance >= sendAmount){
-							balanceCheck = true; 
-						} else {
-							balanceCheck = false;
-						}
 						
-						// 이체한도 체크
-						if (transactionLimit >= sendAmount){
-							limitCheck = true;
-						} else {
-							limitCheck = false;
-						}
+						checkLimit();
+						checkBalance();
 						
-						console.log(pwCheck);
-						console.log(balanceCheck);
-						console.log(limitCheck);
-						if(!balanceCheck && limitCheck){
+						console.log("pwCheck :" + pwCheck);
+						console.log("balanceCheck :" +balanceCheck);
+						console.log("limitCheck :" +limitCheck);
+
+						if(!balanceCheck){
 							alert("입출금통장 잔액이 부족합니다.");
-						}else if(balanceCheck && !limitCheck){
-							alert("금일 이체한도를 초과하였습니다.");
-						}else if(!balanceCheck && !limitCheck){
-							alert("잔액 부족 및 이체한도가 초과되었습니다.");
+						}
+						
+						if(!limitCheck){
+							alert("금일 이체한도가 초과되었습니다.");
 						}
 						
 						if(pwCheck && balanceCheck && limitCheck){							
@@ -206,10 +230,6 @@
 				}
 			});
 		}
-		
-
-
-		
 	}
 
 

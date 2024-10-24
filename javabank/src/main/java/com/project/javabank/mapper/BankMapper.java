@@ -113,6 +113,11 @@ public class BankMapper {
 		return sqlSession.selectOne("getDepositUserId", depositAccount);
 	}
 	
+	// [이체] 오늘 이체 누적금액 확인
+	public int getTransferMoneySum(Map<String, String> params) {
+		return sqlSession.selectOne("getTransferMoneySum", params);
+	}
+	
 	// [이체] 이체 처리
 	@Transactional
 	public void transferProcess(Map<String, Object> params) {

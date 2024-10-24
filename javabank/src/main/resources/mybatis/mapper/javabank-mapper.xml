@@ -124,7 +124,7 @@
     			and (A.type = '입금' OR A.type = '이자 입금' OR A.type = '상품해지 입금' OR A.type = '상품만기 입금')
     			</if>
     			<if test="details == 'withdraw'">
-    			and (A.type = '출금' OR A.type = '상품가입 출금')
+    			and (A.type = '출금' OR A.type = '상품가입 출금' OR A.type = '자동이체 출금')
     			</if>
     	order by A.accountSeq desc
     </select>
@@ -175,6 +175,13 @@
     	select userId from JB_Deposit
     	where depositAccount = #{depositAccount}
     </select>    
+    
+    <select id="getTransferMoneySum" parameterType="java.util.Map" resultType="int">
+    	select COALESCE(sum(deltaAmount), 0)  from JB_Dtransaction
+    	where depositAccount = #{depositAccount}
+    	and type = '출금'
+    	and TO_CHAR(updateDate, 'YYYY-MM-DD') = #{today}    
+    </select>
     
     <select id="getDepositBalanceOnly" parameterType="String" resultType="int">
     	select balance 
@@ -342,7 +349,7 @@
     
     <insert id="insertAutoTransferDtransaction" parameterType="java.util.Map">
     	insert into JB_Dtransaction(accountSeq, depositAccount, userId, updateDate, type, memo, deltaAmount, balance, transferAccount) 
-    	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '출금', '적금 자동이체', #{monthlyPayment}, #{balance}, #{productAccount})
+    	values (accountSeq.NextVal, #{depositAccount}, #{userId}, SYSDATE, '자동이체 출금', '적금 자동이체', #{monthlyPayment}, #{balance}, #{productAccount})
     </insert>
     
     <insert id="insertAutoTransferPtransaction" parameterType="java.util.Map">

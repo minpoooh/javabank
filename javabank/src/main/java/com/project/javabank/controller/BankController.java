@@ -169,10 +169,23 @@ public class BankController {
 			return "deposit_list";
 			
 		} else if(submitType.equals("transfer")) {
+			Map<String, String> params = new HashMap<>();
+			
 			// 이체 버튼 클릭한 경우
 			req.setAttribute("depositAccount", depositAccount);
 			req.setAttribute("depositBalance", depositBalance);
 			req.setAttribute("transactionLimit", depositInfo.getTransactionLimit());
+			
+			LocalDate date = LocalDate.now();
+			String today = String.valueOf(date);
+			
+			params.put("depositAccount", depositAccount);
+			params.put("today", today);
+			
+			// 오늘 이체 누적금액 확인
+			int transferMoneySum = mapper.getTransferMoneySum(params);
+			req.setAttribute("transferMoneySum", transferMoneySum);
+			
 			return "transfer_money";
 			
 		} else if(submitType.equals("detail")) {
@@ -311,7 +324,6 @@ public class BankController {
 		
 		// 상대방 계좌번호로 아이디 가져오기
 		String receiveUserId = mapper.getDepositUserId(inputAccount);
-		
 		Map<String, Object> params = new HashMap<>();
 		params.put("depositAccount", depositAccount);	// 출금계좌
 		params.put("sendMoneyAmount", sendMoneyAmount);
