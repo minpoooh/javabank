@@ -143,19 +143,22 @@
     </select>
     
     <select id="getMyTransactionList" parameterType="String" resultType="DtransactionDTO">
-    	select A.transferAccount, A.userID, B.userName, A.updateDate
-		from(
-		        select transferAccount, userID, updateDate
-		        from (
-		                select transferAccount, userId, updateDate, ROW_NUMBER() over (Partition by transferAccount order by accountSeq desc) as rn
-		                from JB_Dtransaction
-		                where type != '개설'
-		                and type = '출금'
-		        )
-		        where rn = 1
-		)A
-		join JB_User B
-		on A.userId = B.userId
+    	select A.transferAccount, A.userID, B.userName, A.updateDate, C.depositEnable
+					from(
+					        select transferAccount, userID, updateDate, depositAccount
+					        from (
+					                select transferAccount, userId, updateDate, depositAccount, ROW_NUMBER() over (Partition by transferAccount order by accountSeq desc) as rn
+					                from JB_Dtransaction
+					                where type != '개설'
+					                and type = '출금'
+					        )
+					        where rn = 1
+					)A
+					join JB_User B
+						on A.userId = B.userId
+			        join JB_Deposit C
+			        	on A.depositAccount = C.depositAccount
+		where C.depositEnable = 'Y'
     </select>
     
     <select id="getCheckAccountExist" parameterType="String" resultType="int">
