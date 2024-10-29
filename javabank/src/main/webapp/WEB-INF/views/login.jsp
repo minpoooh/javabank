@@ -143,7 +143,7 @@
 		            
 		            <div class="btn_box">
 			            <button class="submit_btn" type="submit">비밀번호 찾기</button>
-			            <button class="close_btn" data-popup="findbyid">취소</button>
+			            <button class="close_btn" data-popup="findbypw">취소</button>
 		        	</div>
 		        </div>
 		        
